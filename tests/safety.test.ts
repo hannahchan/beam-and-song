@@ -32,7 +32,8 @@ function simulate(
   if (tapsPerSec > 0) {
     for (let t = 250; t < seconds * 1000; t += 1000 / tapsPerSec) taps.push(t);
   }
-  const sim: SimInput = { seed: 12345, tapsMs: taps, photoDataUrl: 'data:worst-case' };
+  // No measured luminance on the photo → the model assumes worst-case white.
+  const sim: SimInput = { seed: 12345, tapsMs: taps, photos: [{ dataUrl: 'data:worst-case' }] };
   const lum: number[] = [];
   const red: number[] = [];
   for (let i = 0; i < seconds * FPS; i++) {

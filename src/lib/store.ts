@@ -212,6 +212,25 @@ export interface ProfileExport {
   profile: Profile;
 }
 
+export interface BackupExport {
+  app: 'beam-and-song';
+  kind: 'backup';
+  version: 1;
+  exportedAt: string;
+  profiles: Profile[];
+}
+
+/** Whole-device backup — every child on this device (therapist workflows, PT-3). */
+export function exportAll(): BackupExport {
+  return {
+    app: 'beam-and-song',
+    kind: 'backup',
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    profiles: JSON.parse(JSON.stringify(getState().profiles)) as Profile[],
+  };
+}
+
 export function exportProfile(profileId: string): ProfileExport | null {
   const p = getState().profiles.find((x) => x.id === profileId);
   if (!p) return null;
@@ -222,6 +241,30 @@ export function exportProfile(profileId: string): ProfileExport | null {
     exportedAt: new Date().toISOString(),
     profile: JSON.parse(JSON.stringify(p)) as Profile,
   };
+}
+
+/** Accepts a single-profile export or a whole-device backup. */
+export function importAny(json: unknown): { ok: true; count: number; firstNickname: string } | { ok: false; error: string } {
+  if (json && typeof json === 'object' && (json as BackupExport).kind === 'backup') {
+    const backup = json as Partial<BackupExport>;
+    if (backup.app !== 'beam-and-song' || !Array.isArray(backup.profiles) || backup.profiles.length === 0) {
+      return { ok: false, error: 'That backup file looks empty or damaged.' };
+    }
+    let count = 0;
+    let first = '';
+    for (const prof of backup.profiles) {
+      const result = importProfile({ app: 'beam-and-song', kind: 'profile', version: 1, exportedAt: '', profile: prof });
+      if (result.ok) {
+        count++;
+        first = first || result.profile.nickname;
+      }
+    }
+    return count > 0
+      ? { ok: true, count, firstNickname: first }
+      : { ok: false, error: 'No readable profiles were found in that backup.' };
+  }
+  const single = importProfile(json);
+  return single.ok ? { ok: true, count: 1, firstNickname: single.profile.nickname } : single;
 }
 
 export function importProfile(json: unknown): { ok: true; profile: Profile } | { ok: false; error: string } {

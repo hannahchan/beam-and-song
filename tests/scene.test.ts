@@ -143,6 +143,33 @@ describe('movement setting (PR-2)', () => {
   });
 });
 
+describe('measured photo luminance feeds the safety model (CR-3/SR-8)', () => {
+  it('a dark measured photo contributes less than an unmeasured (worst-case) one', async () => {
+    const { sceneLuminance } = await import('../src/safety/luminance');
+    const params = buildParams({ ...DEFAULT_SETTINGS, brightness: 3, size: 5 });
+    const photoSpec = spec('familiar-photo');
+    const t = 5000; // mid-hold, fully faded in
+    const dark = computeScene(photoSpec, params, t, { seed: 1, tapsMs: [], photos: [{ dataUrl: 'x', lum: 0.05 }] });
+    const worst = computeScene(photoSpec, params, t, { seed: 1, tapsMs: [], photos: [{ dataUrl: 'x' }] });
+    expect(sceneLuminance(dark)).toBeLessThan(sceneLuminance(worst) * 0.4);
+  });
+
+  it('multiple photos cycle across appearances (PR-9)', () => {
+    const params = buildParams(DEFAULT_SETTINGS);
+    const photos = [
+      { dataUrl: 'a', lum: 0.2 },
+      { dataUrl: 'b', lum: 0.3 },
+    ];
+    const seen = new Set<string>();
+    for (let t = 3000; t < 120_000; t += 4000) {
+      const scene = computeScene(spec('familiar-photo'), params, t, { seed: 1, tapsMs: [], photos });
+      const url = scene.items.find((i) => i.shape === 'photo')?.photoDataUrl;
+      if (url) seen.add(url);
+    }
+    expect(seen).toEqual(new Set(['a', 'b']));
+  });
+});
+
 describe('determinism (testability of everything above)', () => {
   it('same seed, same time, same scene', () => {
     const params = buildParams(DEFAULT_SETTINGS);

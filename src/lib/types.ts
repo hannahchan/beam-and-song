@@ -54,6 +54,8 @@ export interface CustomPhoto {
   label: string;
   /** Downscaled JPEG data URL, produced client-side (TR-7). Never leaves the device (PV-5). */
   dataUrl: string;
+  /** Measured average relative luminance (0..1). Absent on old photos → treated as worst-case. */
+  lum?: number;
   addedAt: string;
 }
 
@@ -193,6 +195,8 @@ export interface SceneItem {
   glow: number;
   rot?: number; // radians
   photoDataUrl?: string;
+  /** Measured luminance of the photo; the safety model assumes 1 (white) when absent. */
+  photoLum?: number;
 }
 
 export interface Scene {

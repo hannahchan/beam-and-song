@@ -64,7 +64,9 @@ export function sceneLuminance(scene: Scene): number {
   const bgLum = relLuminance(scene.bg);
   let lum = bgLum;
   for (const it of scene.items) {
-    const itemLum = it.shape === 'photo' ? 1 : relLuminance(it.color);
+    // Photos use their measured luminance (lib/photos.ts); worst-case white
+    // when unmeasured, so the model never flatters unknown content.
+    const itemLum = it.shape === 'photo' ? (it.photoLum ?? 1) : relLuminance(it.color);
     lum += luminousArea(it.r, it.glow, it.alpha) * Math.max(0, itemLum - bgLum);
   }
   return Math.min(lum, 1);

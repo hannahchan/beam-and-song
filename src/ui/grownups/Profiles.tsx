@@ -3,8 +3,9 @@ import type { AppState, Profile } from '../../lib/types';
 import {
   createProfile,
   deleteProfile,
+  exportAll,
   exportProfile,
-  importProfile,
+  importAny,
   setActiveProfile,
   setPin,
   updateProfile,
@@ -63,10 +64,16 @@ export function Profiles({ state }: { state: AppState }) {
             const file = (e.target as HTMLInputElement).files?.[0];
             if (!file) return;
             try {
-              const result = importProfile(JSON.parse(await file.text()));
+              const result = importAny(JSON.parse(await file.text()));
               setImportMsg(
                 result.ok
-                  ? { kind: 'ok', text: `Welcome, ${result.profile.nickname} — profile imported.` }
+                  ? {
+                      kind: 'ok',
+                      text:
+                        result.count === 1
+                          ? `Welcome, ${result.firstNickname} — profile imported.`
+                          : `${result.count} profiles imported.`,
+                    }
                   : { kind: 'err', text: result.error },
               );
             } catch {
@@ -81,6 +88,23 @@ export function Profiles({ state }: { state: AppState }) {
           </p>
         )}
       </Card>
+
+      {state.profiles.length > 1 && (
+        <Card title="Back up this whole device">
+          <p class="card-note">
+            One file with every child's profile — settings, notes, and photos (recordings stay on this device).
+            It contains personal information about children; keep it somewhere you trust.
+          </p>
+          <button
+            class="btn"
+            onClick={() =>
+              downloadFile('beam-and-song-backup.json', JSON.stringify(exportAll(), null, 2), 'application/json')
+            }
+          >
+            Save a backup of everyone
+          </button>
+        </Card>
+      )}
 
       <PinCard hasPin={!!state.pinHash} />
     </div>

@@ -124,6 +124,16 @@ describe('export / import (PT-3, PV-4)', () => {
     expect(store.getState().profiles).toHaveLength(0);
   });
 
+  it('whole-device backup round-trips every profile (PT-3)', () => {
+    store.createProfile('Bean');
+    store.createProfile('Pip');
+    const backup = store.exportAll();
+    expect(backup.kind).toBe('backup');
+    const result = store.importAny(JSON.parse(JSON.stringify(backup)));
+    expect(result.ok && result.count).toBe(2);
+    expect(store.getState().profiles).toHaveLength(4);
+  });
+
   it('normalizes missing fields on import instead of crashing later', () => {
     const p = store.createProfile('Bean');
     const exported = store.exportProfile(p.id)!;

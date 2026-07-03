@@ -26,7 +26,8 @@ export interface SimInput {
   seed: number;
   /** Raw tap/switch timestamps in lesson-ms. Cooldown filtering happens here. */
   tapsMs: readonly number[];
-  photoDataUrl?: string;
+  /** The child's own photos (CR-3); cycled through for novelty (PR-9). */
+  photos?: readonly { dataUrl: string; lum?: number }[];
 }
 
 const EMPTY: readonly number[] = [];
@@ -79,7 +80,7 @@ export function computeScene(
       riseFloat(scene, p, tMs, sim.seed, taps, cue);
       break;
     case 'photoDrift':
-      photoDrift(scene, p, tMs, sim.photoDataUrl);
+      photoDrift(scene, p, tMs, sim.photos ?? []);
       break;
     case 'audioPan':
       audioPan(scene, p, tMs);
@@ -514,13 +515,22 @@ function riseFloat(
   scene.pan = (bx - 0.5) * 1.6;
 }
 
-function photoDrift(scene: Scene, p: EngineParams, tMs: number, photoDataUrl?: string): void {
+function photoDrift(
+  scene: Scene,
+  p: EngineParams,
+  tMs: number,
+  photos: readonly { dataUrl: string; lum?: number }[],
+): void {
   const pos = biasPoint(0.5, 0.5, p.fieldBias, p.biasStrength);
   const cycleMs = envelopeLength(p.fadeMs * 1.6, p.holdMs * 2.6, p.fadeMs * 1.6) + p.holdMs * 0.8;
-  const local = tMs % cycleMs;
+  const idx = Math.floor(tMs / cycleMs);
+  const local = tMs - idx * cycleMs;
   const env = fadeEnvelope(local, 0, p.fadeMs * 1.6, p.holdMs * 2.6, p.fadeMs * 1.6);
   const driftX = p.movement ? 0.25 * safeMod(tMs / 1000, p.modHz * 0.5, p.modDepth, 0) : 0;
   const driftY = p.movement ? 0.2 * safeMod(tMs / 1000, p.modHz * 0.35, p.modDepth, 1.2) : 0;
+  // Each appearance may bring a different familiar thing (PR-9 novelty
+  // within familiarity); a single photo simply recurs.
+  const photo = photos.length ? photos[idx % photos.length] : undefined;
   if (env > 0.005) {
     scene.items.push({
       shape: 'photo',
@@ -530,7 +540,8 @@ function photoDrift(scene: Scene, p: EngineParams, tMs: number, photoDataUrl?: s
       color: '#888888',
       alpha: clamp01(p.peakAlpha * 0.95 * env),
       glow: 0, // photos never glow (PR-13; also keeps luminance bounded)
-      photoDataUrl,
+      photoDataUrl: photo?.dataUrl,
+      photoLum: photo?.lum,
     });
   }
   scene.pan = (pos.x - 0.5) * 1.2;

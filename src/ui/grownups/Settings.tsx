@@ -391,9 +391,9 @@ function PhotoManager({ profile }: { profile: Profile }) {
     setBusy(true);
     setMsg(null);
     try {
-      const dataUrl = await processPhotoFile(file);
+      const { dataUrl, lum } = await processPhotoFile(file);
       updateProfile(profile.id, (p) => {
-        p.photos.push({ id: uid(), label: file.name.replace(/\.[a-z0-9]+$/i, ''), dataUrl, addedAt: new Date().toISOString() });
+        p.photos.push({ id: uid(), label: file.name.replace(/\.[a-z0-9]+$/i, ''), dataUrl, lum, addedAt: new Date().toISOString() });
       });
       setMsg({ kind: 'ok', text: 'Added. It stays on this device — nothing is uploaded.' });
     } catch (e) {

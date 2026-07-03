@@ -55,7 +55,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
   const againRef = useRef<(() => void) | null>(null);
 
   const params = useMemo(() => buildParams(settings), [settings]);
-  const photoDataUrl = profile.photos[0]?.dataUrl;
+  const photos = profile.photos.map((p) => ({ dataUrl: p.dataUrl, lum: p.lum }));
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -63,7 +63,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    const photos = createPhotoCache();
+    const photoCache = createPhotoCache();
     const sessionMs = Math.max(2, settings.sessionMinutes) * 60_000;
     // Each program entry gets an equal slice, never less than 45 s (FR-7).
     const sliceMs = queue.length > 1 ? Math.max(45_000, sessionMs / queue.length) : sessionMs;
@@ -72,7 +72,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
 
     let idx = 0;
     let spec = queue[0];
-    let sim: SimInput = { seed: 20260703, tapsMs: tapsRef.current, photoDataUrl };
+    let sim: SimInput = { seed: 20260703, tapsMs: tapsRef.current, photos };
     let raf = 0;
     let lessonT = 0;
     let prevT = 0;
@@ -116,7 +116,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
       idx = nextIdx;
       spec = queue[idx];
       tapsRef.current.length = 0;
-      sim = { seed: 20260703 + idx * 101, tapsMs: tapsRef.current, photoDataUrl };
+      sim = { seed: 20260703 + idx * 101, tapsMs: tapsRef.current, photos };
       lessonT = 0;
       prevT = 0;
       handover = null;
@@ -188,7 +188,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
         if (melody && (settings.soundFollowsTarget || spec.behavior === 'audioPan')) {
           melody.setPan(scene.pan);
         }
-        drawScene(ctx, scene, w, h, photos);
+        drawScene(ctx, scene, w, h, photoCache);
         if (fadeK > 0) {
           ctx.save();
           ctx.globalAlpha = fadeK;
@@ -201,7 +201,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
         }
       } else if (phaseRef.current === 'resting') {
         restT += dt;
-        drawScene(ctx, restScene(params, restT), w, h, photos);
+        drawScene(ctx, restScene(params, restT), w, h, photoCache);
       }
       raf = requestAnimationFrame(frame);
     };

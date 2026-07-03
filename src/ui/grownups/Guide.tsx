@@ -120,6 +120,14 @@ export function Guide() {
         </p>
       </Card>
 
+      <Card title="Put it on the home screen">
+        <p class="card-note">
+          On an iPad: open this site in Safari → tap the share square → <b>Add to Home Screen</b>. On Android:
+          browser menu → <b>Add to home screen</b> (or "Install"). It then opens truly full-screen, without
+          browser bars competing with the lesson, and keeps working even with patchy internet.
+        </p>
+      </Card>
+
       <Card title="Privacy, plainly">
         <p>
           Everything — profiles, settings, notes, photos — lives only in this browser on this device. Nothing is
