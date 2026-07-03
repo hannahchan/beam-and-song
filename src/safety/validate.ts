@@ -30,6 +30,15 @@ const BEHAVIORS = new Set([
   'facesFamiliar',
 ]);
 
+/**
+ * SR-7 — language that must never appear in anything family-facing:
+ * no clinical deficit vocabulary, no scoring/grading, no diagnosis.
+ * Lesson copy is validated against this, and the PT-13 observation
+ * templates are tested against it too.
+ */
+export const NON_DIAGNOSTIC_BANNED =
+  /diagnos|deficit|impair|defect|\bscore|test result|assess|field loss|abnormal|sever(e|ity)|normative|percentile|\bgrade\b|\bfail/i;
+
 export function validateSpec(spec: LessonSpec): string[] {
   const errors: string[] = [];
   const err = (m: string) => errors.push(`${spec.id}: ${m}`);
@@ -50,11 +59,8 @@ export function validateSpec(spec: LessonSpec): string[] {
   if (!spec.watchFor) err('watchFor copy missing (needed for PT-10 guidance)');
   if (spec.requiresPhoto && spec.shape !== 'photo') err('requiresPhoto only makes sense for photo lessons');
 
-  // Non-diagnostic language guard (SR-7 spirit): grown-up copy must never
-  // sound clinical or evaluative.
-  const banned = /diagnos|deficit|impair|defect|score|test result|assess/i;
   for (const field of [spec.goal, spec.watchFor, spec.bridge ?? '']) {
-    if (banned.test(field)) err(`copy uses clinical/diagnostic language: "${field.slice(0, 40)}…"`);
+    if (NON_DIAGNOSTIC_BANNED.test(field)) err(`copy uses clinical/diagnostic language: "${field.slice(0, 40)}…"`);
   }
 
   return errors;

@@ -1,5 +1,6 @@
 import type { Profile, SessionRecord } from './types';
 import { getLesson } from '../lessons/specs';
+import { regionInsight } from './regions';
 
 /**
  * PT-7 — turn raw observations into something a caregiver (and a TVI) can
@@ -124,6 +125,12 @@ export function buildShareText(profile: Profile, days = 28): string {
       lines.push(`  ${d} · ${getLesson(r.lessonId)?.title ?? r.lessonId} · ${resp}${tags}${note}`);
     }
   }
+  const regions = regionInsight(profile);
+  if (regions) {
+    lines.push('', 'Screen-region notes (family-marked responses; descriptive only):');
+    for (const l of regions.lines) lines.push(`  ${l}`);
+  }
+
   lines.push('', 'Made with Beam and Song — a companion tool, not a programme or assessment.');
   return lines.join('\n');
 }

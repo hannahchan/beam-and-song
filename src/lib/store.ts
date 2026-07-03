@@ -29,6 +29,7 @@ export const DEFAULT_SETTINGS: ChildSettings = {
   sessionMinutes: 4,
   melodySource: 'builtin',
   scanning: 'off',
+  fieldObservation: false,
 };
 
 type Listener = () => void;

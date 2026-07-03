@@ -1,6 +1,7 @@
 import type { Profile } from '../../lib/types';
 import { getLesson } from '../../lessons/specs';
 import { buildShareText, summarize } from '../../lib/summary';
+import { regionInsight } from '../../lib/regions';
 import { exportProfile } from '../../lib/store';
 import { Card, downloadFile } from './bits';
 
@@ -58,6 +59,8 @@ export function Sessions({ profile }: { profile: Profile | null }) {
         )}
       </Card>
 
+      <RegionCard profile={profile} />
+
       <Card title="Share with the vision team">
         <p class="card-note">
           Both files are saved to <b>this device</b> for you to share however you choose — nothing is sent
@@ -102,6 +105,35 @@ export function Sessions({ profile }: { profile: Profile | null }) {
         ))}
       </Card>
     </div>
+  );
+}
+
+/**
+ * PT-13 surface — appears only when the optional setting is on AND enough
+ * sessions across enough weeks exist. Descriptive and tentative by design;
+ * interpretation always routes to the professional (SR-7).
+ */
+function RegionCard({ profile }: { profile: Profile }) {
+  const insight = regionInsight(profile);
+  if (!profile.settings.fieldObservation) return null;
+  return (
+    <Card title="Where looks landed (optional)">
+      {insight ? (
+        <>
+          {insight.lines.map((l) => (
+            <p key={l} class={l.startsWith('Across') ? '' : 'card-note'}>
+              {l}
+            </p>
+          ))}
+          {insight.suggestion && <p>{insight.suggestion}</p>}
+        </>
+      ) : (
+        <p class="card-note">
+          This builds quietly in the background. Once there are at least a couple of weeks of sessions with
+          marked responses, anything worth mentioning appears here — described gently, never as a measurement.
+        </p>
+      )}
+    </Card>
   );
 }
 

@@ -49,6 +49,8 @@ export interface ChildSettings {
   melodySource: 'builtin' | string;
   /** AR-2/AR-8 — built-in switch scanning for menus and overlays. */
   scanning: 'off' | 'auto' | 'step';
+  /** PT-13 — optional, off by default; descriptive tuning aid only (SR-7). */
+  fieldObservation: boolean;
 }
 
 export interface CustomPhoto {
@@ -90,6 +92,8 @@ export interface SessionRecord {
   response: ResponseLevel | null; // null = not recorded
   tags: SessionTag[];
   note?: string;
+  /** PT-13 — per-quadrant seconds-shown / marked-responses, only when enabled. */
+  regions?: Record<'ul' | 'ur' | 'll' | 'lr', { s: number; r: number }>;
 }
 
 /**

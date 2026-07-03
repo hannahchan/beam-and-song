@@ -281,6 +281,13 @@ export function Settings({ profile }: { profile: Profile | null }) {
           to {profile.nickname} — any press is the lesson's touch — and the ring returns for menus and the pause
           screen.
         </p>
+
+        <Toggle
+          label="Notice where on the screen responses happen (optional)"
+          checked={s.fieldObservation}
+          hint="Quietly counts which part of the screen the target was in when you (or they) marked a response. After a couple of weeks of sessions, the Notes page may offer a gentle observation — purely as tuning help and something to discuss with their vision professional. It never tests, measures, or diagnoses anything, and single sessions are never interpreted."
+          onChange={(fieldObservation) => set({ fieldObservation })}
+        />
       </Card>
 
       <Card title="Session length">

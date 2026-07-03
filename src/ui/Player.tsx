@@ -10,6 +10,7 @@ import { audio } from '../engine/audio';
 import { buzz } from '../engine/haptics';
 import { effectiveTaps } from '../engine/kernel';
 import { SESSION_TAGS, type LessonSpec, type ResponseLevel, type SessionTag, type TapEvent } from '../lib/types';
+import { emptyTally, quadrantOf, type RegionTally } from '../lib/regions';
 
 type Phase = 'running' | 'paused' | 'resting' | 'observe';
 
@@ -55,6 +56,8 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
   const tapsRef = useRef<TapEvent[]>([]);
   const startedAtRef = useRef(0);
   const againRef = useRef<(() => void) | null>(null);
+  const regionsRef = useRef<RegionTally>(emptyTally());
+  const lastQuadRef = useRef<'ul' | 'ur' | 'll' | 'lr'>('ul');
 
   const params = useMemo(() => buildParams(settings), [settings]);
   const photos = profile.photos.map((p) => ({ dataUrl: p.dataUrl, lum: p.lum }));
@@ -180,6 +183,20 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
         }
 
         const scene = computeScene(spec, softened(), lessonT, sim, prevT);
+        // PT-13 (opt-in): tally which quadrant the main target sat in, and
+        // where marked responses landed. Descriptive support only (SR-7).
+        if (settings.fieldObservation && !handover) {
+          const main = scene.items.reduce(
+            (best, it) => (it.r > 0.03 && it.alpha * it.r > (best?.alpha ?? 0) * (best?.r ?? 0) ? it : best),
+            null as (typeof scene.items)[number] | null,
+          );
+          if (main) {
+            const q = quadrantOf(main.x, main.y);
+            lastQuadRef.current = q;
+            regionsRef.current[q].s += dt / 1000;
+            if (scene.cues.some(isTapCue)) regionsRef.current[q].r += 1;
+          }
+        }
         const fadeK = handover ? Math.min((lessonT - handover.at) / XFADE_MS, 1) : 0;
         for (const cue of scene.cues) {
           if (settings.audioMode === 'off' || handover) continue;
@@ -238,6 +255,8 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
             });
         melody.playPhrase();
         buzz(settings.haptics);
+        // The grown-up marked a look (FR-6b) — that's a response too (PT-13).
+        if (settings.fieldObservation) regionsRef.current[lastQuadRef.current].r += 1;
       }
     };
     const onPointerDown = (e: PointerEvent) => {
@@ -366,6 +385,9 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
           onDone={(response, tags, note) => {
             const p = activeProfile();
             if (p) {
+              const tally = regionsRef.current;
+              const hasRegionData =
+                settings.fieldObservation && Object.values(tally).some((q) => q.s > 5);
               addSession(p.id, {
                 at: new Date(startedAtRef.current).toISOString(),
                 lessonId: current.id,
@@ -374,6 +396,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
                 response,
                 tags,
                 note: note || undefined,
+                regions: hasRegionData ? tally : undefined,
               });
             }
             leave();
