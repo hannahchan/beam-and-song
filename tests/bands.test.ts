@@ -36,6 +36,22 @@ describe('age bands', () => {
     expect(child.goal).not.toMatch(/baby/i);
   });
 
+  it('the middle band never says "baby" and its own melodies stay gentle', () => {
+    for (const base of LESSONS) {
+      const child = resolveLesson(base, 'child');
+      const copy = `${child.title} ${child.goal} ${child.watchFor} ${child.bridge ?? ''}`;
+      expect(copy, `${base.id} child copy`).not.toMatch(/\bbaby\b|\bbabies\b/i);
+    }
+    for (const id of ['lanternWaltz', 'meadow'] as const) {
+      expect(MELODIES[id]).toBeDefined();
+      expect(MELODIES[id].bpm).toBeLessThanOrEqual(78);
+    }
+    // The middle band has its own musical identity where the infant band
+    // leans most heavily on lullaby (the opening lesson).
+    const glow = resolveLesson(LESSONS.find((l) => l.id === 'gentle-glow')!, 'child');
+    expect(glow.melody).not.toBe('brahms');
+  });
+
   it('resolution preserves behavior, level, and interactivity — age never changes the practice', () => {
     for (const base of LESSONS) {
       for (const band of ['child', 'teen'] as const) {

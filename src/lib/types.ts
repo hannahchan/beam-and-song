@@ -188,7 +188,9 @@ export type MelodyId =
   | 'duet'
   | 'ember'
   | 'nightSky'
-  | 'tideGlass';
+  | 'tideGlass'
+  | 'lanternWaltz'
+  | 'meadow';
 
 /** CR-10 — how a lesson re-presents itself for an older band. */
 export interface BandVariant {

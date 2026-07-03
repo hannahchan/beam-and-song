@@ -191,6 +191,39 @@ export const MELODIES: Record<MelodyId, Melody> = {
       N(62, 1.5), N(67, 1.5), N(69, 2), N(0, 2),
     ],
   },
+
+  /*
+   * CR-10 — the middle band (roughly 2–9): brighter than lullabies,
+   * warmer than the teen ambience. Original tunes as note data.
+   */
+
+  /** A gentle waltz, like a lantern swinging slowly. */
+  lanternWaltz: {
+    id: 'lanternWaltz',
+    bpm: 72,
+    restBeats: 3,
+    voice: 'soft',
+    notes: [
+      N(67, 1), N(64, 0.5), N(67, 1.5), N(69, 1), N(65, 0.5), N(69, 1.5),
+      N(67, 1), N(64, 1), N(60, 1), N(62, 2.5), N(0, 0.5),
+      N(65, 1), N(62, 0.5), N(65, 1.5), N(67, 1), N(64, 0.5), N(67, 1.5),
+      N(65, 1), N(62, 1), N(59, 1), N(60, 2.5), N(0, 0.5),
+    ],
+  },
+
+  /** A skipping pentatonic line — a walk through long grass. */
+  meadow: {
+    id: 'meadow',
+    bpm: 78,
+    restBeats: 2,
+    voice: 'musicbox',
+    notes: [
+      N(60, 0.75), N(62, 0.25), N(64, 0.75), N(67, 0.25), N(69, 1), N(67, 1),
+      N(64, 0.75), N(62, 0.25), N(60, 1.5), N(0, 0.5),
+      N(64, 0.75), N(67, 0.25), N(69, 0.75), N(72, 0.25), N(74, 1), N(72, 1),
+      N(69, 0.75), N(67, 0.25), N(64, 1.5), N(0, 0.5),
+    ],
+  },
 };
 
 /** Range checks used by tests: every pitched note stays in a gentle band. */

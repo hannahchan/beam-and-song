@@ -14,6 +14,7 @@ import type { AgeBand, BandVariant, LessonSpec } from '../lib/types';
  */
 export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', BandVariant>>> = {
   'gentle-glow': {
+    child: { title: 'Lantern Glow', melody: 'lanternWaltz' },
     teen: {
       title: 'Ember',
       melody: 'ember',
@@ -23,6 +24,7 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
     },
   },
   'little-star': {
+    child: { title: 'Wishing Star' },
     teen: {
       title: 'North Star',
       melody: 'nightSky',
@@ -31,6 +33,7 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
     },
   },
   'drifting-light': {
+    child: { title: 'Floating Lantern' },
     teen: {
       title: 'Drift',
       goal: 'A light drifts slowly from one side to the other — practice at following with the eyes. With movement off in settings, the light rests in one place instead.',
@@ -46,6 +49,7 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
     },
   },
   firefly: {
+    child: { melody: 'meadow' },
     teen: {
       title: 'Night Lights',
       melody: 'nightSky',
@@ -121,6 +125,7 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
     },
   },
   'find-the-star': {
+    child: { title: 'Star Hide-and-Seek', melody: 'meadow' },
     teen: {
       title: 'Find the Signal',
       melody: 'tideGlass',
@@ -129,6 +134,7 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
     },
   },
   'find-your-photo': {
+    child: { title: 'Find Your Treasure' },
     teen: {
       title: 'Spot the Familiar',
       melody: 'ember',
@@ -138,6 +144,7 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
     },
   },
   'near-and-far': {
+    child: { title: 'Close and Far Away' },
     teen: {
       title: 'Near and Far',
       melody: 'nightSky',
@@ -147,6 +154,7 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
     },
   },
   'hidden-among-many': {
+    child: { title: 'Deep Hide-and-Seek', melody: 'meadow' },
     teen: {
       title: 'Hidden in the Field',
       melody: 'nightSky',
