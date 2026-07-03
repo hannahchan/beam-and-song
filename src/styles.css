@@ -583,6 +583,41 @@ details summary {
 .photo-row:last-child { border-bottom: none; }
 .photo-thumb { width: 74px; height: 74px; border-radius: 14px; object-fit: cover; border: 1px solid var(--line); }
 
+/* Settings live preview: always visible while adjusting (no screen-hopping). */
+.settings-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 330px);
+  gap: 1.2rem;
+  align-items: start;
+}
+.settings-main { grid-column: 1; grid-row: 1; }
+.settings-preview {
+  grid-column: 2;
+  grid-row: 1;
+  position: sticky;
+  top: 0.8rem;
+}
+.preview-canvas {
+  display: block;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background: #000;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+}
+@media (max-width: 880px) {
+  .settings-layout { display: block; }
+  .settings-preview {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    padding: 0.5rem 0;
+    margin-bottom: 0.8rem;
+    background: var(--bg0);
+  }
+  .preview-canvas { aspect-ratio: 16 / 6; }
+}
+
 /* Switch-scanning highlight (AR-2/AR-8): one steady ring that glides — never blinks. */
 #bs-scan-ring {
   position: fixed;

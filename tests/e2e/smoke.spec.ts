@@ -65,10 +65,40 @@ test('grown-up gate: the tap-the-word path opens the area (FR-11)', async ({ pag
   await expect(page.getByRole('heading', { name: /Welcome|space$/ })).toBeVisible();
 });
 
-test('settings persist across reload (PT-2)', async ({ page }) => {
+test('settings persist across reload, and the live preview animates (PT-2)', async ({ page }) => {
   await openGrownUps(page);
   await page.getByRole('link', { name: 'Settings' }).click();
+
+  // The live preview runs the real engine and follows changes instantly.
+  const previewSig = () =>
+    page.evaluate(() => {
+      const c = document.querySelector('.preview-canvas') as HTMLCanvasElement;
+      const { data } = c.getContext('2d')!.getImageData(0, 0, c.width, c.height);
+      let sum = 0;
+      for (let i = 0; i < data.length; i += 4001) sum += data[i] + data[i + 1];
+      return sum;
+    });
+  await page.waitForTimeout(900);
+  const a = await previewSig();
+  await page.waitForTimeout(900);
+  const b = await previewSig();
+  expect(a).not.toBe(b); // breathing/drifting, live
+
   await page.getByRole('button', { name: 'Target colour yellow' }).click();
+  await page.waitForTimeout(400);
+  const yellowish = await page.evaluate(() => {
+    const c = document.querySelector('.preview-canvas') as HTMLCanvasElement;
+    const { data } = c.getContext('2d')!.getImageData(0, 0, c.width, c.height);
+    let r = 0;
+    let g = 0;
+    for (let i = 0; i < data.length; i += 4001) {
+      r += data[i];
+      g += data[i + 1];
+    }
+    return g > r * 0.5; // yellow has strong green; red does not
+  });
+  expect(yellowish).toBe(true); // the preview followed the colour change
+
   await page.reload();
   await expect(page.getByRole('button', { name: 'Target colour yellow' })).toHaveAttribute('aria-pressed', 'true');
 });
