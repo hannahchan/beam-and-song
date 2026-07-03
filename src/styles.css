@@ -357,7 +357,7 @@ a { color: var(--focus); }
 /* ------------------------------- grown-ups ------------------------------- */
 
 .gu-shell {
-  max-width: 980px;
+  max-width: 1320px;
   margin: 0 auto;
   padding: 1.2rem 1.2rem 4rem;
 }
@@ -631,12 +631,7 @@ details summary:hover {
 .photo-row:last-child { border-bottom: none; }
 .photo-thumb { width: 74px; height: 74px; border-radius: 14px; object-fit: cover; border: 1px solid var(--line); }
 
-/* Settings live preview: always visible while adjusting (no screen-hopping).
-   The shell widens on this page so the form keeps a comfortable reading
-   width beside the preview instead of squeezing into a narrow strip. */
-.gu-shell:has(.settings-layout) {
-  max-width: 1320px;
-}
+/* Settings live preview: always visible while adjusting (no screen-hopping). */
 .settings-layout {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(280px, 380px);
