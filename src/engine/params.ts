@@ -34,9 +34,13 @@ export interface EngineParams {
   tempoScale: number;
 }
 
+/** pace 1 (slowest) .. 5 — multiplies durations; even the "fastest" stays gentle. */
+export function paceMultiplier(pace: number): number {
+  return [2.4, 1.9, 1.5, 1.2, 1.0][clamp(pace, 1, 5) - 1];
+}
+
 export function buildParams(s: ChildSettings): EngineParams {
-  // pace 1 (slowest) .. 5 — multiplies durations; even the "fastest" stays gentle.
-  const paceMult = [2.4, 1.9, 1.5, 1.2, 1.0][clamp(s.pace, 1, 5) - 1];
+  const paceMult = paceMultiplier(s.pace);
 
   return {
     color: TARGET_COLORS[s.targetColor] ?? TARGET_COLORS.red,

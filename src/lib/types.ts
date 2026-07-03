@@ -47,6 +47,8 @@ export interface ChildSettings {
   sessionMinutes: number;
   /** PR-9 / CR-3 — 'builtin' or the id of one of the profile's own recordings. */
   melodySource: 'builtin' | string;
+  /** AR-2/AR-8 — built-in switch scanning for menus and overlays. */
+  scanning: 'off' | 'auto' | 'step';
 }
 
 export interface CustomPhoto {

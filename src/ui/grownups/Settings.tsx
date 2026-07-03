@@ -235,6 +235,32 @@ export function Settings({ profile }: { profile: Profile | null }) {
         />
       </Card>
 
+      <Card title="Access">
+        <RadioGroup
+          legend="Switch scanning for menus"
+          value={s.scanning}
+          onChange={(scanning) => set({ scanning })}
+          options={[
+            { value: 'off', label: 'Off', detail: 'Touch, keyboard, and your device’s own switch tools work as usual.' },
+            {
+              value: 'auto',
+              label: 'One switch (automatic)',
+              detail: 'A calm ring glides from button to button by itself; pressing the switch chooses.',
+            },
+            {
+              value: 'step',
+              label: 'Two switches (step)',
+              detail: 'One switch moves the ring (Space), the other chooses (Enter).',
+            },
+          ]}
+        />
+        <p class="hint">
+          The ring's timing follows the pace setting above and never hurries. During a lesson the switch belongs
+          to {profile.nickname} — any press is the lesson's touch — and the ring returns for menus and the pause
+          screen.
+        </p>
+      </Card>
+
       <Card title="Session length">
         <RangeField
           label="Wind down after"

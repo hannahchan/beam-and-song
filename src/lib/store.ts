@@ -28,6 +28,7 @@ export const DEFAULT_SETTINGS: ChildSettings = {
   haptics: true,
   sessionMinutes: 4,
   melodySource: 'builtin',
+  scanning: 'off',
 };
 
 type Listener = () => void;

@@ -281,6 +281,13 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
     else audio.duck(1, 0.6);
   }, [phase]);
 
+  // While the lesson is live, the switch belongs to the child (AR-8):
+  // scanning suspends and Space/Enter are lesson input. Overlays wake it.
+  useEffect(() => {
+    document.body.classList.toggle('bs-lesson-live', phase === 'running');
+    return () => document.body.classList.remove('bs-lesson-live');
+  }, [phase]);
+
   useEffect(() => {
     audio.setVolume(settings.volume * (soft ? 0.5 : 1));
   }, [soft, settings.volume]);

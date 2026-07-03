@@ -583,6 +583,19 @@ details summary {
 .photo-row:last-child { border-bottom: none; }
 .photo-thumb { width: 74px; height: 74px; border-radius: 14px; object-fit: cover; border: 1px solid var(--line); }
 
+/* Switch-scanning highlight (AR-2/AR-8): one steady ring that glides — never blinks. */
+#bs-scan-ring {
+  position: fixed;
+  border: 4px solid var(--focus);
+  border-radius: 14px;
+  box-shadow: 0 0 0 3px rgba(4, 5, 9, 0.7);
+  pointer-events: none;
+  z-index: 60;
+  opacity: 0;
+  transition-property: top, left, width, height, opacity;
+  transition-timing-function: ease;
+}
+
 .update-toast {
   position: fixed;
   left: max(1rem, env(safe-area-inset-left));
