@@ -12,6 +12,9 @@ import { effectiveTaps } from '../engine/kernel';
 import { SESSION_TAGS, type LessonSpec, type ResponseLevel, type SessionTag, type TapEvent } from '../lib/types';
 import { emptyTally, quadrantOf, type RegionTally } from '../lib/regions';
 import { enabledPhotos } from '../lib/photos';
+import { CHOICE_BEHAVIORS, LessonScanController, LESSON_SCAN } from './lessonScan';
+import { dwellFromPace } from './scan';
+import { paceMultiplier } from '../engine/params';
 
 type Phase = 'running' | 'paused' | 'resting' | 'observe';
 
@@ -82,6 +85,10 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
     let idx = 0;
     let spec = queue[0];
     let sim: SimInput = { seed: 20260703, taps: tapsRef.current, photos };
+    // AR-8 — with scanning on, find/search lessons become stepped choices.
+    const lessonScan = new LessonScanController();
+    const scanDwellMs = dwellFromPace(paceMultiplier(settings.pace));
+    const choiceScanActive = () => settings.scanning !== 'off' && CHOICE_BEHAVIORS.has(spec.behavior);
     let raf = 0;
     let lessonT = 0;
     let prevT = 0;
@@ -130,6 +137,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
       prevT = 0;
       handover = null;
       melody = null;
+      lessonScan.reset();
       startMelodyIfWanted();
       setCurrent(spec);
     };
@@ -225,6 +233,20 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
           melody.setPan(scene.pan, main?.y ?? 0.5);
         }
         drawScene(ctx, scene, w, h, photoCache);
+        if (choiceScanActive() && !handover) {
+          const ring = lessonScan.update(scene.items, lessonT, dt, settings.scanning as 'auto' | 'step', scanDwellMs);
+          if (ring.visible) {
+            const minDim = Math.min(w, h);
+            ctx.save();
+            ctx.globalAlpha = ring.alpha;
+            ctx.strokeStyle = '#9ec1ff';
+            ctx.lineWidth = Math.max(3, minDim * LESSON_SCAN.STROKE_FRAC);
+            ctx.beginPath();
+            ctx.arc(ring.x * w, ring.y * h, ring.r * minDim, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.restore();
+          }
+        }
         if (fadeK > 0) {
           ctx.save();
           ctx.globalAlpha = fadeK;
@@ -290,6 +312,17 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
       }
       if ((e.key === ' ' || e.key === 'Enter') && !(e.target as HTMLElement).closest('button, a, input, textarea')) {
         e.preventDefault();
+        // Choice scanning: the switch steps the ring / picks the highlighted
+        // light, instead of the tap-anywhere auto-hit (AR-8).
+        if (phaseRef.current === 'running' && choiceScanActive()) {
+          if (settings.scanning === 'step' && e.key === ' ') {
+            lessonScan.step(lessonT);
+            return;
+          }
+          const sel = lessonScan.selection();
+          if (sel) onTap(sel.x, sel.y);
+          return;
+        }
         onTap();
       }
     };

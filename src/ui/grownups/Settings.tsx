@@ -285,9 +285,10 @@ export function Settings({ profile }: { profile: Profile | null }) {
           ]}
         />
         <p class="hint">
-          The ring's timing follows the pace setting above and never hurries. During a lesson the switch belongs
-          to {profile.nickname} — any press is the lesson's touch — and the ring returns for menus and the pause
-          screen.
+          The ring's timing follows the pace setting above and never hurries. During most lessons the switch
+          belongs to {profile.nickname} — any press is the lesson's touch. In the find-and-seek lessons, the
+          ring steps gently between the lights on screen, and choosing answers the one it rests on — a real
+          choice, made with a switch. The ring returns for menus and the pause screen.
         </p>
 
         <Toggle
