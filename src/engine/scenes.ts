@@ -105,6 +105,15 @@ export function computeScene(
     case 'facesFamiliar':
       facesFamiliar(scene, p, tMs, sim.photos ?? []);
       break;
+    case 'soundSeek':
+      soundSeek(scene, p, tMs, taps, cue);
+      break;
+    case 'rhythmMelody':
+      alternatingVoices(scene, p, tMs, cue, 'beat', 'phrase');
+      break;
+    case 'loudSoft':
+      loudSoft(scene, p, tMs, cue);
+      break;
   }
 
   // Subtle texture only at complexity 3, and only ever near-invisible dim
@@ -582,22 +591,27 @@ function audioPan(scene: Scene, p: EngineParams, tMs: number): void {
   scene.pan = pan;
 }
 
-/** Bell and drum take slow turns (CR-5 discrimination). */
-function audioAlternate(
+/**
+ * Two contrasting voices take slow turns (CR-5 discrimination).
+ * Shared by Bell & Drum (pitch contrast) and Drum & Tune (texture contrast).
+ */
+function alternatingVoices(
   scene: Scene,
   p: EngineParams,
   tMs: number,
   cue: (name: string, atMs: number) => void,
+  firstCue: string,
+  secondCue: string,
 ): void {
   const y = biasBandY(p.fieldBias, p.biasStrength);
   const halfMs = 6000 + p.holdMs; // each voice's turn, incl. quiet gap
   const cycleMs = halfMs * 2;
   const idx = Math.floor(tMs / cycleMs);
   const local = tMs - idx * cycleMs;
-  cue('bell', idx * cycleMs + 400);
-  cue('drum', idx * cycleMs + halfMs + 400);
+  cue(firstCue, idx * cycleMs + 400);
+  cue(secondCue, idx * cycleMs + halfMs + 400);
 
-  const bellActive = local < halfMs;
+  const firstActive = local < halfMs;
   const glowEnv = fadeEnvelope(local % halfMs, 0, 600, 2400, Math.max(halfMs - 3600, 600));
   const mk = (x: number, active: boolean): SceneItem =>
     orb(p, {
@@ -607,8 +621,96 @@ function audioAlternate(
       alpha: clamp01((0.1 + (active ? 0.1 * glowEnv : 0)) * p.peakAlpha * entry(tMs, p)),
       glow: Math.min(p.glow, 0.6),
     });
-  scene.items.push(mk(0.28, bellActive), mk(0.72, !bellActive));
-  scene.pan = bellActive ? -0.5 : 0.5;
+  scene.items.push(mk(0.28, firstActive), mk(0.72, !firstActive));
+  scene.pan = firstActive ? -0.5 : 0.5;
+}
+
+function audioAlternate(
+  scene: Scene,
+  p: EngineParams,
+  tMs: number,
+  cue: (name: string, atMs: number) => void,
+): void {
+  alternatingVoices(scene, p, tMs, cue, 'bell', 'drum');
+}
+
+/**
+ * CR-5 — sound localization as a game. The song calls from one side; the
+ * grown-up taps when the child turns toward it, and it answers from that
+ * same side. The screen stays nearly dark: listening is the work.
+ */
+function soundSeek(
+  scene: Scene,
+  p: EngineParams,
+  tMs: number,
+  taps: readonly number[],
+  cue: (name: string, atMs: number) => void,
+): void {
+  const y = biasBandY(p.fieldBias, p.biasStrength);
+  const gapMs = p.holdMs * 0.9;
+  const callMs = p.holdMs * 2.2;
+  const cycleMs = gapMs + callMs;
+  const idx = Math.floor(tMs / cycleMs);
+  const local = tMs - idx * cycleMs;
+  const side = idx % 2 === 0 ? -1 : 1; // left, then right, unhurried
+  const callStart = idx * cycleMs + gapMs;
+  cue('call', callStart + 200);
+  cue('call', callStart + callMs * 0.55);
+
+  const calling = local >= gapMs;
+  const callEnv = fadeEnvelope(local - gapMs, 0, 600, callMs - 1800, 900);
+
+  // Parent-marked turns: any touch during a call answers from that side.
+  let answer = 0;
+  for (const tap of taps) {
+    const tapIdx = Math.floor(tap / cycleMs);
+    if (tap - tapIdx * cycleMs < gapMs) continue; // taps in the quiet gap rest
+    cue('chime', tap);
+    const dt = tMs - tap;
+    if (dt >= 0) answer = Math.max(answer, fadeEnvelope(dt, 0, 500, 400, 1100));
+  }
+
+  const mk = (x: number, active: boolean): SceneItem =>
+    orb(p, {
+      x,
+      y,
+      r: p.radius * 0.38,
+      alpha: clamp01(
+        (0.1 + (active ? 0.08 * callEnv + 0.12 * answer : 0)) * p.peakAlpha * entry(tMs, p),
+      ),
+      glow: Math.min(p.glow, 0.6),
+    });
+  scene.items.push(mk(0.25, side < 0), mk(0.75, side > 0));
+  scene.pan = calling ? side * 0.85 : 0;
+}
+
+/** CR-5 — the same warm note returns quietly, then more fully. Never sharply. */
+function loudSoft(
+  scene: Scene,
+  p: EngineParams,
+  tMs: number,
+  cue: (name: string, atMs: number) => void,
+): void {
+  const pos = biasPoint(0.5, 0.5, p.fieldBias, p.biasStrength);
+  const halfMs = 5000 + p.holdMs * 0.6;
+  const cycleMs = halfMs * 2;
+  const idx = Math.floor(tMs / cycleMs);
+  const local = tMs - idx * cycleMs;
+  cue('toneSoft', idx * cycleMs + 400);
+  cue('toneFull', idx * cycleMs + halfMs + 400);
+
+  const fullActive = local >= halfMs;
+  const swellEnv = fadeEnvelope(local % halfMs, 0, 700, 2200, Math.max(halfMs - 3400, 600));
+  scene.items.push(
+    orb(p, {
+      x: pos.x,
+      y: pos.y,
+      r: p.radius * 0.42,
+      alpha: clamp01((0.1 + (fullActive ? 0.07 : 0.02) * swellEnv) * p.peakAlpha * entry(tMs, p)),
+      glow: Math.min(p.glow, 0.6),
+    }),
+  );
+  scene.pan = (pos.x - 0.5) * 1.2;
 }
 
 /* --------------------------- Levels 3–4 (CR-8) --------------------------- */

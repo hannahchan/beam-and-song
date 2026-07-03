@@ -305,6 +305,28 @@ class AudioEngine {
       case 'drum':
         this.note(48, t, 1.4, 'warm', null, false, 0.5);
         break;
+      case 'call': {
+        // A little five-note call for the localization game (CR-5).
+        const motif = [60, 64, 67, 64, 60];
+        motif.forEach((m, i) => this.note(m, t + i * 0.55, 0.7, 'musicbox', null, false, pan));
+        break;
+      }
+      case 'beat':
+        // Three soft, steady taps — rhythm as a character.
+        for (let i = 0; i < 3; i++) this.note(48, t + i * 0.6, 0.5, 'warm', null, false, -0.4, 0.8);
+        break;
+      case 'phrase': {
+        // A short flowing line — melody as the other character.
+        const line = [64, 67, 69, 72];
+        line.forEach((m, i) => this.note(m, t + i * 0.5, 0.65, 'musicbox', null, false, 0.4));
+        break;
+      }
+      case 'toneSoft':
+        this.note(57, t, 1.8, 'warm', null, false, 0, 0.35);
+        break;
+      case 'toneFull':
+        this.note(57, t, 2.0, 'warm', null, false, 0, 1.0);
+        break;
     }
   }
 
@@ -317,15 +339,17 @@ class AudioEngine {
     at: number,
     durSec: number,
     style: VoiceStyle,
-    panner: StereoPannerNode | null,
+    panner: AudioNode | null,
     layered: boolean,
     fixedPan = 0,
+    peakScale = 1,
   ): void {
     if (!this.ctx || !this.master) return;
     const freq = 440 * Math.pow(2, (midi - 69) / 12);
     const dest = panner ?? this.panFor(fixedPan);
 
-    const mkVoice = (f: number, type: OscillatorType, peak: number, filterHz: number) => {
+    const mkVoice = (f: number, type: OscillatorType, basePeak: number, filterHz: number) => {
+      const peak = basePeak * peakScale;
       const osc = this.ctx!.createOscillator();
       osc.type = type;
       osc.frequency.value = f;

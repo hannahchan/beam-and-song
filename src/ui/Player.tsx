@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { navigate } from '../lib/router';
-import { getLesson } from '../lessons/specs';
+import { CUE_DRIVEN_BEHAVIORS, getLesson } from '../lessons/specs';
 import { bandNoun, resolveLesson } from '../lessons/bands';
 import { activeProfile, addSession, ensureProfile } from '../lib/store';
 import { buildParams } from '../engine/params';
@@ -107,7 +107,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
         ? profile.audio.find((a) => a.id === settings.melodySource)
         : undefined;
 
-    const melodyWanted = () => settings.audioMode === 'with' && spec.behavior !== 'audioAlternate';
+    const melodyWanted = () => settings.audioMode === 'with' && !CUE_DRIVEN_BEHAVIORS.has(spec.behavior);
     const startMelodyIfWanted = () => {
       if (!melodyWanted() || melody || !audio.unlocked) return;
       const usePan = settings.soundFollowsTarget || spec.behavior === 'audioPan';

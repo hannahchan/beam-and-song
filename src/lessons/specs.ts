@@ -279,11 +279,63 @@ export const LESSONS: readonly LessonSpec[] = [
     goal: 'Two gentle voices take slow turns: a small bright bell, then a low warm drum. Early sound discrimination — noticing that the two are different.',
     watchFor: 'Different reactions to the two sounds: a still, listening face for one, a wiggle or vocalisation for the other.',
   },
+  {
+    id: 'wheres-the-song',
+    title: "Where's the Song?",
+    level: 1,
+    theme: 'Listening',
+    hearingFirst: true,
+    behavior: 'soundSeek',
+    shape: 'orb',
+    melody: 'humSway',
+    interactive: true,
+    goal: 'A listening game: a little song calls gently from one side, then the other. When your baby turns toward it — even slightly — tap anywhere, and the song answers happily from that same side. Best with the device propped up and its own speakers, or a speaker you can place.',
+    watchFor: 'Stilling first, then a head-turn or eye-shift toward the calling side. Slow turning is still turning.',
+    bridge: 'The real-world twin: call their name softly from one side of them, then the other, and celebrate every turn.',
+  },
+  {
+    id: 'drum-and-tune',
+    title: 'Drum and Tune',
+    level: 1,
+    theme: 'Listening',
+    hearingFirst: true,
+    behavior: 'rhythmMelody',
+    shape: 'orb',
+    melody: 'duet',
+    interactive: false,
+    goal: 'Two musical characters take slow turns: a soft, steady drum pattern, then a little flowing tune. Discrimination one step on from Bell and Drum — different kinds of sound, not just different notes.',
+    watchFor: 'Different reactions to the two characters: still listening for one, wiggles or little sounds for the other.',
+  },
+  {
+    id: 'big-sound-little-sound',
+    title: 'Big Sound, Little Sound',
+    level: 1,
+    theme: 'Listening',
+    hearingFirst: true,
+    behavior: 'loudSoft',
+    shape: 'orb',
+    melody: 'humSway',
+    interactive: false,
+    goal: 'The same warm note returns quietly, then more fully — never sharply. Noticing louder and softer is a small building block of listening, and of feeling safe with sound.',
+    watchFor: 'A blink, a settle, or brightening when the fuller sound arrives — and whether the quiet one still earns attention.',
+  },
 ] as const;
 
 export function getLesson(id: string): LessonSpec | undefined {
   return LESSONS.find((l) => l.id === id);
 }
+
+/**
+ * Behaviors whose sound arrives entirely through scene cues — the player
+ * must not run a looping melody underneath them (it would bury the very
+ * contrast or localization the lesson exists for).
+ */
+export const CUE_DRIVEN_BEHAVIORS: ReadonlySet<string> = new Set([
+  'audioAlternate',
+  'soundSeek',
+  'rhythmMelody',
+  'loudSoft',
+]);
 
 /** Default child queue when nothing is favorited yet. */
 export const DEFAULT_LESSON_IDS = ['gentle-glow', 'little-star', 'drifting-light', 'magic-touch'];

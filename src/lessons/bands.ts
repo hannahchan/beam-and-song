@@ -179,6 +179,28 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
       bridge: 'Best right before time with the real person: photo first, then the face itself, close and unhurried.',
     },
   },
+  'wheres-the-song': {
+    teen: {
+      title: 'Find the Sound',
+      goal: 'A listening game: sound calls gently from one side, then the other. When they turn toward it — even slightly — tap anywhere, and it answers from that same side. Best with the device propped up and its own speakers, or a speaker you can place.',
+      watchFor: 'Stilling first, then a head-turn or eye-shift toward the calling side. Slow turning is still turning.',
+      bridge: 'The real-world twin: speak softly from one side of them, then the other, and mark every turn.',
+    },
+  },
+  'drum-and-tune': {
+    teen: {
+      title: 'Beat and Line',
+      goal: 'Two musical characters take slow turns: a soft, steady beat, then a flowing line. Discrimination one step on from Two Tones — different kinds of sound, not just different notes.',
+      watchFor: 'Different reactions to the two characters: still listening for one, movement or vocalising for the other.',
+    },
+  },
+  'big-sound-little-sound': {
+    teen: {
+      title: 'Loud and Soft',
+      goal: 'The same warm note returns quietly, then more fully — never sharply. Noticing louder and softer is a building block of listening, and of feeling settled around sound.',
+      watchFor: 'A blink, a settle, or brightening when the fuller sound arrives — and whether the quiet one still earns attention.',
+    },
+  },
   'bell-and-drum': {
     teen: {
       title: 'Two Tones',

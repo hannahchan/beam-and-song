@@ -28,6 +28,9 @@ const BEHAVIORS = new Set([
   'nearFar',
   'amongMoving',
   'facesFamiliar',
+  'soundSeek',
+  'rhythmMelody',
+  'loudSoft',
 ]);
 
 /**

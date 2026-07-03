@@ -190,6 +190,47 @@ describe('find/search lessons (L3–L4, CR-8)', () => {
   });
 });
 
+describe('listening lessons (CR-5)', () => {
+  it("Where's the Song alternates sides and answers taps from the calling side", () => {
+    const p = buildParams(DEFAULT_SETTINGS);
+    const gap = p.holdMs * 0.9;
+    const call = p.holdMs * 2.2;
+    const cycle = gap + call;
+    const mid = (i: number) => i * cycle + gap + call / 2;
+    const sceneL = computeScene(spec('wheres-the-song'), p, mid(0), { seed: 1, taps: [] });
+    const sceneR = computeScene(spec('wheres-the-song'), p, mid(1), { seed: 1, taps: [] });
+    expect(sceneL.pan).toBeLessThan(-0.5);
+    expect(sceneR.pan).toBeGreaterThan(0.5);
+
+    // A tap during the call answers; a tap in the quiet gap rests.
+    const tapDuringCall = computeScene(
+      spec('wheres-the-song'), p, mid(0) + 60, { seed: 1, taps: [{ t: mid(0) + 30, x: -1, y: -1 }] }, mid(0),
+    );
+    expect(tapDuringCall.cues).toContain('chime');
+    const tapInGap = computeScene(
+      spec('wheres-the-song'), p, gap / 2 + 60, { seed: 1, taps: [{ t: gap / 2, x: -1, y: -1 }] }, gap / 2 - 30,
+    );
+    expect(tapInGap.cues).not.toContain('chime');
+  });
+
+  it('Drum and Tune and Big Sound emit their contrasting cues in turn', () => {
+    const p = buildParams(DEFAULT_SETTINGS);
+    const collect = (id: string, seconds: number) => {
+      const cues: string[] = [];
+      for (let t = 0; t < seconds * 1000; t += 250) {
+        cues.push(...computeScene(spec(id), p, t, { seed: 1, taps: [] }, t - 250).cues);
+      }
+      return cues;
+    };
+    const rhythm = collect('drum-and-tune', 30);
+    expect(rhythm).toContain('beat');
+    expect(rhythm).toContain('phrase');
+    const loud = collect('big-sound-little-sound', 30);
+    expect(loud).toContain('toneSoft');
+    expect(loud).toContain('toneFull');
+  });
+});
+
 describe('measured photo luminance feeds the safety model (CR-3/SR-8)', () => {
   it('a dark measured photo contributes less than an unmeasured (worst-case) one', async () => {
     const { sceneLuminance } = await import('../src/safety/luminance');

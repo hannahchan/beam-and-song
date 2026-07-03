@@ -161,7 +161,10 @@ export type Behavior =
   | 'searchClutter'
   | 'nearFar'
   | 'amongMoving'
-  | 'facesFamiliar';
+  | 'facesFamiliar'
+  | 'soundSeek'
+  | 'rhythmMelody'
+  | 'loudSoft';
 
 export type ShapeKind =
   | 'orb'
