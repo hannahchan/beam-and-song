@@ -3,7 +3,7 @@ import { useRoute } from './lib/router';
 import { Landing } from './ui/Landing';
 import { Chooser } from './ui/Chooser';
 import { Player } from './ui/Player';
-import { GrownUps } from './ui/grownups/GrownUps';
+import { GATE_KEY, GrownUps } from './ui/grownups/GrownUps';
 import { useStore } from './ui/useStore';
 import { paceMultiplier } from './engine/params';
 import { dwellFromPace, scanner } from './ui/scan';
@@ -27,6 +27,16 @@ export function App() {
   useEffect(() => {
     scanner.configure(scanning, dwellFromPace(paceMultiplier(pace)));
   }, [scanning, pace]);
+
+  // PV-3 — when a PIN is set, leaving the grown-up area re-locks it: on a
+  // shared or therapist device, handing the tablet over must not hand over
+  // the notes. Without a PIN the hold-gate simply asks again next visit.
+  const pinSet = !!state.pinHash;
+  useEffect(() => {
+    if (pinSet && !route.path.startsWith('/grown-ups')) {
+      sessionStorage.removeItem(GATE_KEY);
+    }
+  }, [route.path, pinSet]);
 
   useEffect(() => {
     const titles: Record<string, string> = {

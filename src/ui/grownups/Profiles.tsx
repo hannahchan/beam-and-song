@@ -211,8 +211,10 @@ function PinCard({ hasPin }: { hasPin: boolean }) {
     <Card title="A light lock for this area">
       <p class="card-note">
         On a shared tablet — a family device, or a therapist's — a PIN keeps notes and photos away from casual
-        eyes. It's a courtesy lock, not encryption; anyone with real access to the device could still reach
-        browser data.
+        eyes. It asks again every time you come back from the child screen. It's a courtesy lock, not
+        encryption; anyone with real access to the device could still reach browser data. And if it's ever
+        forgotten, there's no recovery by design: clearing this site's data in the browser removes the lock
+        <b> and everything else on this device</b> — which is one more reason to keep a backup file.
       </p>
       {hasPin ? (
         <div class="row">

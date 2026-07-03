@@ -3,9 +3,9 @@ import { useEffect, useRef, useState } from 'preact/hooks';
 
 /** Shared small components for the grown-up UI (AR-5, AR-6). */
 
-export function Card({ title, children }: { title?: string; children: ComponentChildren }) {
+export function Card({ title, children, id }: { title?: string; children: ComponentChildren; id?: string }) {
   return (
-    <section class="card">
+    <section class="card" id={id}>
       {title && <h2>{title}</h2>}
       {children}
     </section>

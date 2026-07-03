@@ -12,17 +12,20 @@ import { Guide } from './Guide';
 import { Setup } from './Setup';
 import { PrintSummary } from './PrintSummary';
 
-const GATE_KEY = 'beam-and-song:grownup-ok';
+export const GATE_KEY = 'beam-and-song:grownup-ok';
 
 /**
  * The grown-up area shell: child-resistant gate (FR-5), optional PIN (PV-3),
  * accessible navigation (AR-6), and the professional-companion framing that
  * belongs on every page (SR-4).
+ *
+ * When a PIN is set, the PIN *is* the gate (it re-locks every time the app
+ * returns to the child screen — see App); without one, the press-and-hold /
+ * tap-the-word gate keeps small hands out.
  */
 export function GrownUps({ route }: { route: Route }) {
   const state = useStore();
   const [open, setOpen] = useState(() => sessionStorage.getItem(GATE_KEY) === '1');
-  const [pinOk, setPinOk] = useState(() => !state.pinHash || sessionStorage.getItem(GATE_KEY) === '1');
   const mainRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -30,20 +33,13 @@ export function GrownUps({ route }: { route: Route }) {
     mainRef.current?.querySelector('h1')?.focus?.();
   }, [route.path]);
 
-  if (!open || !pinOk) {
+  if (!open) {
     return (
       <Gate
-        needsPin={!!state.pinHash && !pinOk}
-        onHoldPassed={() => {
-          setOpen(true);
-          if (!state.pinHash) {
-            sessionStorage.setItem(GATE_KEY, '1');
-            setPinOk(true);
-          }
-        }}
-        onPinPassed={() => {
+        hasPin={!!state.pinHash}
+        onPassed={() => {
           sessionStorage.setItem(GATE_KEY, '1');
-          setPinOk(true);
+          setOpen(true);
         }}
       />
     );
@@ -105,7 +101,7 @@ export function GrownUps({ route }: { route: Route }) {
         {sub === 'library' && <Library profile={profile} />}
         {sub === 'settings' && <Settings profile={profile} />}
         {sub === 'sessions' && <Sessions profile={profile} />}
-        {sub === 'guide' && <Guide />}
+        {sub === 'guide' && <Guide topic={route.params.get('topic')} />}
         {sub === 'profiles' && <Profiles state={state} />}
         {sub === 'setup' && <Setup profile={profile} />}
       </main>
@@ -119,15 +115,7 @@ export function GrownUps({ route }: { route: Route }) {
   );
 }
 
-function Gate({
-  needsPin,
-  onHoldPassed,
-  onPinPassed,
-}: {
-  needsPin: boolean;
-  onHoldPassed: () => void;
-  onPinPassed: () => void;
-}) {
+function Gate({ hasPin, onPassed }: { hasPin: boolean; onPassed: () => void }) {
   const [pin, setPin] = useState('');
   const [err, setErr] = useState('');
   // Stable shuffled order so re-renders don't shuffle under the finger.
@@ -140,14 +128,14 @@ function Gate({
     return w.sort(() => (Math.random() < 0.5 ? -1 : 1));
   }, []);
 
-  if (needsPin) {
+  if (hasPin) {
     return (
       <main class="child-screen" style={{ background: 'var(--bg0)' }}>
         <form
           class="overlay-card"
           onSubmit={async (e) => {
             e.preventDefault();
-            if (await checkPin(pin)) onPinPassed();
+            if (await checkPin(pin)) onPassed();
             else {
               setErr('That PIN does not match.');
               setPin('');
@@ -155,7 +143,7 @@ function Gate({
           }}
         >
           <h1 tabindex={-1}>Enter your PIN</h1>
-          <p class="card-note">The lock you set to keep notes away from casual eyes.</p>
+          <p class="card-note">The lock you set to keep notes away from casual eyes. It asks again each time you come back from the child screen.</p>
           <label class="field">
             <span class="field-label">PIN</span>
             <input
@@ -173,6 +161,11 @@ function Gate({
           <a class="btn btn-quiet" href="#/">
             Back to the child screen
           </a>
+          <p class="card-note" style={{ marginTop: '0.8rem' }}>
+            Forgotten it? There is no recovery by design — clearing this site's data in your browser settings
+            removes the lock, along with every profile, note, and photo on this device. A saved backup file
+            brings the children back afterwards.
+          </p>
         </form>
       </main>
     );
@@ -184,13 +177,13 @@ function Gate({
         <h1 tabindex={-1} style={{ color: 'var(--inkSoft)' }}>
           For grown-ups
         </h1>
-        <HoldButton label="Press and hold" onComplete={onHoldPassed} />
+        <HoldButton label="Press and hold" onComplete={onPassed} />
         <p class="card-note" style={{ textAlign: 'center', maxWidth: '26rem' }}>
           Or, if holding is difficult, tap the word <b>two</b>:
         </p>
         <div class="word-choice" role="group" aria-label="Tap the word two">
           {words.map(([word, correct]) => (
-            <button key={word} class="btn" onClick={() => (correct ? onHoldPassed() : undefined)}>
+            <button key={word} class="btn" onClick={() => (correct ? onPassed() : undefined)}>
               {word}
             </button>
           ))}

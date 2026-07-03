@@ -1,3 +1,4 @@
+import type { ComponentChildren } from 'preact';
 import { useState } from 'preact/hooks';
 import type { LessonSpec, Profile, Program } from '../../lib/types';
 import { LESSONS, getLesson } from '../../lessons/specs';
@@ -13,7 +14,7 @@ const resolveFor = (l: LessonSpec, profile: Profile | null) => resolveLesson(l, 
  * Levels are described as what they practise, not as grades to pass (PT-10).
  */
 export function Library({ profile }: { profile: Profile | null }) {
-  const groups: Array<{ title: string; blurb: string; filter: (l: LessonSpec) => boolean }> = [
+  const groups: Array<{ title: string; blurb: ComponentChildren; filter: (l: LessonSpec) => boolean }> = [
     {
       title: 'Level 1 · Noticing',
       blurb: 'One target on a plain dark field. Building the very first visual attention.',
@@ -31,7 +32,13 @@ export function Library({ profile }: { profile: Profile | null }) {
     },
     {
       title: 'Level 4 · Higher-order looking',
-      blurb: 'Visual search among drifting company, following through distraction, and familiar faces. Challenge comes from the looking — never from speed; every safety rule holds unchanged here.',
+      blurb: (
+        <>
+          Visual search among drifting company, following through distraction, and familiar faces. The
+          challenge comes from the looking itself — these lessons never get faster, brighter, or flashier than
+          the gentle ones (<a href="#/grown-ups/guide?topic=safety">how lessons stay gentle</a>).
+        </>
+      ),
       filter: (l) => l.level === 4 && !l.hearingFirst,
     },
     {

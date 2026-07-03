@@ -1,5 +1,5 @@
 import { navigate } from '../lib/router';
-import { ensureProfile } from '../lib/store';
+import { ensureProfile, getState } from '../lib/store';
 import { enabledPhotos } from '../lib/photos';
 import { DEFAULT_LESSON_IDS, getLesson } from '../lessons/specs';
 import { resolveLesson } from '../lessons/bands';
@@ -30,6 +30,7 @@ export function Chooser() {
   return (
     <main class="child-screen">
       <h1 class="sr-only">Choose a lesson</h1>
+      {getState().profiles.length > 1 && <p class="chooser-for">{profile.nickname}'s lessons</p>}
       <div class="chooser">
         {programs.map((p) => (
           <button

@@ -1,6 +1,6 @@
 import { navigate } from '../lib/router';
 import { audio } from '../engine/audio';
-import { ensureProfile } from '../lib/store';
+import { ensureProfile, getState } from '../lib/store';
 
 /**
  * FR-1 — a calm landing with one big door for the child and a small,
@@ -21,9 +21,15 @@ export function Landing() {
     navigate('/choose');
   };
 
+  // With several children on one device, say quietly who is up — so a
+  // grown-up never has to enter their area just to check (PT-1).
+  const profiles = getState().profiles;
+  const active = profiles.find((p) => p.id === getState().activeProfileId) ?? profiles[0];
+
   return (
     <main class="child-screen">
       <p class="landing-title">beam and song</p>
+      {profiles.length > 1 && active && <p class="landing-profile">ready for {active.nickname}</p>}
       <button class="start-orb" onClick={start} aria-label="Start — gentle lessons">
         Start
       </button>

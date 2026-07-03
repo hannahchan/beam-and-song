@@ -115,6 +115,25 @@ test('profile export downloads a JSON file flagged as personal (PV-4)', async ({
   expect(download.suggestedFilename()).toMatch(/beam-and-song-profile-.*\.json/);
 });
 
+test('a PIN re-locks the grown-up area every time you return from the child screen (PV-3)', async ({ page }) => {
+  await openGrownUps(page);
+  await page.getByRole('link', { name: 'Children' }).click();
+  await page.getByLabel('New PIN (4+ digits)').fill('2468');
+  await page.getByRole('button', { name: 'Set PIN' }).click();
+  await expect(page.getByText('PIN is on.')).toBeVisible();
+
+  // Leave for the child screen, then come back: the PIN must be asked again.
+  await page.getByRole('link', { name: 'Back to child screen' }).click();
+  await expect(page.getByRole('button', { name: /^Start/ })).toBeVisible();
+  await page.getByRole('link', { name: 'For grown-ups' }).click();
+  await expect(page.getByRole('heading', { name: 'Enter your PIN' })).toBeVisible();
+  await expect(page.getByText(/Forgotten it\?/)).toBeVisible();
+
+  await page.getByLabel('PIN').fill('2468');
+  await page.getByRole('button', { name: 'Open' }).click();
+  await expect(page.getByRole('heading', { name: /space$/ })).toBeVisible();
+});
+
 test('switch scanning: ring appears and step-scan moves and activates', async ({ page }) => {
   await openGrownUps(page);
   await page.getByRole('link', { name: 'Settings' }).click();

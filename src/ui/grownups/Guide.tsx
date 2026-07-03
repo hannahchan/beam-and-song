@@ -1,11 +1,25 @@
+import { useEffect } from 'preact/hooks';
 import { Card } from './bits';
 
 /**
  * PT-11 / PT-12 / PT-10 — plain-language orientation and setup guidance.
  * Framed throughout as support alongside professionals, never instead of
  * them (SR-4), and written for a parent who may have no TVI yet.
+ *
+ * Other pages can deep-link a section via ?topic=<id> (hash routing means
+ * ordinary fragment anchors can't work here).
  */
-export function Guide() {
+export function Guide({ topic }: { topic?: string | null }) {
+  useEffect(() => {
+    if (!topic) return;
+    const el = document.getElementById(`guide-${topic}`);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      el.querySelector('h2')?.setAttribute('tabindex', '-1');
+      (el.querySelector('h2') as HTMLElement | null)?.focus();
+    }
+  }, [topic]);
+
   return (
     <div class="stack">
       <h1 tabindex={-1}>A short guide for grown-ups</h1>
@@ -149,7 +163,7 @@ export function Guide() {
         </p>
       </Card>
 
-      <Card title="How this app keeps visuals gentle">
+      <Card title="How this app keeps visuals gentle" id="guide-safety">
         <p class="card-note">
           Because seizure conditions commonly accompany CVI, the app is built so that nothing can flash in the
           hazardous range: all changes are slow fades, brightness changes are capped, there are no stripes or
