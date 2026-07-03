@@ -4,6 +4,14 @@ What remains against the requirements, organized into phases that each end in so
 shippable. Requirement IDs refer to `CVI-training-site-requirements-final.md`; current
 status per ID is in `requirements-coverage.md`.
 
+> **Status (July 2026): Phases 1–5 are implemented** (see git history: one commit per
+> logical unit). What remains is exactly the human-dependent work:
+> Phase 0's clinical review and family testing, the AT hardware walkthrough
+> (`at-walkthrough.md`), and the on-device performance soak (`perf-budgets.md`).
+> Open build-side threads, deliberately deferred: scannable slider/text-field values,
+> per-lesson custom-audio mapping, a curated stock-photo track for L3/L4 (human-gated
+> on licensing/appropriateness), and whatever the clinical feedback surfaces.
+
 ---
 
 ## Phase 0 — Clinical review track (start now, runs in parallel)

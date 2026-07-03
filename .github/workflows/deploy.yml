@@ -31,6 +31,8 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - run: npm run test:e2e
       - run: npm run build
+      # TR-9 — payload budgets are enforced, not aspirational.
+      - run: node scripts/check-budgets.mjs
       - if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
         with:

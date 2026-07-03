@@ -37,7 +37,7 @@ Legend: ✅ done · 🟡 partial · ⏭ deferred (with reason) · ∅ n/a at inf
 | L3/L4 content | ✅ | L3: find-among (shape & own-photo targets), near/far distance drills. L4: visual search among drifting company, follow-among-movers, familiar faces (family photos only — no stock imagery; a curated-photo track remains open, human-gated for licensing/appropriateness). |
 | CR-1 | ✅ | Stars/Fireflies/Light/Rain/Familiar-things themes recur across levels. |
 | CR-2 | ✅ | No binary assets at all — visuals procedural, audio synthesized; ~35 KB gzipped app. |
-| CR-3 | ✅ | Photo targets: client-side downscale → data URL in the profile; on-device only; drives the photo lesson. Custom **audio** deferred. |
+| CR-3 | ✅ | Photos: client-side downscale + luminance measurement, on-device, drive four lessons. Audio: the family's own songs/recordings (IndexedDB blobs, client-side normalization, duration caps) can replace the built-in melodies, including after-a-look snippets. Neither ever leaves the device. |
 | CR-4 | ✅ | Bridge prompts on ball/duck/photo/touch lessons, surfaced in the library cards. |
 | CR-5 | ✅ | Two listening-first lessons + "Listening first" preset. |
 | CR-6 | ✅ | Three bands (infant / child / teen) selectable per profile and in guided setup. |
@@ -45,7 +45,7 @@ Legend: ✅ done · 🟡 partial · ⏭ deferred (with reason) · ∅ n/a at inf
 | CR-8 | ✅ | Challenge scales through clutter count (complexity setting), drifting distractors, target size (near/far), movement-among-movers, and faces — all inside unchanged Section 8 limits; find/search rewards are cooldown-bound and switch-operable (a switch press always counts as a hit). |
 | CR-9 | ✅ | Band re-skins theme/music/copy only — behavior, level, interactivity provably unchanged (tested). A teen at Level 1 gets "Ember", not a duck. |
 | CR-10 | ✅ | Full teen re-skin (ambient melodies composed as note data; boat/ember/orbit themes); child band = warm content with adjusted wording; a build-breaking test bans babyish language/imagery/nursery tunes from teen output. |
-| CR-11 | 🟡 | Teen row covers Levels 1–2 + listening (14 re-skinned lessons); breadth grows with L3/L4. |
+| CR-11 | ✅ | 20 lessons × 3 bands across Levels 1–4 + listening; the historically underserved cells (older children/teens at early phases) get the full re-skinned L1–L2 row plus L3/L4. Ongoing content growth stays welcome, gated on clinical feedback. |
 
 ## §5 Personalization
 
@@ -66,18 +66,18 @@ single band; the profile field becomes meaningful when more bands ship).
 | PT-6 | ✅ | Session timer (2–8 min) → gentle wind-down to a rest screen; "short and sweet" nudge on repeats. |
 | PT-7 | ✅ | 4-week trend, response mix, top lesson, weekly bars (with text alternative), plain-text TVI summary export. |
 | PT-8 | ✅ | Day-context tags; summaries call out that quiet hard-days are expected, not decline. |
-| PT-9 | ⏭ | Custom ordered programs — next iteration; favorites ordering partially covers it. |
-| PT-10 | ✅ | Guide section + per-lesson cues. |
+| PT-9 | ✅ | Named ordered programs with a button-based (switch-friendly) builder; programs play as queued sessions with slow crossfades; program tiles on the child screen. |
+| PT-10 | ✅ | Guide section + per-lesson cues, now including L2→L3 and L3→L4. |
 | PT-11 | ✅ | Room/lighting/distance/positioning guidance in Guide + dashboard reminder. |
 | PT-12 | ✅ | "What CVI is / what a response looks like / when to stop / find a professional" — orientation framing only. |
-| PT-13 | ⏭ | Field-pattern observation deferred **on purpose**: needs careful SR-7-compliant design; infant tap data would be mostly parent-generated anyway. PR-4 tuning ships without it. |
+| PT-13 | ✅ | Opt-in, off by default. Quadrant exposure/response tallies per session; surfaces only after ≥8 qualifying sessions across ≥14 days with per-quadrant exposure floors; stale data ignored. Output descriptive + hedged + routed to the professional; every producible sentence is tested against the SR-7 language guard; at most a field-bias *experiment* is suggested. |
 
 ## §7 Accessibility
 
 | ID | Status | Notes |
 |---|---|---|
 | AR-1 | ✅ | ≥44–56 px targets everywhere; child side is tap-anywhere. |
-| AR-2/AR-8 | 🟡 | All controls are semantic, keyboard-operable big buttons → OS switch scanning (iOS Switch Control etc.) works; lesson input accepts any key. A **built-in** auto-scanner with PR-5-aware timing is deferred; scanning indicators would then follow FR-8/PR-3 rules. |
+| AR-2/AR-8 | ✅ | Built-in auto (one-switch) and step (two-switch) scanning: dwell derives from the pace/latency setting (≥1.5 s floor), the highlight is one steady gliding ring (≥500 ms ease, never blinks — unit-tested against the fade floor), and scanning suspends during live lessons so the switch stays the child's input. Find/search lessons treat a switch press as a hit. OS-level scanning also works throughout. Remaining niche: sliders/text fields defer to platform tools (documented). |
 | AR-3 | ✅ | Touch-first layout, `touch-action: manipulation`, safe-area insets. |
 | AR-4 | ✅ | Token palette verified ≥4.5:1 by test. |
 | AR-5 | ✅ | Plain-language grown-up UI; complexity behind presets. |
@@ -94,7 +94,7 @@ single band; the profile field becomes meaningful when more bands ship).
 | SR-4 | ✅ | Companion framing on landing, footer of every grown-up page, Guide, exports. |
 | SR-5 | ✅ | No patterned backgrounds exist; saturated-red area transitions must be zero (tested); luminance model counts glow halos. |
 | SR-6 | ✅ | Rewards ride the same kernel; input-mashing simulated in tests; cooldown 1.5 s enforced in engine *and* scene. |
-| SR-7 | 🟡 | PT-13 deferred, so mostly moot; the language guard in spec validation + copy review keep all output descriptive. |
+| SR-7 | ✅ | A shared banned-language regex (clinical/deficit/scoring vocabulary) gates lesson copy at validation time and is asserted over every sentence the PT-13 feature can produce. Output is session-bound, hedged, and always routes to the professional; the guard rejected authored copy twice during development. |
 | SR-8 | ✅ | The centerpiece: headless 60 fps simulation of every lesson × extreme settings × input spam, measured against the limits; the analyzer itself is negative-tested against synthetic strobes/cuts. |
 
 ## §9 Technical
@@ -109,8 +109,8 @@ single band; the profile field becomes meaningful when more bands ship).
 | TR-6 | ✅ | Start tap unlocks AudioContext; player retries unlock on first in-lesson gesture; resume handling. |
 | TR-7 | ✅ | Photos downscaled client-side to ≤512 px JPEG; stored locally; removable (PV-5). |
 | TR-8 | ✅ | 124 tests; safety suite is the priority class and gates deploy in CI. |
-| TR-9 | 🟡 | Asset budgets trivially met (≈35 KB total, zero fetches); frame-time measurement on low-end hardware pending. |
-| TR-10 | 🟡 | Automated: axe (all pages) + contrast tests + keyboard-operable controls. Manual AT walkthrough pending. |
+| TR-9 | 🟡 | CI-enforced payload budgets (scripts/check-budgets.mjs; currently ~48 KB JS gz of a 70 KB budget, zero per-lesson fetches) + an in-player diagnostics overlay (?diag=1) and a scripted on-device soak protocol (docs/perf-budgets.md). The hardware runs themselves are the remaining human step. |
+| TR-10 | 🟡 | Automated: axe (all pages), contrast tests, keyboard-operable controls, scanning unit + E2E tests. docs/at-walkthrough.md scripts the manual AT passes; running them on hardware is the remaining human step. |
 
 ## §10 Privacy
 

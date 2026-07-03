@@ -1,38 +1,48 @@
 # Beam and Song
 
-Gentle, tunable light-and-song lessons for **babies with CVI** (cortical/cerebral visual impairment) — a
-companion tool for families and vision professionals. Static site, no accounts, no servers, no data leaving
-the device.
+Gentle, tunable light-and-song lessons for **children with CVI** (cortical/cerebral visual impairment),
+from babies to teens — a companion tool for families and vision professionals. Static site, no accounts,
+no servers, no data leaving the device.
 
-> **Status: v1, infant scope — built for expert review, not yet clinically reviewed.**
-> The full requirements brief spans birth to teens; this first build deliberately serves **infants**
-> (roughly birth–18 months) so there is something real to iterate on. Per the brief (§11), TVI/clinical
-> review of content and safety — and usability testing with actual CVI children — is expected **before**
-> real-world use.
+> **Status: feature-complete against the brief's build-side requirements — built for expert review, not
+> yet clinically reviewed.** Per the brief (§11), TVI/clinical review of content and safety — and usability
+> testing with actual CVI children across the age range — is expected **before** real-world use.
+> The review packet is ready in `docs/clinical-review-packet.md`.
 
 ## What's inside
 
-- **14 lessons** across three groups, all rendered procedurally on canvas and scored by a Web Audio
-  synthesizer (public-domain lullabies as note data — zero binary assets, ~35 KB gzipped total):
-  - **Level 1 · Noticing** — one target on black: pulsing glow, twinkling star, drifting light for
-    tracking, tap-anywhere cause-and-effect, appearing/vanishing firefly, falling raindrop.
-  - **Level 2 · Following & finding** — star on a curved path with sound that travels with it, two
-    fireflies inviting a look, rolling ball, gliding duck, rising balloon, and the child's **own photo**
-    (processed and stored on-device only).
-  - **Listening lessons** — hearing as a goal in its own right: a song that travels ear-to-ear, and
-    bell/drum discrimination.
-- **Personalization on every axis the brief names** (§5): target colour, background, movement + speed,
-  complexity, visual-field bias, pace/latency, size, glow (down to none), brightness, three sound modes
-  (with / after-a-look / off), volume, single vs layered voices, sound-follows-target, haptics, session length.
-- **Presets + a 5-question guided setup** so no one meets a wall of sliders on day one.
-- **Caregiver tooling**: multiple child profiles, instant persistence, export/import (JSON), ten-second
-  session observations with day-context tags, a 4-week trend view, a plain-text summary to hand a TVI,
-  a settings-review nudge, and an optional PIN for shared devices.
+- **20 lessons across Levels 1–4** plus listening lessons, all rendered procedurally on canvas and scored
+  by a Web Audio synthesizer (note data only — zero binary assets, ~48 KB gzipped total):
+  - **Level 1 · Noticing** — one target on black: glow, star, drifting light, tap-anywhere
+    cause-and-effect, firefly, raindrop.
+  - **Level 2 · Following & finding** — curved paths with travelling sound, two fireflies inviting a
+    look, ball, duck/boat, balloon, the child's own photo.
+  - **Level 3 · Toward the world** — find-the-target among dim company (shapes or the family's own
+    photo), near/far distance drills.
+  - **Level 4 · Higher-order looking** — visual search among drifting distractors, following through
+    distraction, familiar faces (family photos only — never stock imagery).
+  - **Listening lessons** — hearing as a goal in its own right (CR-5).
+- **Three age bands** (CR-9/CR-10): the same practice re-presents itself per band — a teen at Level 1
+  gets "Ember" with ambient music, never a duck with a nursery rhyme. A build-breaking test bans babyish
+  language, imagery, and nursery tunes from teen output.
+- **Personalization on every axis the brief names** (§5), presets + a guided setup, and **custom
+  programs** (PT-9): named lesson sequences that play as queued sessions with slow crossfades.
+- **The family's own media** (CR-3): photos (downscaled + luminance-measured client-side) and songs or
+  voice recordings (IndexedDB, normalized client-side) as targets and music — on-device only, always.
+- **Caregiver tooling**: profiles, instant persistence, export/import + whole-device backup, ten-second
+  observations with day-context tags, trends, a TVI-readable summary, a settings-review nudge, an optional
+  PIN — and **opt-in field-pattern observation** (PT-13) that only ever speaks descriptively, after weeks
+  of data, under a tested non-diagnostic language guard (SR-7).
+- **Switch access built in** (AR-2/AR-8): one-switch auto-scanning and two-switch step-scanning with
+  pace-derived dwell and a glide-only highlight; during lessons the switch belongs to the child, and in
+  find/search lessons a switch press always counts as a hit.
 - **Safety engine, verified not vowed** (§8): every animation flows through a kernel that clamps modulation
   to ≤ 0.5 Hz (the hazard band starts ~3 Hz), forbids fades under 500 ms, caps luminance swing, and
-  cooldown-limits rewards. The test suite **simulates every lesson at 60 fps** — at default and at the most
-  extreme reachable settings, under input mashing — and measures the luminance timeline against flash-safety
-  thresholds. The suite caught four real hazards during development; that is the point of it.
+  cooldown-limits rewards. The test suite **simulates every lesson at 60 fps** — at default and extreme
+  settings, under input mashing, across age bands — and measures the luminance timeline against
+  flash-safety thresholds. It caught six real hazards during development; that is the point of it.
+- **186 unit/safety/a11y tests + 5 Playwright E2E tests**, all gating deploy in CI along with enforced
+  payload budgets (TR-9).
 
 ## Run it
 
@@ -80,23 +90,21 @@ Everything (profiles, settings, notes, photos) lives in `localStorage` in this b
 there are no analytics, no accounts, no network calls after load (a service worker keeps it working offline).
 Exports are explicit local file downloads, flagged as containing personal information about a child.
 
-## Honest gaps / next iterations
+## Honest gaps / what only humans can finish
 
-Tracked in [docs/requirements-coverage.md](docs/requirements-coverage.md) against every requirement ID. Highlights:
+Tracked in [docs/requirements-coverage.md](docs/requirements-coverage.md) against every requirement ID,
+with the forward plan in [docs/ROADMAP.md](docs/ROADMAP.md). The build-side phases are implemented; what
+remains is human-dependent:
 
-- **Older age bands** (CR-6/CR-9/CR-10/CR-11): the age×phase grid, age-respecting themes for
-  children/teens — the largest deliberate scope cut for v1.
-- **Levels 3–4** content (real photos on busier grounds, visual search, crowding).
-- **PT-13 field-pattern observation**: deferred; needs careful SR-7 non-diagnostic design.
-- **PT-9 custom programs** (ordered sequences beyond favorites).
-- **Built-in switch auto-scanning**: v1 relies on OS-level switch access (iOS Switch Control /
-  Android Switch Access) over fully semantic controls; a native scanner with latency-aware timing (AR-8)
-  is a natural next step.
-- **Custom audio** (a favourite song as reward) — photos shipped first.
-- **Measured device performance budgets** (TR-9): the asset side is trivially met (no assets); frame-time
-  measurement on low-end tablets still needs a hardware pass.
-- **Clinical/TVI review and real-family usability testing** — required before promoting this beyond a
-  prototype (brief §11).
+- **Clinical/TVI review and real-family usability testing** across the age range — the gate between
+  "prototype" and "recommendable" (brief §11). Packet ready: `docs/clinical-review-packet.md`.
+- **Assistive-tech hardware walkthrough** — scripts ready in `docs/at-walkthrough.md` (VoiceOver, NVDA,
+  iOS Switch Control, Android), results tables waiting.
+- **On-device performance soak** on an older iPad + budget Android tablet — protocol and in-player
+  diagnostics (`?diag=1`) in `docs/perf-budgets.md`; CI already enforces the payload half.
+- **Curated real-photo content** for L3/L4 beyond the family's own photos — sourcing/licensing/
+  appropriateness are human judgments; the build deliberately ships without stock imagery.
+- Smaller deferred threads: scannable slider/text values, per-lesson custom-audio mapping.
 
 ## A note on framing
 

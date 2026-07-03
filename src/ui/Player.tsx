@@ -47,6 +47,9 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
   const [soft, setSoft] = useState(false);
   const [againCount, setAgainCount] = useState(0);
   const [current, setCurrent] = useState<LessonSpec>(queue[0]);
+  // TR-9 — on-device diagnostics for the scripted hardware soak (docs/perf-budgets.md).
+  const diag = location.hash.includes('diag=1');
+  const [diagText, setDiagText] = useState('');
   const phaseRef = useRef(phase);
   phaseRef.current = phase;
   const softRef = useRef(soft);
@@ -158,11 +161,28 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
       return { ...params, peakAlpha: params.peakAlpha * 0.55, glow: Math.min(params.glow, 0.6) };
     };
 
+    let frames = 0;
+    let dropped = 0;
+    let worstDt = 0;
+    let lastDiagAt = 0;
+
     const frame = (now: number) => {
       const dt = Math.min(now - lastFrame, 100);
       lastFrame = now;
       const w = canvas.clientWidth;
       const h = canvas.clientHeight;
+
+      if (diag && phaseRef.current === 'running') {
+        frames++;
+        if (dt > 34) dropped++; // more than ~2 vsync intervals at 60 Hz
+        worstDt = Math.max(worstDt, dt);
+        if (now - lastDiagAt > 1000) {
+          lastDiagAt = now;
+          setDiagText(
+            `${spec.id} · frames ${frames} · dropped ${dropped} (${((dropped / Math.max(frames, 1)) * 100).toFixed(2)}%) · worst ${worstDt.toFixed(0)}ms`,
+          );
+        }
+      }
 
       if (phaseRef.current === 'running') {
         prevT = lessonT;
@@ -329,6 +349,12 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
   return (
     <div class={`player ${phase === 'paused' || phase === 'observe' ? 'dimmed' : ''}`}>
       <canvas ref={canvasRef} aria-label={`${current.title} lesson playing`} role="img" />
+
+      {diag && diagText && (
+        <p class="player-hint" style={{ top: '0.6rem', bottom: 'auto', opacity: 0.8 }}>
+          {diagText}
+        </p>
+      )}
 
       {settings.audioMode === 'after' && phase === 'running' && (
         <AfterModeHint interactive={current.interactive} noun={bandNoun(profile.ageBand)} />
