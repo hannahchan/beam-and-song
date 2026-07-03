@@ -37,8 +37,20 @@ describe('profiles persist locally (TR-2, PT-1, PT-2)', () => {
   it('nickname only — no other identifying fields exist on a fresh profile (PV-1)', () => {
     const p = store.createProfile('Bean');
     expect(Object.keys(p).sort()).toEqual(
-      ['createdAt', 'favorites', 'id', 'lastReviewAt', 'nickname', 'photos', 'sessions', 'settings'].sort(),
+      ['createdAt', 'favorites', 'id', 'lastReviewAt', 'nickname', 'photos', 'programs', 'sessions', 'settings'].sort(),
     );
+  });
+
+  it('programs: create, reorder, remove (PT-9)', () => {
+    const p = store.createProfile('Bean');
+    const progId = store.addProgram(p.id, 'Morning quiet');
+    store.updateProgram(p.id, progId, (prog) => prog.lessonIds.push('gentle-glow', 'little-star', 'raindrop'));
+    store.updateProgram(p.id, progId, (prog) => {
+      [prog.lessonIds[0], prog.lessonIds[1]] = [prog.lessonIds[1], prog.lessonIds[0]];
+    });
+    expect(store.activeProfile()?.programs[0].lessonIds).toEqual(['little-star', 'gentle-glow', 'raindrop']);
+    store.deleteProgram(p.id, progId);
+    expect(store.activeProfile()?.programs).toEqual([]);
   });
 
   it('updates settings and favorites', () => {

@@ -65,10 +65,19 @@ export interface SessionRecord {
   id: string;
   at: string; // ISO datetime
   lessonId: string;
+  /** Set when the session played a program (PT-9); stored by name so it survives deletion. */
+  programName?: string;
   durationSec: number;
   response: ResponseLevel | null; // null = not recorded
   tags: SessionTag[];
   note?: string;
+}
+
+/** PT-9 — a named, ordered sequence of lessons composed by a parent or TVI. */
+export interface Program {
+  id: string;
+  name: string;
+  lessonIds: string[];
 }
 
 export interface Profile {
@@ -78,6 +87,7 @@ export interface Profile {
   createdAt: string;
   settings: ChildSettings;
   favorites: string[]; // lesson ids, in order
+  programs: Program[];
   photos: CustomPhoto[];
   sessions: SessionRecord[];
   /** PT-5 — when settings were last deliberately reviewed. */

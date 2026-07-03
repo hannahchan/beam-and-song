@@ -8,12 +8,16 @@ import { createPhotoCache, drawScene } from '../engine/render';
 import { audio } from '../engine/audio';
 import { buzz } from '../engine/haptics';
 import { effectiveTaps } from '../engine/kernel';
-import { SESSION_TAGS, type ResponseLevel, type SessionTag } from '../lib/types';
+import { SESSION_TAGS, type LessonSpec, type ResponseLevel, type SessionTag } from '../lib/types';
 
 type Phase = 'running' | 'paused' | 'resting' | 'observe';
 
 /**
  * FR-2 — the full-screen, distraction-free lesson player.
+ *
+ * Plays either a single lesson or a named program (PT-9) as a queued session:
+ * each lesson gets an equal slice of the session time and hands over with a
+ * slow crossfade and a beat of quiet — never a cut (FR-8).
  *
  * A child can never get stuck (FR-5): the only chrome is one dim corner
  * button that opens the grown-up overlay. Opening it immediately dims the
@@ -22,14 +26,24 @@ type Phase = 'running' | 'paused' | 'resting' | 'observe';
  * caregiver can operate it like any other control (FR-11); a baby cannot
  * complete the two-step Resume/End choice it reveals.
  */
-export function Player({ lessonId }: { lessonId: string }) {
+export function Player({ lessonId, programId }: { lessonId?: string; programId?: string }) {
   const profile = ensureProfile();
-  const lesson = getLesson(lessonId) ?? getLesson('gentle-glow')!;
   const settings = profile.settings;
+
+  const program = programId ? profile.programs.find((p) => p.id === programId) : undefined;
+  const queue = useMemo<LessonSpec[]>(() => {
+    const ids = program ? program.lessonIds : [lessonId ?? ''];
+    const specs = ids
+      .map(getLesson)
+      .filter((l): l is LessonSpec => !!l && !(l.requiresPhoto && profile.photos.length === 0));
+    return specs.length ? specs : [getLesson('gentle-glow')!];
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [programId, lessonId]);
 
   const [phase, setPhase] = useState<Phase>('running');
   const [soft, setSoft] = useState(false);
   const [againCount, setAgainCount] = useState(0);
+  const [current, setCurrent] = useState<LessonSpec>(queue[0]);
   const phaseRef = useRef(phase);
   phaseRef.current = phase;
   const softRef = useRef(soft);
@@ -40,11 +54,7 @@ export function Player({ lessonId }: { lessonId: string }) {
   const startedAtRef = useRef(0);
   const againRef = useRef<(() => void) | null>(null);
 
-  const params = useMemo(() => {
-    const p = buildParams(settings);
-    return p;
-  }, [settings]);
-
+  const params = useMemo(() => buildParams(settings), [settings]);
   const photoDataUrl = profile.photos[0]?.dataUrl;
 
   useEffect(() => {
@@ -54,17 +64,23 @@ export function Player({ lessonId }: { lessonId: string }) {
     if (!ctx) return;
 
     const photos = createPhotoCache();
-    const sim: SimInput = { seed: 20260703, tapsMs: tapsRef.current, photoDataUrl };
     const sessionMs = Math.max(2, settings.sessionMinutes) * 60_000;
+    // Each program entry gets an equal slice, never less than 45 s (FR-7).
+    const sliceMs = queue.length > 1 ? Math.max(45_000, sessionMs / queue.length) : sessionMs;
+    const XFADE_MS = 1400;
+    const GAP_MS = 700;
 
+    let idx = 0;
+    let spec = queue[0];
+    let sim: SimInput = { seed: 20260703, tapsMs: tapsRef.current, photoDataUrl };
     let raf = 0;
-    let lessonT = 0; // ms of *running* lesson time
+    let lessonT = 0;
     let prevT = 0;
     let restT = 0;
+    let handover: null | { at: number } = null; // lessonT when the crossfade began
     let lastFrame = performance.now();
     let melody: ReturnType<typeof audio.startMelody> | null = null;
-    let melodyWanted = settings.audioMode === 'with' && !!lesson.melody;
-    let fadingOut = false;
+    let windingDown = false;
     startedAtRef.current = Date.now();
 
     const resize = () => {
@@ -76,44 +92,58 @@ export function Player({ lessonId }: { lessonId: string }) {
     resize();
     window.addEventListener('resize', resize);
 
+    const melodyWanted = () => settings.audioMode === 'with' && spec.behavior !== 'audioAlternate';
     const startMelodyIfWanted = () => {
-      if (!melodyWanted || melody || !audio.unlocked) return;
-      // Hearing-first pan lessons always travel; otherwise per setting (FR-10).
-      const usePan = settings.soundFollowsTarget || lesson.behavior === 'audioPan';
-      if (lesson.behavior === 'audioAlternate') return; // its voices come from cues
-      melody = audio.startMelody(lesson.melody, {
+      if (!melodyWanted() || melody || !audio.unlocked) return;
+      const usePan = settings.soundFollowsTarget || spec.behavior === 'audioPan';
+      melody = audio.startMelody(spec.melody, {
         tempoScale: params.tempoScale,
         pan: usePan,
         layered: settings.audioStyle === 'layered',
         loop: true,
       });
     };
+
+    const beginLesson = (nextIdx: number) => {
+      idx = nextIdx;
+      spec = queue[idx];
+      tapsRef.current.length = 0;
+      sim = { seed: 20260703 + idx * 101, tapsMs: tapsRef.current, photoDataUrl };
+      lessonT = 0;
+      prevT = 0;
+      handover = null;
+      melody = null;
+      startMelodyIfWanted();
+      setCurrent(spec);
+    };
+
     audio.setVolume(settings.volume * (softRef.current ? 0.5 : 1));
     void audio.unlock().then(startMelodyIfWanted);
 
-    // "Once more" from the rest screen: a fresh, equally gentle round (PT-6).
     againRef.current = () => {
-      lessonT = 0;
-      prevT = 0;
       restT = 0;
-      fadingOut = false;
-      tapsRef.current.length = 0;
-      melody = null;
-      startMelodyIfWanted();
+      windingDown = false;
+      audio.stopMelody(0.2);
+      beginLesson(0);
     };
 
-    // Screen must not sleep mid-lesson.
     let wakeLock: { release(): Promise<void> } | null = null;
     const grabWakeLock = async () => {
       try {
-        wakeLock = await (navigator as Navigator & { wakeLock?: { request(t: string): Promise<never> } }).wakeLock?.request(
-          'screen',
-        ) ?? null;
+        wakeLock =
+          (await (
+            navigator as Navigator & { wakeLock?: { request(t: string): Promise<never> } }
+          ).wakeLock?.request('screen')) ?? null;
       } catch {
         /* not critical */
       }
     };
     void grabWakeLock();
+
+    const softened = () => {
+      if (!softRef.current) return params;
+      return { ...params, peakAlpha: params.peakAlpha * 0.55, glow: Math.min(params.glow, 0.6) };
+    };
 
     const frame = (now: number) => {
       const dt = Math.min(now - lastFrame, 100);
@@ -125,58 +155,71 @@ export function Player({ lessonId }: { lessonId: string }) {
         prevT = lessonT;
         lessonT += dt;
 
-        // PT-6 — gentle wind-down, never an abrupt stop.
-        if (lessonT > sessionMs && !fadingOut) {
-          fadingOut = true;
-          melody?.stop(2.5);
-          melody = null;
-          setPhase('resting');
+        // Slice elapsed: hand over to the next lesson, or wind the session down (PT-6).
+        if (lessonT > sliceMs && !handover && !windingDown) {
+          if (idx < queue.length - 1) {
+            handover = { at: lessonT };
+            melody?.stop(1.2);
+            melody = null;
+          } else {
+            windingDown = true;
+            melody?.stop(2.5);
+            melody = null;
+            setPhase('resting');
+          }
         }
 
-        const scene = computeScene(lesson, softened(), lessonT, sim, prevT);
+        const scene = computeScene(spec, softened(), lessonT, sim, prevT);
+        const fadeK = handover ? Math.min((lessonT - handover.at) / XFADE_MS, 1) : 0;
         for (const cue of scene.cues) {
-          if (settings.audioMode === 'off') continue;
+          if (settings.audioMode === 'off' || handover) continue;
           if (settings.audioMode === 'after' && !isTapCue(cue)) continue;
           audio.playCue(cue, scene.pan * 0.6);
           if (isTapCue(cue)) buzz(settings.haptics);
         }
-        if (melody && (settings.soundFollowsTarget || lesson.behavior === 'audioPan')) {
+        if (melody && (settings.soundFollowsTarget || spec.behavior === 'audioPan')) {
           melody.setPan(scene.pan);
         }
         drawScene(ctx, scene, w, h, photos);
+        if (fadeK > 0) {
+          ctx.save();
+          ctx.globalAlpha = fadeK;
+          ctx.fillStyle = scene.bg;
+          ctx.fillRect(0, 0, w, h);
+          ctx.restore();
+        }
+        if (handover && lessonT - handover.at > XFADE_MS + GAP_MS) {
+          beginLesson(idx + 1);
+        }
       } else if (phaseRef.current === 'resting') {
         restT += dt;
         drawScene(ctx, restScene(params, restT), w, h, photos);
-      } else {
-        // paused/observe: hold the last frame, dimmed via CSS.
       }
       raf = requestAnimationFrame(frame);
     };
     raf = requestAnimationFrame(frame);
 
-    const softened = () => {
-      if (!softRef.current) return params;
-      return { ...params, peakAlpha: params.peakAlpha * 0.55, glow: Math.min(params.glow, 0.6) };
-    };
-
     /** Tap / switch input — anywhere counts (AR-1, AR-3, AR-8). */
     const onTap = () => {
-      if (phaseRef.current !== 'running') return;
+      if (phaseRef.current !== 'running' || handover) return;
       if (!audio.unlocked) {
         void audio.unlock().then(startMelodyIfWanted);
       }
       const t = lessonT;
-      if (lesson.interactive) {
+      if (spec.interactive) {
         const before = effectiveTaps(tapsRef.current).length;
         tapsRef.current.push(t);
         const after = effectiveTaps(tapsRef.current).length;
         if (after === before) return; // inside cooldown — scene & sound ignore it too
       } else if (settings.audioMode === 'after') {
         // FR-6b — the grown-up taps when the baby looks; the song answers.
-        melody ??= settings.audioMode === 'after' && lesson.melody
-          ? audio.startMelody(lesson.melody, { tempoScale: params.tempoScale, pan: false, layered: settings.audioStyle === 'layered', loop: false })
-          : null;
-        melody?.playPhrase();
+        melody ??= audio.startMelody(spec.melody, {
+          tempoScale: params.tempoScale,
+          pan: false,
+          layered: settings.audioStyle === 'layered',
+          loop: false,
+        });
+        melody.playPhrase();
         buzz(settings.haptics);
       }
     };
@@ -220,7 +263,7 @@ export function Player({ lessonId }: { lessonId: string }) {
       void wakeLock?.release().catch(() => {});
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [lesson.id]);
+  }, [queue.map((q) => q.id).join('|')]);
 
   // FR-12 — opening the overlay is itself the calm-down: dim + hush at once.
   useEffect(() => {
@@ -232,9 +275,7 @@ export function Player({ lessonId }: { lessonId: string }) {
     audio.setVolume(settings.volume * (soft ? 0.5 : 1));
   }, [soft, settings.volume]);
 
-  const finish = () => {
-    setPhase('observe');
-  };
+  const finish = () => setPhase('observe');
 
   const leave = () => {
     if (document.fullscreenElement) void document.exitFullscreen().catch(() => {});
@@ -243,9 +284,9 @@ export function Player({ lessonId }: { lessonId: string }) {
 
   return (
     <div class={`player ${phase === 'paused' || phase === 'observe' ? 'dimmed' : ''}`}>
-      <canvas ref={canvasRef} aria-label={`${lesson.title} lesson playing`} role="img" />
+      <canvas ref={canvasRef} aria-label={`${current.title} lesson playing`} role="img" />
 
-      {settings.audioMode === 'after' && phase === 'running' && <AfterModeHint interactive={lesson.interactive} />}
+      {settings.audioMode === 'after' && phase === 'running' && <AfterModeHint interactive={current.interactive} />}
 
       {phase === 'running' && (
         <button class="player-corner" onClick={() => setPhase('paused')} aria-label="Grown-ups: pause, soften, or end the lesson">
@@ -299,7 +340,8 @@ export function Player({ lessonId }: { lessonId: string }) {
             if (p) {
               addSession(p.id, {
                 at: new Date(startedAtRef.current).toISOString(),
-                lessonId: lesson.id,
+                lessonId: current.id,
+                programName: program?.name,
                 durationSec: Math.round((Date.now() - startedAtRef.current) / 1000),
                 response,
                 tags,

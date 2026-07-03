@@ -12,6 +12,7 @@ import type { LessonSpec } from '../lib/types';
  */
 export function Chooser() {
   const profile = ensureProfile();
+  const programs = profile.programs.filter((p) => p.lessonIds.length > 0).slice(0, 2);
   const ids = [...profile.favorites];
   for (const d of DEFAULT_LESSON_IDS) {
     if (ids.length >= 6) break;
@@ -20,13 +21,24 @@ export function Chooser() {
   const lessons = ids
     .map(getLesson)
     .filter((l): l is LessonSpec => !!l && !(l.requiresPhoto && profile.photos.length === 0))
-    .slice(0, 6);
+    .slice(0, Math.max(2, 6 - programs.length));
   const color = TARGET_COLORS[profile.settings.targetColor] ?? TARGET_COLORS.red;
 
   return (
     <main class="child-screen">
       <h1 class="sr-only">Choose a lesson</h1>
       <div class="chooser">
+        {programs.map((p) => (
+          <button
+            key={p.id}
+            class="chooser-tile"
+            onClick={() => navigate('/play', { program: p.id })}
+            aria-label={`Play the program ${p.name}`}
+          >
+            <ProgramGlyph color={color} />
+            <span>{p.name}</span>
+          </button>
+        ))}
         {lessons.map((l) => (
           <button
             key={l.id}
@@ -43,6 +55,18 @@ export function Chooser() {
         For grown-ups
       </a>
     </main>
+  );
+}
+
+/** A little constellation: several lessons strung together. */
+function ProgramGlyph({ color }: { color: string }) {
+  return (
+    <svg viewBox="0 0 100 100" aria-hidden="true">
+      <path d="M22 70 Q40 40 56 52 T84 30" stroke="rgba(174,183,201,0.4)" stroke-width="3" fill="none" />
+      <circle cx="22" cy="70" r="12" fill={color} />
+      <circle cx="56" cy="52" r="9" fill={color} opacity="0.8" />
+      <circle cx="84" cy="30" r="7" fill={color} opacity="0.6" />
+    </svg>
   );
 }
 

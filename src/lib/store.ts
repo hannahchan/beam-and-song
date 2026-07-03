@@ -73,6 +73,7 @@ function normalizeProfile(p: Profile): Profile {
     ...p,
     settings: { ...DEFAULT_SETTINGS, ...(p.settings ?? {}) },
     favorites: Array.isArray(p.favorites) ? p.favorites : [],
+    programs: Array.isArray(p.programs) ? p.programs.filter((x) => x && Array.isArray(x.lessonIds)) : [],
     photos: Array.isArray(p.photos) ? p.photos : [],
     sessions: Array.isArray(p.sessions) ? p.sessions : [],
   };
@@ -105,6 +106,7 @@ export function createProfile(nickname: string): Profile {
     createdAt: new Date().toISOString(),
     settings: { ...DEFAULT_SETTINGS },
     favorites: [],
+    programs: [],
     photos: [],
     sessions: [],
     lastReviewAt: new Date().toISOString(),
@@ -159,6 +161,29 @@ export function toggleFavorite(profileId: string, lessonId: string): void {
     p.favorites = p.favorites.includes(lessonId)
       ? p.favorites.filter((f) => f !== lessonId)
       : [...p.favorites, lessonId];
+  });
+}
+
+/* ------------------------------ programs (PT-9) ------------------------------ */
+
+export function addProgram(profileId: string, name: string): string {
+  const id = uid();
+  updateProfile(profileId, (p) => {
+    p.programs.push({ id, name: name.trim() || 'New program', lessonIds: [] });
+  });
+  return id;
+}
+
+export function updateProgram(profileId: string, programId: string, patch: (prog: import('./types').Program) => void): void {
+  updateProfile(profileId, (p) => {
+    const prog = p.programs.find((x) => x.id === programId);
+    if (prog) patch(prog);
+  });
+}
+
+export function deleteProgram(profileId: string, programId: string): void {
+  updateProfile(profileId, (p) => {
+    p.programs = p.programs.filter((x) => x.id !== programId);
   });
 }
 

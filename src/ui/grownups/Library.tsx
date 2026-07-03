@@ -1,6 +1,8 @@
-import type { LessonSpec, Profile } from '../../lib/types';
-import { LESSONS } from '../../lessons/specs';
-import { toggleFavorite } from '../../lib/store';
+import { useState } from 'preact/hooks';
+import type { LessonSpec, Profile, Program } from '../../lib/types';
+import { LESSONS, getLesson } from '../../lessons/specs';
+import { addProgram, deleteProgram, toggleFavorite, updateProgram } from '../../lib/store';
+import { Card } from './bits';
 
 /**
  * FR-4 — the browsable lesson library, grouped by level, with starring.
@@ -33,6 +35,7 @@ export function Library({ profile }: { profile: Profile | null }) {
         child screen. Every lesson follows the colour, size, pace, and sound choices in Settings. When in doubt
         about level, start lower: comfort first, challenge second.
       </p>
+      {profile && <Programs profile={profile} />}
       {groups.map((g) => (
         <section key={g.title}>
           <h2 style={{ marginTop: '1.6rem' }}>{g.title}</h2>
@@ -44,6 +47,127 @@ export function Library({ profile }: { profile: Profile | null }) {
           </div>
         </section>
       ))}
+    </div>
+  );
+}
+
+/**
+ * PT-9 — named, ordered lesson sequences. Reordering uses plain up/down
+ * buttons so it works by keyboard and switch, never drag-only (AR-2).
+ */
+function Programs({ profile }: { profile: Profile }) {
+  const [newName, setNewName] = useState('');
+  return (
+    <Card title="Programs — a sequence for one session">
+      <p class="card-note">
+        String a few lessons into a named session — yours or one your vision professional suggests. Programs
+        appear as tiles on the child screen and play in order, each lesson handing over with a slow fade.
+      </p>
+      {profile.programs.map((prog) => (
+        <ProgramEditor key={prog.id} profile={profile} program={prog} />
+      ))}
+      <form
+        class="row"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (newName.trim()) {
+            addProgram(profile.id, newName);
+            setNewName('');
+          }
+        }}
+      >
+        <label class="field" style={{ flex: 1, minWidth: '12rem', margin: 0 }}>
+          <span class="field-label">New program name</span>
+          <input
+            type="text"
+            maxLength={40}
+            value={newName}
+            placeholder="e.g. Morning quiet time"
+            onInput={(e) => setNewName((e.target as HTMLInputElement).value)}
+          />
+        </label>
+        <button class="btn" type="submit">
+          Create
+        </button>
+      </form>
+    </Card>
+  );
+}
+
+function ProgramEditor({ profile, program }: { profile: Profile; program: Program }) {
+  const [adding, setAdding] = useState(LESSONS[0].id);
+  const available = LESSONS.filter((l) => !(l.requiresPhoto && profile.photos.length === 0));
+  const move = (i: number, dir: -1 | 1) =>
+    updateProgram(profile.id, program.id, (p) => {
+      const j = i + dir;
+      if (j < 0 || j >= p.lessonIds.length) return;
+      [p.lessonIds[i], p.lessonIds[j]] = [p.lessonIds[j], p.lessonIds[i]];
+    });
+
+  return (
+    <div class="card" style={{ background: 'var(--bg2)' }}>
+      <div class="spread">
+        <h3 style={{ margin: 0 }}>{program.name}</h3>
+        <div class="row">
+          {program.lessonIds.length > 0 && (
+            <a class="btn btn-small btn-primary" href={`#/play?program=${program.id}`}>
+              Play
+            </a>
+          )}
+          <button class="btn btn-small btn-danger" onClick={() => deleteProgram(profile.id, program.id)}>
+            Delete
+          </button>
+        </div>
+      </div>
+      <ol style={{ margin: '0.6rem 0', paddingLeft: '1.4rem' }}>
+        {program.lessonIds.map((id, i) => (
+          <li key={`${id}-${i}`} style={{ margin: '0.3rem 0' }}>
+            <span class="row" style={{ gap: '0.4rem' }}>
+              <span style={{ flex: 1, minWidth: '9rem' }}>{getLesson(id)?.title ?? id}</span>
+              <button class="btn btn-small btn-ghost" aria-label={`Move ${getLesson(id)?.title} earlier`} disabled={i === 0} onClick={() => move(i, -1)}>
+                ↑
+              </button>
+              <button
+                class="btn btn-small btn-ghost"
+                aria-label={`Move ${getLesson(id)?.title} later`}
+                disabled={i === program.lessonIds.length - 1}
+                onClick={() => move(i, 1)}
+              >
+                ↓
+              </button>
+              <button
+                class="btn btn-small btn-ghost"
+                aria-label={`Remove ${getLesson(id)?.title} from ${program.name}`}
+                onClick={() => updateProgram(profile.id, program.id, (p) => p.lessonIds.splice(i, 1))}
+              >
+                ✕
+              </button>
+            </span>
+          </li>
+        ))}
+      </ol>
+      <div class="row">
+        <label class="field" style={{ flex: 1, minWidth: '11rem', margin: 0 }}>
+          <span class="sr-only">Lesson to add to {program.name}</span>
+          <select value={adding} onChange={(e) => setAdding((e.target as HTMLSelectElement).value)}>
+            {available.map((l) => (
+              <option key={l.id} value={l.id}>
+                {l.title} (Level {l.level}
+                {l.hearingFirst ? ', listening' : ''})
+              </option>
+            ))}
+          </select>
+        </label>
+        <button
+          class="btn btn-small"
+          onClick={() => updateProgram(profile.id, program.id, (p) => p.lessonIds.push(adding))}
+        >
+          Add lesson
+        </button>
+      </div>
+      {program.lessonIds.length > 4 && (
+        <p class="hint">Long programs make long sessions — a few lessons is usually plenty (each gets at least 45 seconds).</p>
+      )}
     </div>
   );
 }

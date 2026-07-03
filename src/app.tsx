@@ -20,7 +20,13 @@ export function App() {
   }, [route.path]);
 
   if (route.path === '/choose') return <Chooser />;
-  if (route.path === '/play') return <Player lessonId={route.params.get('lesson') ?? ''} />;
+  if (route.path === '/play')
+    return (
+      <Player
+        lessonId={route.params.get('lesson') ?? undefined}
+        programId={route.params.get('program') ?? undefined}
+      />
+    );
   if (route.path.startsWith('/grown-ups')) return <GrownUps route={route} />;
   return <Landing />;
 }

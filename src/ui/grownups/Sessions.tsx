@@ -88,7 +88,7 @@ export function Sessions({ profile }: { profile: Profile | null }) {
         {recent.map((r) => (
           <div key={r.id} class="session-item">
             <span>
-              <b>{getLesson(r.lessonId)?.title ?? r.lessonId}</b>
+              <b>{r.programName ? `${r.programName} (program)` : (getLesson(r.lessonId)?.title ?? r.lessonId)}</b>
               <span class="card-note"> · {new Date(r.at).toLocaleDateString()} · {Math.max(1, Math.round(r.durationSec / 60))} min</span>
               {r.tags.map((t) => (
                 <span key={t} class="tag-pill">
