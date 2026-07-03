@@ -1,8 +1,11 @@
 import { useState } from 'preact/hooks';
 import type { LessonSpec, Profile, Program } from '../../lib/types';
 import { LESSONS, getLesson } from '../../lessons/specs';
+import { resolveLesson } from '../../lessons/bands';
 import { addProgram, deleteProgram, toggleFavorite, updateProgram } from '../../lib/store';
 import { Card } from './bits';
+
+const resolveFor = (l: LessonSpec, profile: Profile | null) => resolveLesson(l, profile?.ageBand ?? 'infant');
 
 /**
  * FR-4 — the browsable lesson library, grouped by level, with starring.
@@ -31,9 +34,10 @@ export function Library({ profile }: { profile: Profile | null }) {
     <div>
       <h1 tabindex={-1}>Lessons</h1>
       <p class="card-note" style={{ maxWidth: '46rem' }}>
-        Star the ones that suit {profile?.nickname ?? 'your baby'} — starred lessons become the big tiles on the
-        child screen. Every lesson follows the colour, size, pace, and sound choices in Settings. When in doubt
-        about level, start lower: comfort first, challenge second.
+        Star the ones that suit {profile?.nickname ?? 'your child'} — starred lessons become the big tiles on
+        their screen. Every lesson follows the colour, size, pace, sound, and <b>age</b> choices in Settings:
+        the same practice is presented differently for a baby, a child, or a teen. When in doubt about level,
+        start lower: comfort first, challenge second.
       </p>
       {profile && <Programs profile={profile} />}
       {groups.map((g) => (
@@ -120,31 +124,34 @@ function ProgramEditor({ profile, program }: { profile: Profile; program: Progra
         </div>
       </div>
       <ol style={{ margin: '0.6rem 0', paddingLeft: '1.4rem' }}>
-        {program.lessonIds.map((id, i) => (
-          <li key={`${id}-${i}`} style={{ margin: '0.3rem 0' }}>
-            <span class="row" style={{ gap: '0.4rem' }}>
-              <span style={{ flex: 1, minWidth: '9rem' }}>{getLesson(id)?.title ?? id}</span>
-              <button class="btn btn-small btn-ghost" aria-label={`Move ${getLesson(id)?.title} earlier`} disabled={i === 0} onClick={() => move(i, -1)}>
-                ↑
-              </button>
-              <button
-                class="btn btn-small btn-ghost"
-                aria-label={`Move ${getLesson(id)?.title} later`}
-                disabled={i === program.lessonIds.length - 1}
-                onClick={() => move(i, 1)}
-              >
-                ↓
-              </button>
-              <button
-                class="btn btn-small btn-ghost"
-                aria-label={`Remove ${getLesson(id)?.title} from ${program.name}`}
-                onClick={() => updateProgram(profile.id, program.id, (p) => p.lessonIds.splice(i, 1))}
-              >
-                ✕
-              </button>
-            </span>
-          </li>
-        ))}
+        {program.lessonIds.map((id, i) => {
+          const title = getLesson(id) ? resolveFor(getLesson(id)!, profile).title : id;
+          return (
+            <li key={`${id}-${i}`} style={{ margin: '0.3rem 0' }}>
+              <span class="row" style={{ gap: '0.4rem' }}>
+                <span style={{ flex: 1, minWidth: '9rem' }}>{title}</span>
+                <button class="btn btn-small btn-ghost" aria-label={`Move ${title} earlier`} disabled={i === 0} onClick={() => move(i, -1)}>
+                  ↑
+                </button>
+                <button
+                  class="btn btn-small btn-ghost"
+                  aria-label={`Move ${title} later`}
+                  disabled={i === program.lessonIds.length - 1}
+                  onClick={() => move(i, 1)}
+                >
+                  ↓
+                </button>
+                <button
+                  class="btn btn-small btn-ghost"
+                  aria-label={`Remove ${title} from ${program.name}`}
+                  onClick={() => updateProgram(profile.id, program.id, (p) => p.lessonIds.splice(i, 1))}
+                >
+                  ✕
+                </button>
+              </span>
+            </li>
+          );
+        })}
       </ol>
       <div class="row">
         <label class="field" style={{ flex: 1, minWidth: '11rem', margin: 0 }}>
@@ -152,7 +159,7 @@ function ProgramEditor({ profile, program }: { profile: Profile; program: Progra
           <select value={adding} onChange={(e) => setAdding((e.target as HTMLSelectElement).value)}>
             {available.map((l) => (
               <option key={l.id} value={l.id}>
-                {l.title} (Level {l.level}
+                {resolveFor(l, profile).title} (Level {l.level}
                 {l.hearingFirst ? ', listening' : ''})
               </option>
             ))}
@@ -172,7 +179,8 @@ function ProgramEditor({ profile, program }: { profile: Profile; program: Progra
   );
 }
 
-function LessonCard({ lesson, profile }: { lesson: LessonSpec; profile: Profile | null }) {
+function LessonCard({ lesson: base, profile }: { lesson: LessonSpec; profile: Profile | null }) {
+  const lesson = resolveFor(base, profile);
   const starred = profile?.favorites.includes(lesson.id) ?? false;
   const locked = lesson.requiresPhoto && (profile?.photos.length ?? 0) === 0;
 

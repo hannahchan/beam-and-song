@@ -73,6 +73,7 @@ function migrate(raw: unknown): AppState {
 function normalizeProfile(p: Profile): Profile {
   return {
     ...p,
+    ageBand: p.ageBand === 'child' || p.ageBand === 'teen' ? p.ageBand : 'infant',
     settings: { ...DEFAULT_SETTINGS, ...(p.settings ?? {}) },
     favorites: Array.isArray(p.favorites) ? p.favorites : [],
     programs: Array.isArray(p.programs) ? p.programs.filter((x) => x && Array.isArray(x.lessonIds)) : [],
@@ -107,6 +108,7 @@ export function createProfile(nickname: string): Profile {
     id: uid(),
     nickname: nickname.trim() || 'Little one',
     createdAt: new Date().toISOString(),
+    ageBand: 'infant',
     settings: { ...DEFAULT_SETTINGS },
     favorites: [],
     programs: [],

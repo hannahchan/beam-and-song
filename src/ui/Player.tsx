@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { navigate } from '../lib/router';
 import { getLesson } from '../lessons/specs';
+import { bandNoun, resolveLesson } from '../lessons/bands';
 import { activeProfile, addSession, ensureProfile } from '../lib/store';
 import { buildParams } from '../engine/params';
 import { computeScene, restScene, type SimInput } from '../engine/scenes';
@@ -35,10 +36,11 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
     const ids = program ? program.lessonIds : [lessonId ?? ''];
     const specs = ids
       .map(getLesson)
-      .filter((l): l is LessonSpec => !!l && !(l.requiresPhoto && profile.photos.length === 0));
-    return specs.length ? specs : [getLesson('gentle-glow')!];
+      .filter((l): l is LessonSpec => !!l && !(l.requiresPhoto && profile.photos.length === 0))
+      .map((l) => resolveLesson(l, profile.ageBand)); // CR-9: band skin, same behavior
+    return specs.length ? specs : [resolveLesson(getLesson('gentle-glow')!, profile.ageBand)];
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [programId, lessonId]);
+  }, [programId, lessonId, profile.ageBand]);
 
   const [phase, setPhase] = useState<Phase>('running');
   const [soft, setSoft] = useState(false);
@@ -303,7 +305,9 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
     <div class={`player ${phase === 'paused' || phase === 'observe' ? 'dimmed' : ''}`}>
       <canvas ref={canvasRef} aria-label={`${current.title} lesson playing`} role="img" />
 
-      {settings.audioMode === 'after' && phase === 'running' && <AfterModeHint interactive={current.interactive} />}
+      {settings.audioMode === 'after' && phase === 'running' && (
+        <AfterModeHint interactive={current.interactive} noun={bandNoun(profile.ageBand)} />
+      )}
 
       {phase === 'running' && (
         <button class="player-corner" onClick={() => setPhase('paused')} aria-label="Grown-ups: pause, soften, or end the lesson">
@@ -347,11 +351,12 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
         </div>
       )}
       {phase === 'resting' && againCount >= 1 && (
-        <p class="player-hint">Short and sweet is best — looking is hard work for growing eyes.</p>
+        <p class="player-hint">Short and sweet is best — looking is genuinely hard work.</p>
       )}
 
       {phase === 'observe' && (
         <ObservationCard
+          noun={bandNoun(profile.ageBand)}
           onDone={(response, tags, note) => {
             const p = activeProfile();
             if (p) {
@@ -377,7 +382,7 @@ function isTapCue(cue: string): boolean {
   return cue === 'chime' || cue === 'note';
 }
 
-function AfterModeHint({ interactive }: { interactive: boolean }) {
+function AfterModeHint({ interactive, noun }: { interactive: boolean; noun: string }) {
   const [gone, setGone] = useState(false);
   useEffect(() => {
     const id = setTimeout(() => setGone(true), 7000);
@@ -387,15 +392,17 @@ function AfterModeHint({ interactive }: { interactive: boolean }) {
     <p class="player-hint" style={{ opacity: gone ? 0 : 1 }}>
       {interactive
         ? 'Sound plays after a touch — any touch or switch press counts.'
-        : 'Sound is set to follow a look: tap the screen when your baby looks, and the song will answer.'}
+        : `Sound is set to follow a look: tap the screen when ${noun} look${noun === 'they' ? '' : 's'}, and the music will answer.`}
     </p>
   );
 }
 
 /** PT-4 / PT-8 — one-tap session observation, entirely skippable. */
 function ObservationCard({
+  noun,
   onDone,
 }: {
+  noun: string;
   onDone: (response: ResponseLevel | null, tags: SessionTag[], note: string) => void;
 }) {
   const [tags, setTags] = useState<SessionTag[]>([]);
@@ -412,7 +419,7 @@ function ObservationCard({
         <p class="card-note">
           A ten-second note builds a picture over time. Quiet days are information too — never a verdict.
         </p>
-        <div class="chips" role="group" aria-label="Did your baby respond?">
+        <div class="chips" role="group" aria-label={`Did ${noun} respond?`}>
           {(
             [
               ['clear', 'Responded clearly'],

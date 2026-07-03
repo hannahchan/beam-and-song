@@ -1,6 +1,7 @@
 import { useState } from 'preact/hooks';
-import type { Profile } from '../../lib/types';
+import type { AgeBand, Profile } from '../../lib/types';
 import { getPreset, recommendFromSetup, type SetupAnswers } from '../../lib/presets';
+import { bandNoun } from '../../lessons/bands';
 import { updateProfile } from '../../lib/store';
 import { Card, RadioGroup } from './bits';
 
@@ -16,7 +17,10 @@ export function Setup({ profile }: { profile: Profile | null }) {
     strongerSide: 'unsure',
     looksYet: 'rarely',
   });
+  const [band, setBand] = useState<AgeBand>(profile?.ageBand ?? 'infant');
   const [done, setDone] = useState(false);
+  const noun = bandNoun(band);
+  const they = band === 'teen' ? 'they' : noun;
 
   if (!profile) {
     return (
@@ -70,6 +74,16 @@ export function Setup({ profile }: { profile: Profile | null }) {
 
       <Card>
         <RadioGroup
+          legend={`First: roughly how old is ${profile.nickname}?`}
+          value={band}
+          onChange={setBand}
+          options={[
+            { value: 'infant', label: 'A baby (up to ~18 months)' },
+            { value: 'child', label: 'A child (~2–9)' },
+            { value: 'teen', label: 'An older child or teen (~10+)', detail: 'Lessons re-present themselves with age-respecting themes and music.' },
+          ]}
+        />
+        <RadioGroup
           legend={`Is there a colour ${profile.nickname} seems drawn to?`}
           value={a.color}
           onChange={(color) => setA({ ...a, color })}
@@ -111,7 +125,7 @@ export function Setup({ profile }: { profile: Profile | null }) {
           ]}
         />
         <RadioGroup
-          legend="Right now, how often do they settle their eyes on something?"
+          legend={`Right now, how often ${they === 'they' ? 'do they' : `does ${noun}`} settle their eyes on something?`}
           value={a.looksYet}
           onChange={(looksYet) => setA({ ...a, looksYet })}
           options={[
@@ -133,6 +147,7 @@ export function Setup({ profile }: { profile: Profile | null }) {
           class="btn btn-primary"
           onClick={() => {
             updateProfile(profile.id, (p) => {
+              p.ageBand = band;
               p.settings = { ...p.settings, ...preset.settings, ...rec.overrides };
               p.presetId = preset.id;
               for (const f of preset.seedFavorites) {

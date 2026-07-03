@@ -124,7 +124,7 @@ export function recommendFromSetup(a: SetupAnswers): SetupRecommendation {
   if (a.soundEffect === 'pulls-away') {
     overrides.audioMode = 'after';
     notes.push(
-      'Because sound seems to pull attention away, songs are set to play after a look — you tap when your baby looks, and the music answers. You can change this in Settings.',
+      'Because sound seems to pull attention away, songs are set to play after a look — you tap when your child looks, and the music answers. You can change this in Settings.',
     );
   } else if (a.soundEffect === 'unsure') {
     overrides.volume = 0.4;

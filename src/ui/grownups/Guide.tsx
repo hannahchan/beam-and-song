@@ -37,7 +37,7 @@ export function Guide() {
           <li>A response that arrives seconds late — visual latency is part of CVI, so wait longer than feels natural</li>
           <li>Looking away and then back — or looking <em>away from</em> the screen while clearly attending to it</li>
         </ul>
-        <p class="card-note">Any of these counts as “responded” in your notes. Trust what you notice; you know your baby.</p>
+        <p class="card-note">Any of these counts as “responded” in your notes. Trust what you notice; you know your child best.</p>
       </Card>
 
       <Card title="When to pause or stop">
@@ -68,7 +68,7 @@ export function Guide() {
         <p>
           Many children with CVI cannot attend to looking and listening at the same time; a song can actually pull
           attention <em>off</em> the target. If looks are rare with sound on, try <b>visual-only</b>, or the{' '}
-          <b>after a look</b> mode — where you tap when your baby looks, and the music arrives as a warm answer.
+          <b>after a look</b> mode — where you tap when your child looks, and the music arrives as a warm answer.
           Other children need the sound to arrive <em>first</em> as the invitation. Watch, try, and keep what
           works.
         </p>
@@ -78,7 +78,7 @@ export function Guide() {
         <p>
           A glowing target helps many children find and hold it. For some, though, glow feeds a habit of gazing at
           light itself rather than looking at <em>things</em> — something vision teachers often work to reduce. If
-          your baby seems drawn into the glow rather than the shape, turn glow down or off in Settings and mention
+          your child seems drawn into the glow rather than the shape, turn glow down or off in Settings and mention
           it to your vision professional.
         </p>
       </Card>
@@ -98,7 +98,7 @@ export function Guide() {
         </ul>
         <p class="card-note">
           Moving “up” can simply mean: slightly smaller target, a touch more speed, one more thing on screen — one
-          change at a time. And no level is a grade: meeting your baby where they are <em>is</em> the practice.
+          change at a time. And no level is a grade: meeting your child where they are <em>is</em> the practice.
         </p>
       </Card>
 

@@ -151,6 +151,46 @@ export const MELODIES: Record<MelodyId, Melody> = {
     voice: 'soft',
     notes: [N(76, 2), N(0, 4), N(48, 2), N(0, 4)],
   },
+
+  /*
+   * CR-10 — ambient, dignified lines for older children and teens.
+   * Composed as note data (no licensing risk), same gentle tempo rules.
+   */
+
+  /** Slow warm minor arpeggio — embers. */
+  ember: {
+    id: 'ember',
+    bpm: 56,
+    restBeats: 3,
+    voice: 'warm',
+    notes: [
+      N(57, 2), N(0, 1), N(60, 2), N(0, 1), N(64, 2), N(0, 1), N(62, 2), N(0, 2),
+      N(57, 2), N(0, 1), N(64, 2), N(0, 1), N(67, 2), N(0, 1), N(64, 2), N(0, 2),
+    ],
+  },
+
+  /** Long, low tones — a night sky breathing. */
+  nightSky: {
+    id: 'nightSky',
+    bpm: 50,
+    restBeats: 4,
+    voice: 'soft',
+    notes: [
+      N(45, 4), N(0, 2), N(52, 4), N(0, 2), N(57, 4), N(0, 2), N(55, 4), N(0, 3),
+    ],
+  },
+
+  /** A glassy, tide-like four-note cycle. */
+  tideGlass: {
+    id: 'tideGlass',
+    bpm: 58,
+    restBeats: 3,
+    voice: 'musicbox',
+    notes: [
+      N(64, 1.5), N(67, 1.5), N(71, 2), N(0, 1.5),
+      N(62, 1.5), N(67, 1.5), N(69, 2), N(0, 2),
+    ],
+  },
 };
 
 /** Range checks used by tests: every pitched note stays in a gentle band. */

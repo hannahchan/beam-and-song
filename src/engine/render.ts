@@ -92,6 +92,9 @@ export function drawScene(
       case 'duck':
         drawDuck(ctx, it, x, y, r);
         break;
+      case 'boat':
+        drawBoat(ctx, it, x, y, r);
+        break;
       case 'balloon':
         drawBalloon(ctx, it, x, y, r);
         break;
@@ -202,6 +205,29 @@ function drawDuck(ctx: CanvasRenderingContext2D, it: SceneItem, x: number, y: nu
   ctx.fillStyle = mixHex(c, '#000000', 0.55);
   ctx.beginPath();
   ctx.arc(r * 0.72, -r * 0.6, r * 0.07, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+/** Teen-band vessel for the glide lessons: simple hull and one soft sail. */
+function drawBoat(ctx: CanvasRenderingContext2D, it: SceneItem, x: number, y: number, r: number): void {
+  ctx.translate(x, y);
+  ctx.rotate((it.rot ?? 0) * 0.4);
+  // Sail
+  ctx.fillStyle = it.color;
+  ctx.beginPath();
+  ctx.moveTo(r * 0.05, -r * 0.15);
+  ctx.quadraticCurveTo(r * 0.1, -r * 1.3, r * 0.02, -r * 1.35);
+  ctx.quadraticCurveTo(r * 0.75, -r * 0.55, r * 0.85, -r * 0.18);
+  ctx.closePath();
+  ctx.fill();
+  // Hull — slightly darker, same hue family (low internal contrast)
+  ctx.fillStyle = mixHex(it.color, '#000000', 0.28);
+  ctx.beginPath();
+  ctx.moveTo(-r * 1.0, -r * 0.05);
+  ctx.lineTo(r * 1.0, -r * 0.05);
+  ctx.quadraticCurveTo(r * 0.75, r * 0.5, 0, r * 0.52);
+  ctx.quadraticCurveTo(-r * 0.75, r * 0.5, -r * 1.0, -r * 0.05);
+  ctx.closePath();
   ctx.fill();
 }
 

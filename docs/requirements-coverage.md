@@ -40,12 +40,12 @@ Legend: ✅ done · 🟡 partial · ⏭ deferred (with reason) · ∅ n/a at inf
 | CR-3 | ✅ | Photo targets: client-side downscale → data URL in the profile; on-device only; drives the photo lesson. Custom **audio** deferred. |
 | CR-4 | ✅ | Bridge prompts on ball/duck/photo/touch lessons, surfaced in the library cards. |
 | CR-5 | ✅ | Two listening-first lessons + "Listening first" preset. |
-| CR-6 | 🟡 | Infant band only in v1 — the headline scope cut. Tone throughout is warm without being cutesy. |
+| CR-6 | ✅ | Three bands (infant / child / teen) selectable per profile and in guided setup. |
 | CR-7 | ✅ | Readiness cues per lesson ("watch for") + move-up/step-back guidance in the Guide. |
 | CR-8 | ⏭ | Higher challenge ceiling comes with L3/L4. |
-| CR-9 | 🟡 | Phase×age decoupling is honored structurally (lessons are specs; colour/theme/audio are parameters), but only one age band ships. |
-| CR-10 | 🟡 | Infant rendering only. |
-| CR-11 | 🟡 | Breadth within the infant row: 14 lessons across 3 groups. |
+| CR-9 | ✅ | Band re-skins theme/music/copy only — behavior, level, interactivity provably unchanged (tested). A teen at Level 1 gets "Ember", not a duck. |
+| CR-10 | ✅ | Full teen re-skin (ambient melodies composed as note data; boat/ember/orbit themes); child band = warm content with adjusted wording; a build-breaking test bans babyish language/imagery/nursery tunes from teen output. |
+| CR-11 | 🟡 | Teen row covers Levels 1–2 + listening (14 re-skinned lessons); breadth grows with L3/L4. |
 
 ## §5 Personalization
 

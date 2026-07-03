@@ -1,6 +1,7 @@
 import { navigate } from '../lib/router';
 import { ensureProfile } from '../lib/store';
 import { DEFAULT_LESSON_IDS, getLesson } from '../lessons/specs';
+import { resolveLesson } from '../lessons/bands';
 import { TARGET_COLORS } from '../safety/constants';
 import type { LessonSpec } from '../lib/types';
 
@@ -21,6 +22,7 @@ export function Chooser() {
   const lessons = ids
     .map(getLesson)
     .filter((l): l is LessonSpec => !!l && !(l.requiresPhoto && profile.photos.length === 0))
+    .map((l) => resolveLesson(l, profile.ageBand))
     .slice(0, Math.max(2, 6 - programs.length));
   const color = TARGET_COLORS[profile.settings.targetColor] ?? TARGET_COLORS.red;
 
@@ -118,6 +120,13 @@ function TileGlyph({ lesson, color }: { lesson: LessonSpec; color: string }) {
         <svg viewBox="0 0 100 100" aria-hidden="true">
           <rect x="18" y="24" width="64" height="52" rx="10" fill="none" stroke={soft} stroke-width="6" />
           <circle cx="50" cy="50" r="14" fill={color} />
+        </svg>
+      );
+    case 'boat':
+      return (
+        <svg viewBox="0 0 100 100" aria-hidden="true">
+          <path d="M50 14 Q54 42 76 52 L50 52 Z" fill={color} />
+          <path d="M20 58 L80 58 Q72 76 50 76 Q28 76 20 58 Z" fill={color} opacity="0.75" />
         </svg>
       );
     default:

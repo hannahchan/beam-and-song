@@ -37,7 +37,7 @@ describe('profiles persist locally (TR-2, PT-1, PT-2)', () => {
   it('nickname only — no other identifying fields exist on a fresh profile (PV-1)', () => {
     const p = store.createProfile('Bean');
     expect(Object.keys(p).sort()).toEqual(
-      ['audio', 'createdAt', 'favorites', 'id', 'lastReviewAt', 'nickname', 'photos', 'programs', 'sessions', 'settings'].sort(),
+      ['ageBand', 'audio', 'createdAt', 'favorites', 'id', 'lastReviewAt', 'nickname', 'photos', 'programs', 'sessions', 'settings'].sort(),
     );
   });
 

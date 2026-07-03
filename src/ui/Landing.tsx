@@ -24,10 +24,10 @@ export function Landing() {
   return (
     <main class="child-screen">
       <p class="landing-title">beam and song</p>
-      <button class="start-orb" onClick={start} aria-label="Start — gentle lessons for your baby">
+      <button class="start-orb" onClick={start} aria-label="Start — gentle lessons">
         Start
       </button>
-      <p class="landing-footnote">A companion to your child's vision team — gentle light and song, tuned to your baby.</p>
+      <p class="landing-footnote">A companion to your child's vision team — gentle light and song, tuned to your child.</p>
       <a class="btn btn-quiet landing-grownups" href="#/grown-ups">
         For grown-ups
       </a>

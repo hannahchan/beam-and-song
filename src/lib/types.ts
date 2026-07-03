@@ -92,6 +92,13 @@ export interface SessionRecord {
   note?: string;
 }
 
+/**
+ * CR-9 / PR-14 — developmental age band, independent of visual phase.
+ * It changes how lessons look, sound, and speak — never how simple they
+ * are allowed to be.
+ */
+export type AgeBand = 'infant' | 'child' | 'teen';
+
 /** PT-9 — a named, ordered sequence of lessons composed by a parent or TVI. */
 export interface Program {
   id: string;
@@ -104,6 +111,8 @@ export interface Profile {
   /** PV-1 — a nickname is enough; we never ask for legal names or birthdays. */
   nickname: string;
   createdAt: string;
+  /** CR-9/CR-10 — drives themes, music, and tone; changeable any time. */
+  ageBand: AgeBand;
   settings: ChildSettings;
   favorites: string[]; // lesson ids, in order
   programs: Program[];
@@ -146,6 +155,7 @@ export type ShapeKind =
   | 'star'
   | 'ball'
   | 'duck'
+  | 'boat'
   | 'balloon'
   | 'drop'
   | 'photo'
@@ -162,7 +172,21 @@ export type MelodyId =
   | 'chime'
   | 'plinks'
   | 'musicBox'
-  | 'duet';
+  | 'duet'
+  | 'ember'
+  | 'nightSky'
+  | 'tideGlass';
+
+/** CR-10 — how a lesson re-presents itself for an older band. */
+export interface BandVariant {
+  title?: string;
+  theme?: string;
+  shape?: ShapeKind;
+  melody?: MelodyId;
+  goal?: string;
+  watchFor?: string;
+  bridge?: string;
+}
 
 export interface LessonSpec {
   id: string;

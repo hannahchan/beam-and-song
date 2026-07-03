@@ -34,6 +34,28 @@ export function Settings({ profile }: { profile: Profile | null }) {
         thing at a time, and let your vision professional guide the bigger choices.
       </p>
 
+      <Card title="Age">
+        <RadioGroup
+          legend={`How should lessons speak to ${profile.nickname}?`}
+          value={profile.ageBand}
+          onChange={(ageBand) => updateProfile(profile.id, (p) => (p.ageBand = ageBand))}
+          options={[
+            { value: 'infant', label: 'A baby', detail: 'Up to around 18 months — lullabies, stars, ducks.' },
+            { value: 'child', label: 'A child', detail: 'Roughly 2–9 — the same warm lessons, wording adjusted.' },
+            {
+              value: 'teen',
+              label: 'An older child or teen',
+              detail: 'Roughly 10 and up — embers, orbits, and ambient music instead of nursery content.',
+            },
+          ]}
+        />
+        <p class="hint">
+          Age changes how lessons look, sound, and speak — never how simple they are allowed to be. Someone
+          older working on the earliest looking skills gets the same calm, high-salience targets, presented with
+          respect (no cartoon ducks, no nursery rhymes).
+        </p>
+      </Card>
+
       <Card title="Start from a preset">
         <div class="row">
           {PRESETS.map((p) => (
@@ -198,7 +220,7 @@ export function Settings({ profile }: { profile: Profile | null }) {
               value: 'after',
               label: 'After a look',
               detail:
-                'Screen stays quiet; you tap when your baby looks and the song answers. For children whom sound pulls away from looking.',
+                'Screen stays quiet; you tap when they look and the song answers. For children whom sound pulls away from looking.',
             },
             { value: 'off', label: 'No sound', detail: 'Visual-only, for pure looking practice.' },
           ]}
