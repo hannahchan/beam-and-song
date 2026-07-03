@@ -39,7 +39,7 @@ Legend: ✅ done · 🟡 partial · ⏭ deferred (with reason) · ∅ n/a at inf
 | CR-2 | ✅ | No binary assets at all — visuals procedural, audio synthesized; ~35 KB gzipped app. |
 | CR-3 | ✅ | Photos: client-side downscale + luminance measurement, on-device, drive four lessons. Audio: the family's own songs/recordings (IndexedDB blobs, client-side normalization, duration caps) can replace the built-in melodies, including after-a-look snippets. Neither ever leaves the device. |
 | CR-4 | ✅ | Bridge prompts on ball/duck/photo/touch lessons, surfaced in the library cards. |
-| CR-5 | ✅ | Two listening-first lessons + "Listening first" preset. |
+| CR-5 | ✅ | Five listening-first lessons (localization game with parent-marked turns, texture and loudness discrimination, traveling song, bell/drum) + "Listening first" preset. |
 | CR-6 | ✅ | Three bands (infant / child / teen) selectable per profile and in guided setup. |
 | CR-7 | ✅ | Readiness cues per lesson ("watch for") + move-up/step-back guidance in the Guide. |
 | CR-8 | ✅ | Challenge scales through clutter count (complexity setting), drifting distractors, target size (near/far), movement-among-movers, and faces — all inside unchanged Section 8 limits; find/search rewards are cooldown-bound and switch-operable (a switch press always counts as a hit). |

@@ -11,6 +11,18 @@ export interface PhotoCache {
   get(dataUrl: string): HTMLCanvasElement | null;
 }
 
+/**
+ * Fit a canvas backing store to its CSS size. One definition so the Settings
+ * preview renders at exactly the player's resolution — the dpr cap of 2 keeps
+ * low-end tablets fluid and is part of the "preview is what plays" guarantee.
+ */
+export function fitCanvasToDisplay(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D): void {
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  canvas.width = Math.round(canvas.clientWidth * dpr);
+  canvas.height = Math.round(canvas.clientHeight * dpr);
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+}
+
 /** Feathers a photo into a soft-edged ellipse so it never has hard borders. */
 export function createPhotoCache(): PhotoCache {
   const cache = new Map<string, HTMLCanvasElement | null>();

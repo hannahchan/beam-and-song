@@ -1,4 +1,4 @@
-import type { LessonSpec } from '../lib/types';
+import { BEHAVIOR_IDS, type LessonSpec } from '../lib/types';
 import { MELODIES } from '../engine/melodies';
 import { SAFETY } from './constants';
 
@@ -8,30 +8,7 @@ import { SAFETY } from './constants';
  * mistakes at build/test time with readable errors.
  */
 
-const BEHAVIORS = new Set([
-  'pulse',
-  'twinkle',
-  'driftAcross',
-  'causeEffect',
-  'appearSpots',
-  'fallDrop',
-  'pathArc',
-  'inviteTwo',
-  'rollBounce',
-  'glideAcross',
-  'riseFloat',
-  'photoDrift',
-  'audioPan',
-  'audioAlternate',
-  'findAmong',
-  'searchClutter',
-  'nearFar',
-  'amongMoving',
-  'facesFamiliar',
-  'soundSeek',
-  'rhythmMelody',
-  'loudSoft',
-]);
+const BEHAVIORS = new Set<string>(BEHAVIOR_IDS);
 
 /**
  * SR-7 — language that must never appear in anything family-facing:

@@ -91,6 +91,28 @@ describe('every lesson stays inside the hard safety limits (SR-1, SR-3, SR-5, SR
   }
 });
 
+describe('reward blooms are constitutionally incapable of red bursts (SR-5/SR-6)', () => {
+  it('no bloom item is ever saturated red, across every interactive lesson under tap spam', async () => {
+    const { isSaturatedRed } = await import('../src/safety/luminance');
+    const { computeScene } = await import('../src/engine/scenes');
+    const settings: ChildSettings = { ...EXTREME_BASE, targetColor: 'red' };
+    const params = buildParams(settings);
+    for (const lesson of LESSONS.filter((l) => l.interactive)) {
+      const taps: Array<{ t: number; x: number; y: number }> = [];
+      for (let t = 250; t < 20_000; t += 500) taps.push({ t, x: -1, y: -1 });
+      const sim: SimInput = { seed: 9, taps, photos: [{ dataUrl: 'x' }] };
+      for (let i = 0; i < 20 * FPS; i += 3) {
+        const scene = computeScene(lesson, params, (i * 1000) / FPS, sim, ((i - 3) * 1000) / FPS);
+        for (const item of scene.items) {
+          if (item.shape === 'bloom') {
+            expect(isSaturatedRed(item.color), `${lesson.id} bloom ${item.color}`).toBe(false);
+          }
+        }
+      }
+    }
+  });
+});
+
 describe('the analyzer itself catches hazards (so the green suite means something)', () => {
   it('flags a 5 Hz flicker', () => {
     const lum: number[] = [];

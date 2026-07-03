@@ -11,7 +11,7 @@ no servers, no data leaving the device.
 
 ## What's inside
 
-- **20 lessons across Levels 1–4** plus listening lessons, all rendered procedurally on canvas and scored
+- **23 lessons across Levels 1–4** plus listening lessons, all rendered procedurally on canvas and scored
   by a Web Audio synthesizer (note data only — zero binary assets, ~48 KB gzipped total):
   - **Level 1 · Noticing** — one target on black: glow, star, drifting light, tap-anywhere
     cause-and-effect, firefly, raindrop.

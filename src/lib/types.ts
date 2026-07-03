@@ -142,29 +142,33 @@ export interface AppState {
 
 /* ---------------------------------- Lessons ---------------------------------- */
 
-export type Behavior =
-  | 'pulse'
-  | 'twinkle'
-  | 'driftAcross'
-  | 'causeEffect'
-  | 'appearSpots'
-  | 'fallDrop'
-  | 'pathArc'
-  | 'inviteTwo'
-  | 'rollBounce'
-  | 'glideAcross'
-  | 'riseFloat'
-  | 'photoDrift'
-  | 'audioPan'
-  | 'audioAlternate'
-  | 'findAmong'
-  | 'searchClutter'
-  | 'nearFar'
-  | 'amongMoving'
-  | 'facesFamiliar'
-  | 'soundSeek'
-  | 'rhythmMelody'
-  | 'loudSoft';
+/** Single source of truth — the Behavior type and the validator both derive from this. */
+export const BEHAVIOR_IDS = [
+  'pulse',
+  'twinkle',
+  'driftAcross',
+  'causeEffect',
+  'appearSpots',
+  'fallDrop',
+  'pathArc',
+  'inviteTwo',
+  'rollBounce',
+  'glideAcross',
+  'riseFloat',
+  'photoDrift',
+  'audioPan',
+  'audioAlternate',
+  'findAmong',
+  'searchClutter',
+  'nearFar',
+  'amongMoving',
+  'facesFamiliar',
+  'soundSeek',
+  'rhythmMelody',
+  'loudSoft',
+] as const;
+
+export type Behavior = (typeof BEHAVIOR_IDS)[number];
 
 export type ShapeKind =
   | 'orb'

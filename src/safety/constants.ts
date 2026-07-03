@@ -44,6 +44,12 @@ export const SAFETY = {
    */
   RED_AREA_DELTA: 0.2,
 
+  /**
+   * SR-5/SR-6 — reward blooms are always pulled at least this far toward
+   * white, so no call site can ever produce a saturated-red burst.
+   */
+  MIN_BLOOM_WHITENESS: 0.5,
+
   /** Music stays slow and gentle (FR-7). */
   MAX_TEMPO_BPM: 84,
 

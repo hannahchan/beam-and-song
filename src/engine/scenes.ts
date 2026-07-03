@@ -15,6 +15,7 @@ import {
   smooth,
 } from './kernel';
 import { mixHex } from '../safety/luminance';
+import { SAFETY } from '../safety/constants';
 
 /**
  * Pure scene computation: (lesson, params, time, inputs) -> what is on screen.
@@ -145,6 +146,52 @@ function entry(tMs: number, p: EngineParams): number {
   return smooth(tMs / Math.max(p.fadeMs, 1));
 }
 
+/**
+ * The one shape a reward is allowed to take (SR-5/SR-6): a soft, non-glowing
+ * halo pulled toward white. The pull is floored at SAFETY.MIN_BLOOM_WHITENESS
+ * so no call site can ever produce a saturated-red burst, and alpha is scaled
+ * by the scene's peak intensity so "softer" mode and low brightness dim
+ * rewards along with everything else (FR-12). BLOOM_MIN_ALPHA is the single
+ * "too faint to draw" cutoff — call sites must not add their own thresholds.
+ */
+const BLOOM_MIN_ALPHA = 0.003;
+function pushBloom(scene: Scene, p: EngineParams, x: number, y: number, r: number, alpha: number, whiteness = 0.65): void {
+  const a = clamp01(alpha * p.peakAlpha);
+  if (a <= BLOOM_MIN_ALPHA) return;
+  scene.items.push({
+    shape: 'bloom',
+    x,
+    y,
+    r,
+    color: mixHex(p.color, '#f7f3ea', Math.max(whiteness, SAFETY.MIN_BLOOM_WHITENESS)),
+    alpha: a,
+    glow: 0,
+  });
+}
+
+/**
+ * Reward pacing shared by every tap-answer moment: warm in over 700 ms, hold,
+ * settle over 1200 ms. One definition so no lesson can drift to its own rate.
+ * Emits the chime cue for each tap and returns the current answer strength.
+ */
+function answerLevel(tapTimes: readonly number[], tMs: number, cue: (name: string, atMs: number) => void): number {
+  let answer = 0;
+  for (const tap of tapTimes) {
+    cue('chime', tap);
+    const dt = tMs - tap;
+    if (dt >= 0) answer = Math.max(answer, fadeEnvelope(dt, 0, 700, 400, 1200));
+  }
+  return answer;
+}
+
+/**
+ * AR-8 — the shared hit rule for find/search lessons: a switch press (x < 0)
+ * always counts as a hit; pointer taps get a generous radius (AR-1).
+ */
+function tapHitsTarget(ev: TapEvent, target: { x: number; y: number }, p: EngineParams, minRadius: number): boolean {
+  return ev.x < 0 || Math.hypot(ev.x - target.x, ev.y - target.y) <= Math.max(2.2 * p.radius, minRadius);
+}
+
 function breathe(p: EngineParams, tMs: number, phase = 0): number {
   return 1 + safeMod(tMs / 1000, p.modHz, p.modDepth, phase);
 }
@@ -220,18 +267,8 @@ function causeEffect(
     radius = p.radius * (1 + 0.1 * lift);
     // Soft bloom halo, desaturated toward white (never a saturated-red burst, SR-5/SR-6).
     const bloomEnv = fadeEnvelope(dt - 500, 0, 800, 300, 1300) * gate;
-    if (bloomEnv > 0.01) {
-      const spread = smooth(clamp01((dt - 500) / envelopeLength(800, 300, 1300)));
-      scene.items.push({
-        shape: 'bloom',
-        x: pos.x,
-        y: pos.y,
-        r: p.radius * (1.05 + 0.4 * spread),
-        color: mixHex(p.color, '#f7f3ea', 0.65),
-        alpha: 0.25 * bloomEnv,
-        glow: 0,
-      });
-    }
+    const spread = smooth(clamp01((dt - 500) / envelopeLength(800, 300, 1300)));
+    pushBloom(scene, p, pos.x, pos.y, p.radius * (1.05 + 0.4 * spread), 0.25 * bloomEnv);
   }
 
   scene.items.push(orb(p, { x: pos.x, y: pos.y, alpha: clamp01(alpha), r: radius }));
@@ -288,18 +325,8 @@ function fallDrop(
   const sinceLand = local - (p.fadeMs + fallMs);
   if (sinceLand > 0) {
     const rippleEnv = fadeEnvelope(sinceLand, 0, 500, 100, 900);
-    if (rippleEnv > 0.01) {
-      const spread = smooth(clamp01(sinceLand / 1500));
-      scene.items.push({
-        shape: 'bloom',
-        x,
-        y: 0.76,
-        r: p.radius * (0.5 + 1.1 * spread),
-        color: mixHex(p.color, '#f7f3ea', 0.5),
-        alpha: 0.3 * rippleEnv,
-        glow: 0,
-      });
-    }
+    const spread = smooth(clamp01(sinceLand / 1500));
+    pushBloom(scene, p, x, 0.76, p.radius * (0.5 + 1.1 * spread), 0.3 * rippleEnv, 0.5);
   }
   scene.pan = (x - 0.5) * 1.6;
 }
@@ -347,12 +374,7 @@ function inviteTwo(
   const inviteEnv = fadeEnvelope(local - p.holdMs, 0, p.fadeMs, p.holdMs * 1.1, p.fadeMs);
 
   // Tap during an invite makes the bright one answer with a bloom.
-  let answer = 0;
-  for (const tap of taps) {
-    const dt = tMs - tap;
-    if (dt >= 0) answer = Math.max(answer, fadeEnvelope(dt, 0, 700, 400, 1200));
-    cue('chime', tap);
-  }
+  const answer = answerLevel(taps, tMs, cue);
 
   const base = p.peakAlpha * 0.3;
   const lit = p.peakAlpha * (0.3 + 0.62 * inviteEnv);
@@ -363,16 +385,8 @@ function inviteTwo(
     scene.items.push(orb(p, { x: positions[i].x, y: positions[i].y, r: p.radius * 0.85, alpha: clamp01(alpha) }));
     // A touch can only bloom a firefly that is actually inviting — so the
     // reward never stacks onto the lesson's own entry or rest transitions.
-    if (isInviter && answer > 0.01 && inviteEnv > 0.01) {
-      scene.items.push({
-        shape: 'bloom',
-        x: positions[i].x,
-        y: positions[i].y,
-        r: p.radius * (1.0 + 0.5 * answer),
-        color: mixHex(p.color, '#f7f3ea', 0.65),
-        alpha: 0.3 * answer * inviteEnv,
-        glow: 0,
-      });
+    if (isInviter) {
+      pushBloom(scene, p, positions[i].x, positions[i].y, p.radius * (1.0 + 0.5 * answer), 0.3 * answer * inviteEnv);
     }
   }
   scene.pan = ((positions[inviter].x - 0.5) * 1.6) * inviteEnv;
@@ -751,22 +765,16 @@ function findAmong(
     distractors.push(pt);
   }
 
-  // Taps during this arrangement's visible window.
-  let answer = 0;
+  // Taps during this arrangement's visible window: hits answer, misses only
+  // draw a gentle guiding lift on the target — never anything negative.
+  const hits: number[] = [];
   let guide = 0;
   for (const ev of taps) {
     if (ev.t < idx * cycleMs || ev.t > idx * cycleMs + cycleMs) continue;
-    const dt = tMs - ev.t;
-    if (dt < 0) continue;
-    const hitRadius = Math.max(2.2 * p.radius, 0.16);
-    const hit = ev.x < 0 || Math.hypot(ev.x - target.x, ev.y - target.y) <= hitRadius;
-    if (hit) {
-      cue('chime', ev.t);
-      answer = Math.max(answer, fadeEnvelope(dt, 0, 700, 400, 1200));
-    } else {
-      guide = Math.max(guide, fadeEnvelope(dt, 0, 600, 300, 900));
-    }
+    if (tapHitsTarget(ev, target, p, 0.16)) hits.push(ev.t);
+    else guide = Math.max(guide, fadeEnvelope(tMs - ev.t, 0, 600, 300, 900));
   }
+  const answer = answerLevel(hits, tMs, cue);
 
   const drift = (i: number, ax: number) =>
     opts.drifting ? 0.3 * safeMod(tMs / 1000, p.modHz * (0.4 + 0.08 * i), p.modDepth, i * 1.9 + ax) : 0;
@@ -801,17 +809,7 @@ function findAmong(
   } else {
     scene.items.push({ ...orb(p, { x: target.x, y: target.y }), shape: 'star', alpha: targetAlpha, r: p.radius * 0.9 });
   }
-  if (answer > 0.01) {
-    scene.items.push({
-      shape: 'bloom',
-      x: target.x,
-      y: target.y,
-      r: p.radius * (1.1 + 0.5 * answer),
-      color: mixHex(p.color, '#f7f3ea', 0.65),
-      alpha: 0.3 * answer * env,
-      glow: 0,
-    });
-  }
+  pushBloom(scene, p, target.x, target.y, p.radius * (1.1 + 0.5 * answer), 0.3 * answer * env);
   scene.pan = (target.x - 0.5) * 1.6;
 }
 
@@ -868,16 +866,11 @@ function amongMoving(
     );
   }
 
-  let answer = 0;
-  for (const ev of taps) {
-    const dt = tMs - ev.t;
-    if (dt < 0) continue;
-    const hit = ev.x < 0 || Math.hypot(ev.x - target.x, ev.y - target.y) <= Math.max(2.2 * p.radius, 0.18);
-    if (hit) {
-      cue('chime', ev.t);
-      answer = Math.max(answer, fadeEnvelope(dt, 0, 700, 400, 1200));
-    }
-  }
+  const answer = answerLevel(
+    taps.filter((ev) => tapHitsTarget(ev, target, p, 0.18)).map((ev) => ev.t),
+    tMs,
+    cue,
+  );
 
   scene.items.push({
     ...orb(p, { x: target.x, y: target.y }),
@@ -886,17 +879,7 @@ function amongMoving(
     alpha: clamp01(p.peakAlpha * 0.94 * breathe(p, tMs) * entry(tMs, p)),
     rot: 0.1 * Math.sin(th),
   });
-  if (answer > 0.01) {
-    scene.items.push({
-      shape: 'bloom',
-      x: target.x,
-      y: target.y,
-      r: p.radius * (1.0 + 0.5 * answer),
-      color: mixHex(p.color, '#f7f3ea', 0.65),
-      alpha: 0.3 * answer,
-      glow: 0,
-    });
-  }
+  pushBloom(scene, p, target.x, target.y, p.radius * (1.0 + 0.5 * answer), 0.3 * answer);
   scene.pan = clamp((target.x - 0.5) * 1.8, -0.85, 0.85);
 }
 

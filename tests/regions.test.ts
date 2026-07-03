@@ -80,13 +80,7 @@ describe('field-pattern observation (PT-13 / SR-7)', () => {
   });
 
   it('reports even spread without inventing a pattern', () => {
-    const even: SessionRecord[] = [];
-    for (let i = 0; i < 12; i++) {
-      const t = emptyTally();
-      for (const q of ['ul', 'ur', 'll', 'lr'] as Quadrant[]) t[q] = { s: 30, r: 2 };
-      even.push(session((i / 11) * 21, t));
-    }
-    const insight = regionInsight(makeProfile(even));
+    const insight = regionInsight(makeProfile(evenSessions()));
     expect(insight!.lines[0]).toMatch(/spread fairly evenly/);
     expect(insight!.suggestion).toBeNull();
   });

@@ -122,6 +122,24 @@ describe('reward cooldown (SR-6)', () => {
   });
 });
 
+describe('reward intensity follows the scene (FR-12 softer mode)', () => {
+  it('lower peak intensity dims blooms along with everything else', () => {
+    const settings = { ...DEFAULT_SETTINGS, brightness: 3 as const, pace: 5 as const };
+    const bright = buildParams(settings);
+    const soft = { ...bright, peakAlpha: bright.peakAlpha * 0.55 };
+    const tapAt = bright.fadeMs + 200; // after entry, so the response is undamped
+    const sampleAt = tapAt + 900; // mid-bloom
+    const sim: SimInput = { seed: 2, taps: [{ t: tapAt, x: -1, y: -1 }] };
+    const bloomOf = (p: typeof bright) =>
+      computeScene(spec('magic-touch'), p, sampleAt, sim).items.find((i) => i.shape === 'bloom');
+    const a = bloomOf(bright);
+    const b = bloomOf(soft);
+    expect(a).toBeDefined();
+    expect(b).toBeDefined();
+    expect(b!.alpha).toBeLessThan(a!.alpha * 0.7);
+  });
+});
+
 describe('movement setting (PR-2)', () => {
   it('movement off keeps the drifting light perfectly still', () => {
     const params = buildParams({ ...DEFAULT_SETTINGS, movement: false });

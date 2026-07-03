@@ -1,4 +1,4 @@
-import type { LessonSpec } from '../lib/types';
+import type { Behavior, LessonSpec } from '../lib/types';
 
 /**
  * The infant lesson library (v1 scope: birth to ~18 months).
@@ -330,7 +330,7 @@ export function getLesson(id: string): LessonSpec | undefined {
  * must not run a looping melody underneath them (it would bury the very
  * contrast or localization the lesson exists for).
  */
-export const CUE_DRIVEN_BEHAVIORS: ReadonlySet<string> = new Set([
+export const CUE_DRIVEN_BEHAVIORS: ReadonlySet<Behavior> = new Set<Behavior>([
   'audioAlternate',
   'soundSeek',
   'rhythmMelody',

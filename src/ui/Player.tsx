@@ -5,11 +5,12 @@ import { bandNoun, resolveLesson } from '../lessons/bands';
 import { activeProfile, addSession, ensureProfile } from '../lib/store';
 import { buildParams } from '../engine/params';
 import { computeScene, primarySceneItem, restScene, type SimInput } from '../engine/scenes';
-import { createPhotoCache, drawScene } from '../engine/render';
+import { createPhotoCache, drawScene, fitCanvasToDisplay } from '../engine/render';
 import { audio } from '../engine/audio';
 import { buzz } from '../engine/haptics';
-import { effectiveTaps } from '../engine/kernel';
-import { SESSION_TAGS, type LessonSpec, type ResponseLevel, type SessionTag, type TapEvent } from '../lib/types';
+import { effectiveTapEvents } from '../engine/kernel';
+import type { LessonSpec, TapEvent } from '../lib/types';
+import { AfterModeHint, ObservationCard } from './SessionOverlays';
 import { emptyTally, quadrantOf, type RegionTally } from '../lib/regions';
 import { enabledPhotos } from '../lib/photos';
 import { CHOICE_BEHAVIORS, LessonScanController, LESSON_SCAN } from './lessonScan';
@@ -99,12 +100,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
     let windingDown = false;
     startedAtRef.current = Date.now();
 
-    const resize = () => {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = Math.round(canvas.clientWidth * dpr);
-      canvas.height = Math.round(canvas.clientHeight * dpr);
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    };
+    const resize = () => fitCanvasToDisplay(canvas, ctx);
     resize();
     window.addEventListener('resize', resize);
 
@@ -278,10 +274,11 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
       }
       const t = lessonT;
       if (spec.interactive) {
-        const before = effectiveTaps(tapsRef.current.map((ev) => ev.t)).length;
+        // Same cooldown source of truth as the scene (kernel.effectiveTapEvents):
+        // record the tap, react only if it survives the safety cooldown.
         tapsRef.current.push({ t, x, y });
-        const after = effectiveTaps(tapsRef.current.map((ev) => ev.t)).length;
-        if (after === before) return; // inside cooldown — scene & sound ignore it too
+        const eff = effectiveTapEvents(tapsRef.current);
+        if (eff[eff.length - 1]?.t !== t) return;
       } else if (settings.audioMode === 'after') {
         // FR-6b — the grown-up taps when the baby looks; the song answers.
         melody ??= customMeta
@@ -465,79 +462,4 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
 
 function isTapCue(cue: string): boolean {
   return cue === 'chime' || cue === 'note';
-}
-
-function AfterModeHint({ interactive, noun }: { interactive: boolean; noun: string }) {
-  const [gone, setGone] = useState(false);
-  useEffect(() => {
-    const id = setTimeout(() => setGone(true), 7000);
-    return () => clearTimeout(id);
-  }, []);
-  return (
-    <p class="player-hint" style={{ opacity: gone ? 0 : 1 }}>
-      {interactive
-        ? 'Sound plays after a touch — any touch or switch press counts.'
-        : `Sound is set to follow a look: tap the screen when ${noun} look${noun === 'they' ? '' : 's'}, and the music will answer.`}
-    </p>
-  );
-}
-
-/** PT-4 / PT-8 — one-tap session observation, entirely skippable. */
-function ObservationCard({
-  noun,
-  onDone,
-}: {
-  noun: string;
-  onDone: (response: ResponseLevel | null, tags: SessionTag[], note: string) => void;
-}) {
-  const [tags, setTags] = useState<SessionTag[]>([]);
-  const [note, setNote] = useState('');
-  const [response, setResponse] = useState<ResponseLevel | null>(null);
-
-  const toggleTag = (t: SessionTag) =>
-    setTags((prev) => (prev.includes(t) ? prev.filter((x) => x !== t) : [...prev, t]));
-
-  return (
-    <div class="overlay" role="dialog" aria-modal="true" aria-label="How did it go?">
-      <div class="overlay-card">
-        <h2>How did it go?</h2>
-        <p class="card-note">
-          A ten-second note builds a picture over time. Quiet days are information too — never a verdict.
-        </p>
-        <div class="chips" role="group" aria-label={`Did ${noun} respond?`}>
-          {(
-            [
-              ['clear', 'Responded clearly'],
-              ['some', 'A little'],
-              ['none', 'Not this time'],
-              ['unsure', 'Hard to say'],
-            ] as const
-          ).map(([val, label]) => (
-            <button key={val} class="chip" aria-pressed={response === val} onClick={() => setResponse(val)}>
-              {label}
-            </button>
-          ))}
-        </div>
-        <div class="chips" role="group" aria-label="Anything about today? Optional.">
-          {SESSION_TAGS.map((t) => (
-            <button key={t} class="chip" aria-pressed={tags.includes(t)} onClick={() => toggleTag(t)}>
-              {t}
-            </button>
-          ))}
-        </div>
-        <label class="field">
-          <span class="field-label">A note, if you like</span>
-          <textarea value={note} onInput={(e) => setNote((e.target as HTMLTextAreaElement).value)} rows={2} />
-        </label>
-        <div class="overlay-actions-row">
-          <button class="btn" onClick={() => onDone(null, [], '')}>
-            Skip
-          </button>
-          <button class="btn btn-primary" onClick={() => onDone(response, tags, note)}>
-            Save &amp; finish
-          </button>
-        </div>
-      </div>
-    </div>
-  );
 }

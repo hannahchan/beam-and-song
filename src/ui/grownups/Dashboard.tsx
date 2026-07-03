@@ -1,5 +1,5 @@
 import type { Profile } from '../../lib/types';
-import { backupIsDue, createProfile, exportAll, getState, reviewIsDue, updateProfile } from '../../lib/store';
+import { backupIsDue, createProfile, exportAll, getState, reviewIsDue } from '../../lib/store';
 import { getLesson, DEFAULT_LESSON_IDS } from '../../lessons/specs';
 import { summarize } from '../../lib/summary';
 import { getPreset } from '../../lib/presets';
@@ -159,5 +159,3 @@ function Welcome() {
   );
 }
 
-// Re-exported for convenience in tests.
-export { updateProfile };

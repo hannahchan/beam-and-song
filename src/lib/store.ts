@@ -1,4 +1,5 @@
 import type { AppState, ChildSettings, Profile, SessionRecord } from './types';
+import { deleteBlob } from './media';
 
 /**
  * Local-only persistence (TR-2, PV-2). Everything lives in this browser's
@@ -158,9 +159,7 @@ export function deleteProfile(id: string): void {
   if (s.activeProfileId === id) s.activeProfileId = s.profiles[0]?.id ?? null;
   persist();
   // Remove the child's audio blobs too (PV-5 — clean deletion means clean).
-  if (gone?.audio.length) {
-    void import('./media').then((m) => gone.audio.forEach((a) => void m.deleteBlob(a.id)));
-  }
+  for (const a of gone?.audio ?? []) void deleteBlob(a.id);
 }
 
 export function updateSettings(profileId: string, patch: Partial<ChildSettings>): void {
