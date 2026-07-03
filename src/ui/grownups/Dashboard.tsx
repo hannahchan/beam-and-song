@@ -1,9 +1,9 @@
 import type { Profile } from '../../lib/types';
-import { createProfile, reviewIsDue, updateProfile } from '../../lib/store';
+import { backupIsDue, createProfile, exportAll, getState, reviewIsDue, updateProfile } from '../../lib/store';
 import { getLesson, DEFAULT_LESSON_IDS } from '../../lessons/specs';
 import { summarize } from '../../lib/summary';
 import { getPreset } from '../../lib/presets';
-import { Card } from './bits';
+import { Card, downloadFile } from './bits';
 import { useState } from 'preact/hooks';
 
 export function Dashboard({ profile }: { profile: Profile | null }) {
@@ -26,6 +26,22 @@ export function Dashboard({ profile }: { profile: Profile | null }) {
           <a class="btn btn-primary" href="#/grown-ups/setup">
             Start guided setup
           </a>
+        </Card>
+      )}
+
+      {backupIsDue(getState()) && (
+        <Card title="Worth a backup?">
+          <p class="card-note">
+            Notes and photos live only in this browser, and browsers can clear rarely-used site data. One file
+            keeps everything safe (recordings stay on this device). It contains personal information about your
+            child — keep it somewhere you trust.
+          </p>
+          <button
+            class="btn"
+            onClick={() => downloadFile('beam-and-song-backup.json', JSON.stringify(exportAll(), null, 2), 'application/json')}
+          >
+            Save a backup now
+          </button>
         </Card>
       )}
 

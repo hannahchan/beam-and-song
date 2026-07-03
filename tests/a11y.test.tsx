@@ -64,6 +64,7 @@ describe('grown-up pages have no WCAG A/AA violations (axe)', () => {
   it('guide', () => checkRoute('/grown-ups/guide'));
   it('profiles', () => checkRoute('/grown-ups/profiles'));
   it('guided setup', () => checkRoute('/grown-ups/setup'));
+  it('printable summary', () => checkRoute('/grown-ups/print'));
 });
 
 describe('child-facing pages are semantically sound too', () => {

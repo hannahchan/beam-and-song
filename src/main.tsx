@@ -6,6 +6,15 @@ import './styles.css';
 applyTheme(document.documentElement);
 render(<App />, document.getElementById('app')!);
 
+// Ask the browser to treat this site's storage as persistent — profiles,
+// notes, and the family's own media should survive storage pressure and
+// idle-eviction policies (PV-2 durability). Best-effort; browsers decide.
+try {
+  void navigator.storage?.persist?.().catch(() => {});
+} catch {
+  /* older browsers */
+}
+
 // Offline support (TR-4): once loaded, lessons keep working without a connection.
 if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', async () => {

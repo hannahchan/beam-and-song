@@ -45,6 +45,11 @@ export function measureLuminance(ctx: CanvasRenderingContext2D, w: number, h: nu
   return n ? Math.min(1, sum / n) : 1;
 }
 
+/** The photos lessons may show — resting a photo is not deleting it (PV-5-friendly). */
+export function enabledPhotos<T extends { enabled?: boolean }>(photos: readonly T[]): T[] {
+  return photos.filter((p) => p.enabled !== false);
+}
+
 export function pixelLuminance(r: number, g: number, b: number): number {
   const lin = (v: number) => {
     const s = v / 255;

@@ -22,6 +22,7 @@ function reset(): void {
   s.profiles.length = 0;
   s.activeProfileId = null;
   s.pinHash = null;
+  s.lastBackupAt = null;
 }
 
 describe('profiles persist locally (TR-2, PT-1, PT-2)', () => {
@@ -141,6 +142,43 @@ describe('export / import (PT-3, PV-4)', () => {
     const result = store.importProfile(exported);
     expect(result.ok).toBe(true);
     expect(store.getState().profiles[1].sessions).toEqual([]);
+  });
+});
+
+describe('backup nudge (PT-3 hygiene)', () => {
+  beforeEach(reset);
+
+  it('not due with little data; due with photos and no backup; cleared by exporting', () => {
+    const p = store.createProfile('Bean');
+    expect(store.backupIsDue(store.getState())).toBe(false);
+    store.updateProfile(p.id, (prof) => {
+      prof.photos.push({ id: 'ph', label: 'x', dataUrl: 'data:', addedAt: 'now' });
+    });
+    expect(store.backupIsDue(store.getState())).toBe(true);
+    store.exportAll();
+    expect(store.backupIsDue(store.getState())).toBe(false);
+  });
+
+  it('becomes due again three weeks after the last backup', () => {
+    const p = store.createProfile('Bean');
+    store.updateProfile(p.id, (prof) => {
+      prof.photos.push({ id: 'ph', label: 'x', dataUrl: 'data:', addedAt: 'now' });
+    });
+    store.exportAll();
+    const state = store.getState();
+    expect(store.backupIsDue(state, Date.now() + 22 * 86400000)).toBe(true);
+  });
+});
+
+describe('photo visibility toggle (CR-3)', () => {
+  it('enabledPhotos filters rested photos without deleting them', async () => {
+    const { enabledPhotos } = await import('../src/lib/photos');
+    const photos = [
+      { id: 'a', enabled: undefined },
+      { id: 'b', enabled: false },
+      { id: 'c', enabled: true },
+    ];
+    expect(enabledPhotos(photos).map((p) => p.id)).toEqual(['a', 'c']);
   });
 });
 

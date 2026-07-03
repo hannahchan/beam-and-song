@@ -1,5 +1,6 @@
 import { navigate } from '../lib/router';
 import { ensureProfile } from '../lib/store';
+import { enabledPhotos } from '../lib/photos';
 import { DEFAULT_LESSON_IDS, getLesson } from '../lessons/specs';
 import { resolveLesson } from '../lessons/bands';
 import { TARGET_COLORS } from '../safety/constants';
@@ -21,7 +22,7 @@ export function Chooser() {
   }
   const lessons = ids
     .map(getLesson)
-    .filter((l): l is LessonSpec => !!l && !(l.requiresPhoto && profile.photos.length === 0))
+    .filter((l): l is LessonSpec => !!l && !(l.requiresPhoto && enabledPhotos(profile.photos).length === 0))
     .map((l) => resolveLesson(l, profile.ageBand))
     .slice(0, Math.max(2, 6 - programs.length));
   const color = TARGET_COLORS[profile.settings.targetColor] ?? TARGET_COLORS.red;

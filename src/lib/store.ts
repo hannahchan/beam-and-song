@@ -46,7 +46,7 @@ export function subscribe(fn: Listener): () => void {
 }
 
 function blankState(): AppState {
-  return { version: 1, activeProfileId: null, profiles: [], pinHash: null };
+  return { version: 1, activeProfileId: null, profiles: [], pinHash: null, lastBackupAt: null };
 }
 
 export function getState(): AppState {
@@ -68,6 +68,7 @@ function migrate(raw: unknown): AppState {
     activeProfileId: s.activeProfileId ?? null,
     profiles: Array.isArray(s.profiles) ? s.profiles.map(normalizeProfile) : [],
     pinHash: typeof s.pinHash === 'string' ? s.pinHash : null,
+    lastBackupAt: typeof s.lastBackupAt === 'string' ? s.lastBackupAt : null,
   };
 }
 
@@ -226,6 +227,7 @@ export interface BackupExport {
 
 /** Whole-device backup — every child on this device (therapist workflows, PT-3). */
 export function exportAll(): BackupExport {
+  markBackedUp();
   return {
     app: 'beam-and-song',
     kind: 'backup',
@@ -238,6 +240,7 @@ export function exportAll(): BackupExport {
 export function exportProfile(profileId: string): ProfileExport | null {
   const p = getState().profiles.find((x) => x.id === profileId);
   if (!p) return null;
+  markBackedUp();
   return {
     app: 'beam-and-song',
     kind: 'profile',
@@ -245,6 +248,22 @@ export function exportProfile(profileId: string): ProfileExport | null {
     exportedAt: new Date().toISOString(),
     profile: JSON.parse(JSON.stringify(p)) as Profile,
   };
+}
+
+function markBackedUp(): void {
+  const s = getState();
+  s.lastBackupAt = new Date().toISOString();
+  persist();
+}
+
+/** PT-3 hygiene — a gentle nudge once there is real data and no recent backup. */
+export function backupIsDue(state: AppState, now = Date.now()): boolean {
+  const worthIt = state.profiles.some(
+    (p) => p.sessions.length >= 12 || p.photos.length > 0 || p.audio.length > 0,
+  );
+  if (!worthIt) return false;
+  if (!state.lastBackupAt) return true;
+  return now - Date.parse(state.lastBackupAt) > 21 * 86400000;
 }
 
 /** Accepts a single-profile export or a whole-device backup. */

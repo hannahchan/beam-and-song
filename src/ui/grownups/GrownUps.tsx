@@ -10,6 +10,7 @@ import { Sessions } from './Sessions';
 import { Profiles } from './Profiles';
 import { Guide } from './Guide';
 import { Setup } from './Setup';
+import { PrintSummary } from './PrintSummary';
 
 const GATE_KEY = 'beam-and-song:grownup-ok';
 
@@ -50,6 +51,9 @@ export function GrownUps({ route }: { route: Route }) {
 
   const sub = route.path.replace(/^\/grown-ups\/?/, '') || 'home';
   const profile = state.profiles.find((p) => p.id === state.activeProfileId) ?? state.profiles[0] ?? null;
+
+  // The print view renders without the app shell — clean on paper.
+  if (sub === 'print') return <PrintSummary profile={profile} />;
 
   const nav: Array<[key: string, href: string, label: string]> = [
     ['home', '#/grown-ups', 'Home'],

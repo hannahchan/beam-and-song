@@ -571,6 +571,19 @@ function PhotoManager({ profile }: { profile: Profile }) {
         <div key={ph.id} class="photo-row">
           <img class="photo-thumb" src={ph.dataUrl} alt={`Photo: ${ph.label}`} />
           <span style={{ flex: 1 }}>{ph.label}</span>
+          <label class="check-item" style={{ minHeight: 'auto' }}>
+            <input
+              type="checkbox"
+              checked={ph.enabled !== false}
+              onChange={(e) =>
+                updateProfile(profile.id, (p) => {
+                  const target = p.photos.find((x) => x.id === ph.id);
+                  if (target) target.enabled = (e.target as HTMLInputElement).checked;
+                })
+              }
+            />
+            <span>Shown in lessons</span>
+          </label>
           <button
             class="btn btn-small btn-danger"
             onClick={() => updateProfile(profile.id, (p) => (p.photos = p.photos.filter((x) => x.id !== ph.id)))}

@@ -108,15 +108,37 @@ export function RangeField({
           <span class="range-value">{word}</span>
         </span>
         {hint && <p class="hint">{hint}</p>}
-        <input
-          type="range"
-          min={min}
-          max={max}
-          step={1}
-          value={value}
-          aria-valuetext={word}
-          onInput={(e) => onChange(Number((e.target as HTMLInputElement).value))}
-        />
+        <span class="range-row">
+          {/* Steppers make every slider operable by single taps — and by
+              switch scanning, which cannot drag (AR-1, AR-8). */}
+          <button
+            type="button"
+            class="btn btn-small stepper"
+            aria-label={`Decrease ${label.toLowerCase()}`}
+            disabled={value <= min}
+            onClick={() => onChange(Math.max(min, value - 1))}
+          >
+            −
+          </button>
+          <input
+            type="range"
+            min={min}
+            max={max}
+            step={1}
+            value={value}
+            aria-valuetext={word}
+            onInput={(e) => onChange(Number((e.target as HTMLInputElement).value))}
+          />
+          <button
+            type="button"
+            class="btn btn-small stepper"
+            aria-label={`Increase ${label.toLowerCase()}`}
+            disabled={value >= max}
+            onClick={() => onChange(Math.min(max, value + 1))}
+          >
+            +
+          </button>
+        </span>
       </label>
     </div>
   );

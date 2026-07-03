@@ -3,6 +3,7 @@ import type { LessonSpec, Profile, Program } from '../../lib/types';
 import { LESSONS, getLesson } from '../../lessons/specs';
 import { resolveLesson } from '../../lessons/bands';
 import { addProgram, deleteProgram, toggleFavorite, updateProgram } from '../../lib/store';
+import { enabledPhotos } from '../../lib/photos';
 import { Card } from './bits';
 
 const resolveFor = (l: LessonSpec, profile: Profile | null) => resolveLesson(l, profile?.ageBand ?? 'infant');
@@ -110,7 +111,7 @@ function Programs({ profile }: { profile: Profile }) {
 
 function ProgramEditor({ profile, program }: { profile: Profile; program: Program }) {
   const [adding, setAdding] = useState(LESSONS[0].id);
-  const available = LESSONS.filter((l) => !(l.requiresPhoto && profile.photos.length === 0));
+  const available = LESSONS.filter((l) => !(l.requiresPhoto && enabledPhotos(profile.photos).length === 0));
   const move = (i: number, dir: -1 | 1) =>
     updateProgram(profile.id, program.id, (p) => {
       const j = i + dir;
@@ -192,7 +193,7 @@ function ProgramEditor({ profile, program }: { profile: Profile; program: Progra
 function LessonCard({ lesson: base, profile }: { lesson: LessonSpec; profile: Profile | null }) {
   const lesson = resolveFor(base, profile);
   const starred = profile?.favorites.includes(lesson.id) ?? false;
-  const locked = lesson.requiresPhoto && (profile?.photos.length ?? 0) === 0;
+  const locked = lesson.requiresPhoto && enabledPhotos(profile?.photos ?? []).length === 0;
 
   return (
     <article class="lesson-card">

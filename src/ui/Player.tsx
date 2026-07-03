@@ -11,6 +11,7 @@ import { buzz } from '../engine/haptics';
 import { effectiveTaps } from '../engine/kernel';
 import { SESSION_TAGS, type LessonSpec, type ResponseLevel, type SessionTag, type TapEvent } from '../lib/types';
 import { emptyTally, quadrantOf, type RegionTally } from '../lib/regions';
+import { enabledPhotos } from '../lib/photos';
 
 type Phase = 'running' | 'paused' | 'resting' | 'observe';
 
@@ -37,7 +38,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
     const ids = program ? program.lessonIds : [lessonId ?? ''];
     const specs = ids
       .map(getLesson)
-      .filter((l): l is LessonSpec => !!l && !(l.requiresPhoto && profile.photos.length === 0))
+      .filter((l): l is LessonSpec => !!l && !(l.requiresPhoto && enabledPhotos(profile.photos).length === 0))
       .map((l) => resolveLesson(l, profile.ageBand)); // CR-9: band skin, same behavior
     return specs.length ? specs : [resolveLesson(getLesson('gentle-glow')!, profile.ageBand)];
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -63,7 +64,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
   const lastQuadRef = useRef<'ul' | 'ur' | 'll' | 'lr'>('ul');
 
   const params = useMemo(() => buildParams(settings), [settings]);
-  const photos = profile.photos.map((p) => ({ dataUrl: p.dataUrl, lum: p.lum }));
+  const photos = enabledPhotos(profile.photos).map((p) => ({ dataUrl: p.dataUrl, lum: p.lum }));
 
   useEffect(() => {
     const canvas = canvasRef.current;

@@ -60,6 +60,8 @@ export interface CustomPhoto {
   dataUrl: string;
   /** Measured average relative luminance (0..1). Absent on old photos → treated as worst-case. */
   lum?: number;
+  /** Absent = shown. Lets a caregiver rest a photo without deleting it. */
+  enabled?: boolean;
   addedAt: string;
 }
 
@@ -134,6 +136,8 @@ export interface AppState {
   profiles: Profile[];
   /** PV-3 — optional courtesy lock for the grown-up area (not encryption). */
   pinHash: string | null;
+  /** When any export/backup was last saved — drives the backup nudge. */
+  lastBackupAt: string | null;
 }
 
 /* ---------------------------------- Lessons ---------------------------------- */

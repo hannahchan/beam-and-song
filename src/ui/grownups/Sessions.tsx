@@ -68,6 +68,9 @@ export function Sessions({ profile }: { profile: Profile | null }) {
           private document.
         </p>
         <div class="row">
+          <a class="btn" href="#/grown-ups/print">
+            Print a one-pager for the clinic
+          </a>
           <button
             class="btn"
             onClick={() => downloadFile(`beam-and-song-summary-${profile.nickname}.txt`, buildShareText(profile), 'text/plain')}

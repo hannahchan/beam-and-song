@@ -181,9 +181,11 @@ a { color: var(--focus); }
 .start-orb:active { transform: scale(0.98); }
 
 @keyframes orb-breathe {
-  /* 4 s period = 0.25 Hz, tiny amplitude — far inside the safety bounds (SR-1). */
-  0%, 100% { transform: scale(1); box-shadow: 0 0 80px 14px rgba(255, 210, 125, 0.24); }
-  50% { transform: scale(1.025); box-shadow: 0 0 100px 22px rgba(255, 210, 125, 0.3); }
+  /* 4 s period = 0.25 Hz, tiny amplitude — far inside the safety bounds (SR-1).
+     Halo-only (no transform): the button's geometry stays stable for
+     imprecise pointers and automation alike. */
+  0%, 100% { box-shadow: 0 0 80px 14px rgba(255, 210, 125, 0.24); }
+  50% { box-shadow: 0 0 105px 24px rgba(255, 210, 125, 0.31); }
 }
 @media (prefers-reduced-motion: reduce) {
   .start-orb { animation: none; }
@@ -423,6 +425,14 @@ input[type='range'] {
   background: transparent;
 }
 
+.range-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.range-row input[type='range'] { flex: 1; min-width: 0; }
+.stepper { min-width: 48px; font-size: 1.3rem; }
+
 .range-value {
   color: var(--accent);
   font-weight: 650;
@@ -643,6 +653,27 @@ details summary {
   border-radius: 14px;
   padding: 0.7rem 1rem;
   z-index: 40;
+}
+
+/* Clinic one-pager (PT-7): app theme on screen, clean black-on-white on paper. */
+.print-sheet {
+  max-width: 820px;
+  margin: 0 auto;
+  padding: 1rem 1.2rem 3rem;
+}
+.print-sheet h1 { font-size: 1.35rem; }
+.print-sheet h2 { font-size: 1.05rem; margin-top: 1.4rem; }
+.print-muted { color: var(--inkSoft); font-size: 0.92rem; }
+.print-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
+.print-table th, .print-table td { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+
+@media print {
+  html, body { background: #fff !important; color: #000 !important; font-size: 12pt; }
+  .no-print { display: none !important; }
+  .print-sheet { max-width: none; padding: 0; }
+  .print-muted { color: #444; }
+  .print-table th, .print-table td { border-bottom: 1px solid #bbb; }
+  .print-sheet a { color: #000; text-decoration: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {
