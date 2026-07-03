@@ -5,3 +5,5 @@ dist/
 coverage/
 .env*
 .claude/settings.local.json
+test-results/
+playwright-report/

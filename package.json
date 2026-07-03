@@ -10,13 +10,16 @@
     "preview": "vite preview",
     "test": "vitest run",
     "test:watch": "vitest",
-    "icons": "node scripts/make-icons.mjs"
+    "icons": "node scripts/make-icons.mjs",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "preact": "^10.26.9"
   },
   "devDependencies": {
+    "@playwright/test": "^1.61.1",
     "@preact/preset-vite": "^2.10.1",
+    "@types/node": "^26.1.0",
     "axe-core": "^4.10.3",
     "jsdom": "^26.1.0",
     "typescript": "^5.8.3",

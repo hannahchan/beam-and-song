@@ -28,6 +28,8 @@ jobs:
       # Safety-critical suite (SR-8): simulated flash/luminance checks on every
       # lesson at every extreme setting must pass before anything deploys.
       - run: npm test
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
       - run: npm run build
       - if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         uses: actions/upload-pages-artifact@v3
