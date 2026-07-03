@@ -23,7 +23,7 @@ depends on other people. Nothing here blocks coding.
   assumptions (luminance model, thresholds), all lesson copy, screenshots/screen
   recordings, and specific questions (are the readiness cues right? is the glow framing
   right? melody tempos?).
-- Recruit 2–3 TVIs / CVI specialists and a couple of families for structured feedback.
+- Recruit 2–3 vision professionals / CVI specialists and a couple of families for structured feedback.
 - Add a `docs/clinical-feedback.md` log; every finding becomes an issue.
 
 **Exit:** at least one professional review completed and triaged.
@@ -59,7 +59,7 @@ review more meaningful.
    update-vs-copy for an existing profile id, service-worker update notice, an
    add-to-home-screen tip in the Guide.
 
-**Exit:** a TVI can compose and export a per-child program with the family's own audio
+**Exit:** a vision professional can compose and export a per-child program with the family's own audio
 and photos; safety suite green including a worst-case (all-white) measured photo.
 
 ---
@@ -151,7 +151,7 @@ busiest scenes; budgets measured in CI.
      weeks"), always with the fatigue/mood caveat, always routing interpretation to the
      professional; wording passes the SR-7 banned-language validator (extend it).
    - Feeds a one-tap "try favouring lower field?" suggestion (PR-4 tuning), phrased as an
-     experiment, never a finding. Exportable in the TVI summary.
+     experiment, never a finding. Exportable in the vision-professional summary.
 2. **Perf harness (TR-9):** in-app frame-drop and audio-underrun counters (dev flag),
    a scripted 3-minute soak per lesson on target hardware (an older iPad + a budget
    Android tablet), results in `docs/perf-budgets.md`; regressions gate on the CI numbers

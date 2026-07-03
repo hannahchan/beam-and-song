@@ -1,6 +1,6 @@
 # Beam and Song — clinical review packet
 
-*For TVIs, CVI specialists, low-vision therapists, and early-intervention professionals.*
+*For vision professionals, CVI specialists, low-vision therapists, and early-intervention professionals.*
 *Prepared July 2026 · review of v1 (infant scope) and the planned expansion (see ROADMAP.md).*
 
 Thank you for looking at this. Beam and Song is a free, static web app offering short,

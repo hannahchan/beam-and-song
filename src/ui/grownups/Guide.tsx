@@ -4,7 +4,7 @@ import { Card } from './bits';
 /**
  * PT-11 / PT-12 / PT-10 — plain-language orientation and setup guidance.
  * Framed throughout as support alongside professionals, never instead of
- * them (SR-4), and written for a parent who may have no TVI yet.
+ * them (SR-4), and written for a parent who may have no vision professional yet.
  *
  * Other pages can deep-link a section via ?topic=<id> (hash routing means
  * ordinary fragment anchors can't work here).
@@ -36,7 +36,7 @@ export function Guide({ topic }: { topic?: string | null }) {
           almost everything here is adjustable — and why your child's own team knows best which settings fit.
         </p>
         <p class="card-note">
-          If you don't yet have a vision professional (a TVI — teacher of students with visual impairments — or a
+          If you don't yet have a vision professional (a teacher of students with visual impairments, or a
           low-vision specialist), it is truly worth pursuing through your early-intervention service,
           ophthalmologist, or local blind/low-vision organisation. This app is a companion for the journey, not a
           programme, and nothing in it diagnoses or treats anything.
@@ -140,9 +140,9 @@ export function Guide({ topic }: { topic?: string | null }) {
       <Card title="Working with your vision team">
         <p>
           Bring the app along to appointments: the <a href="#/grown-ups/sessions">Notes page</a> saves a readable
-          summary a professional can skim in a minute, and the full profile file lets a TVI see (or adjust) the
-          exact settings. If your TVI prefers a different order or emphasis than our levels, follow your TVI —
-          star any lessons in any order; the levels are a convenience, not a doctrine.
+          summary a professional can skim in a minute, and the full profile file lets your vision professional
+          see (or adjust) the exact settings. If they prefer a different order or emphasis than our levels,
+          follow their lead — star any lessons in any order; the levels are a convenience, not a doctrine.
         </p>
       </Card>
 

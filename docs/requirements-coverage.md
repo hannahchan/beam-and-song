@@ -64,7 +64,7 @@ single band; the profile field becomes meaningful when more bands ship).
 | PT-4 | ✅ | Ten-second observation card at session end (response + tags + note), fully skippable. |
 | PT-5 | ✅ | Review nudge after >35 days & ≥8 sessions; "mark reviewed" button. |
 | PT-6 | ✅ | Session timer (2–8 min) → gentle wind-down to a rest screen; "short and sweet" nudge on repeats. |
-| PT-7 | ✅ | 4-week trend, response mix, top lesson, weekly bars (with text alternative), plain-text TVI summary export. |
+| PT-7 | ✅ | 4-week trend, response mix, top lesson, weekly bars (with text alternative), plain-text vision-professional summary export. |
 | PT-8 | ✅ | Day-context tags; summaries call out that quiet hard-days are expected, not decline. |
 | PT-9 | ✅ | Named ordered programs with a button-based (switch-friendly) builder; programs play as queued sessions with slow crossfades; program tiles on the child screen. |
 | PT-10 | ✅ | Guide section + per-lesson cues, now including L2→L3 and L3→L4. |
@@ -122,7 +122,7 @@ downloads are local) · PV-5 ✅ (photos listed, removable, never transmitted).
 
 - Companion-not-curriculum framing runs through all copy. ✅
 - No accounts/cloud; adding them later would trigger new privacy work. ✅ (none added)
-- Glow framed as TVI-coordinated, off-able. ✅
-- **Validation expectation surfaced, not assumed away:** this build has **not** had TVI/clinical review or
+- Glow framed as vision-professional-coordinated, off-able. ✅
+- **Validation expectation surfaced, not assumed away:** this build has **not** had vision-professional/clinical review or
   family usability testing. That review — across content, copy, and the safety analysis assumptions
   (e.g., the luminance model’s halo weighting) — is the gate between "prototype" and "recommendable".

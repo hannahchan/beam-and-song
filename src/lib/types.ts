@@ -105,7 +105,7 @@ export interface SessionRecord {
  */
 export type AgeBand = 'infant' | 'child' | 'teen';
 
-/** PT-9 — a named, ordered sequence of lessons composed by a parent or TVI. */
+/** PT-9 — a named, ordered sequence of lessons composed by a parent or vision professional. */
 export interface Program {
   id: string;
   name: string;

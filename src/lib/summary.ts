@@ -3,8 +3,8 @@ import { getLesson } from '../lessons/specs';
 import { regionInsight } from './regions';
 
 /**
- * PT-7 — turn raw observations into something a caregiver (and a TVI) can
- * actually read. Descriptive and tentative by design: counts and phrasing,
+ * PT-7 — turn raw observations into something a caregiver (and their vision
+ * professional) can actually read. Descriptive and tentative by design: counts and phrasing,
  * never scores, grades, or clinical language (SR-7 spirit).
  */
 

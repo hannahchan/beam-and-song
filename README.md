@@ -5,8 +5,8 @@ from babies to teens — a companion tool for families and vision professionals.
 no servers, no data leaving the device.
 
 > **Status: feature-complete against the brief's build-side requirements — built for expert review, not
-> yet clinically reviewed.** Per the brief (§11), TVI/clinical review of content and safety — and usability
-> testing with actual CVI children across the age range — is expected **before** real-world use.
+> yet clinically reviewed.** Per the brief (§11), vision-professional/clinical review of content and safety
+> — and usability testing with actual CVI children across the age range — is expected **before** real-world use.
 > The review packet is ready in `docs/clinical-review-packet.md`.
 
 ## What's inside
@@ -30,8 +30,9 @@ no servers, no data leaving the device.
 - **The family's own media** (CR-3): photos (downscaled + luminance-measured client-side) and songs or
   voice recordings (IndexedDB, normalized client-side) as targets and music — on-device only, always.
 - **Caregiver tooling**: profiles, instant persistence, export/import + whole-device backup, ten-second
-  observations with day-context tags, trends, a TVI-readable summary, a settings-review nudge, an optional
-  PIN — and **opt-in field-pattern observation** (PT-13) that only ever speaks descriptively, after weeks
+  observations with day-context tags, trends, a summary formatted for your child's vision professional, a
+  settings-review nudge, an optional PIN — and **opt-in field-pattern observation** (PT-13) that only ever
+  speaks descriptively, after weeks
   of data, under a tested non-diagnostic language guard (SR-7).
 - **Switch access built in** (AR-2/AR-8): one-switch auto-scanning and two-switch step-scanning with
   pace-derived dwell and a glide-only highlight; during lessons the switch belongs to the child, and in
@@ -96,7 +97,7 @@ Tracked in [docs/requirements-coverage.md](docs/requirements-coverage.md) agains
 with the forward plan in [docs/ROADMAP.md](docs/ROADMAP.md). The build-side phases are implemented; what
 remains is human-dependent:
 
-- **Clinical/TVI review and real-family usability testing** across the age range — the gate between
+- **Clinical/vision-professional review and real-family usability testing** across the age range — the gate between
   "prototype" and "recommendable" (brief §11). Packet ready: `docs/clinical-review-packet.md`.
 - **Assistive-tech hardware walkthrough** — scripts ready in `docs/at-walkthrough.md` (VoiceOver, NVDA,
   iOS Switch Control, Android), results tables waiting.
@@ -108,6 +109,6 @@ remains is human-dependent:
 
 ## A note on framing
 
-Beam and Song is a **companion, not a curriculum**: it supports — and never replaces — a child's TVI,
-vision professional, or early-intervention team, and it deliberately contains no assessments, scores,
-or diagnostic output of any kind.
+Beam and Song is a **companion, not a curriculum**: it supports — and never replaces — a child's vision
+professional or early-intervention team, and it deliberately contains no assessments, scores, or
+diagnostic output of any kind.
