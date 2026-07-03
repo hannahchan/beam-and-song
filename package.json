@@ -1,0 +1,26 @@
+{
+  "name": "beam-and-song",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Gentle light-and-song lessons for babies with CVI — a companion tool for families and vision professionals.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "icons": "node scripts/make-icons.mjs"
+  },
+  "dependencies": {
+    "preact": "^10.26.9"
+  },
+  "devDependencies": {
+    "@preact/preset-vite": "^2.10.1",
+    "axe-core": "^4.10.3",
+    "jsdom": "^26.1.0",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vitest": "^3.2.4"
+  }
+}
