@@ -4,7 +4,7 @@ import { CUE_DRIVEN_BEHAVIORS, getLesson } from '../lessons/specs';
 import { bandNoun, resolveLesson } from '../lessons/bands';
 import { activeProfile, addSession, ensureProfile } from '../lib/store';
 import { buildParams } from '../engine/params';
-import { computeScene, restScene, type SimInput } from '../engine/scenes';
+import { computeScene, primarySceneItem, restScene, type SimInput } from '../engine/scenes';
 import { createPhotoCache, drawScene } from '../engine/render';
 import { audio } from '../engine/audio';
 import { buzz } from '../engine/haptics';
@@ -204,19 +204,14 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
         }
 
         const scene = computeScene(spec, softened(), lessonT, sim, prevT);
+        const main = primarySceneItem(scene.items);
         // PT-13 (opt-in): tally which quadrant the main target sat in, and
         // where marked responses landed. Descriptive support only (SR-7).
-        if (settings.fieldObservation && !handover) {
-          const main = scene.items.reduce(
-            (best, it) => (it.r > 0.03 && it.alpha * it.r > (best?.alpha ?? 0) * (best?.r ?? 0) ? it : best),
-            null as (typeof scene.items)[number] | null,
-          );
-          if (main) {
-            const q = quadrantOf(main.x, main.y);
-            lastQuadRef.current = q;
-            regionsRef.current[q].s += dt / 1000;
-            if (scene.cues.some(isTapCue)) regionsRef.current[q].r += 1;
-          }
+        if (settings.fieldObservation && !handover && main) {
+          const q = quadrantOf(main.x, main.y);
+          lastQuadRef.current = q;
+          regionsRef.current[q].s += dt / 1000;
+          if (scene.cues.some(isTapCue)) regionsRef.current[q].r += 1;
         }
         const fadeK = handover ? Math.min((lessonT - handover.at) / XFADE_MS, 1) : 0;
         for (const cue of scene.cues) {
@@ -226,7 +221,8 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
           if (isTapCue(cue)) buzz(settings.haptics);
         }
         if (melody && (settings.soundFollowsTarget || spec.behavior === 'audioPan')) {
-          melody.setPan(scene.pan);
+          // FR-10: the music sits where the target sits — including its height.
+          melody.setPan(scene.pan, main?.y ?? 0.5);
         }
         drawScene(ctx, scene, w, h, photoCache);
         if (fadeK > 0) {

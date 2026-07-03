@@ -1,7 +1,25 @@
 import type { CustomAudio, MelodyId } from '../lib/types';
 import { MELODIES, type Melody } from './melodies';
 import { SAFETY } from '../safety/constants';
+import { clamp } from './kernel';
 import { getBlob } from '../lib/media';
+
+/**
+ * FR-10 — where the sound sits in space. Pure and unit-tested: pan (-1..1)
+ * maps to left/right position, and the target's screen height becomes both
+ * a vertical position and a timbre cue (higher on screen = brighter), which
+ * carries even on tablets whose speakers can't render true elevation.
+ */
+export function spatialParams(pan: number, elevation = 0.5): { x: number; y: number; z: number; filterHz: number } {
+  const p = clamp(pan, -1, 1);
+  const e = clamp(elevation, 0, 1); // 0 = top of screen
+  return {
+    x: p * 2.5,
+    y: (0.5 - e) * 1.6,
+    z: -2,
+    filterHz: 1400 + 2600 * (1 - e),
+  };
+}
 
 /**
  * All sound is synthesized with the Web Audio API — no audio files, nothing
@@ -16,9 +34,16 @@ type VoiceStyle = 'soft' | 'musicbox' | 'warm';
 
 export interface MelodyHandle {
   stop(fadeSec?: number): void;
-  setPan(p: number): void;
+  /** Move the music to the target: pan -1..1, elevation 0 (top) .. 1 (bottom). */
+  setPan(p: number, elevation?: number): void;
   /** For "sound after a look" (FR-6b): play the next short phrase once. */
   playPhrase(): void;
+}
+
+/** The melody's spatial output: an input node plus a smooth position setter. */
+interface SpatialChain {
+  input: AudioNode;
+  set(pan: number, elevation: number): void;
 }
 
 class AudioEngine {
@@ -33,10 +58,60 @@ class AudioEngine {
     layered: boolean;
     noteIdx: number;
     nextTime: number;
-    panner: StereoPannerNode | null;
+    spatial: SpatialChain | null;
     loop: boolean;
     playing: boolean;
   } | null = null;
+
+  /**
+   * Build the melody's output: lowpass (elevation-as-brightness) into an
+   * HRTF panner where the browser has one, a plain stereo panner otherwise.
+   * All movement is smoothed — sound glides, it never jumps (SR-2 spirit).
+   */
+  private createSpatialChain(): SpatialChain | null {
+    if (!this.ctx || !this.master) return null;
+    const ctx = this.ctx;
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.value = spatialParams(0).filterHz;
+
+    if (typeof ctx.createPanner === 'function') {
+      const panner = ctx.createPanner();
+      panner.panningModel = 'HRTF';
+      panner.distanceModel = 'linear';
+      panner.refDistance = 1;
+      panner.maxDistance = 10;
+      panner.rolloffFactor = 0.4;
+      filter.connect(panner).connect(this.master);
+      return {
+        input: filter,
+        set: (pan, elevation) => {
+          const s = spatialParams(pan, elevation);
+          const t = ctx.currentTime;
+          if (panner.positionX) {
+            panner.positionX.setTargetAtTime(s.x, t, 0.25);
+            panner.positionY.setTargetAtTime(s.y, t, 0.25);
+            panner.positionZ.setTargetAtTime(s.z, t, 0.25);
+          } else {
+            panner.setPosition(s.x, s.y, s.z);
+          }
+          filter.frequency.setTargetAtTime(s.filterHz, t, 0.3);
+        },
+      };
+    }
+
+    const stereo = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+    if (stereo) filter.connect(stereo).connect(this.master);
+    else filter.connect(this.master);
+    return {
+      input: filter,
+      set: (pan, elevation) => {
+        const s = spatialParams(pan, elevation);
+        stereo?.pan.setTargetAtTime(clamp(pan, -1, 1), ctx.currentTime, 0.25);
+        filter.frequency.setTargetAtTime(s.filterHz, ctx.currentTime, 0.3);
+      },
+    };
+  }
 
   get unlocked(): boolean {
     return this.ctx !== null && this.ctx.state === 'running';
@@ -93,8 +168,7 @@ class AudioEngine {
     this.stopMelody(0.25);
     if (!this.ctx || !this.master) return this.nullHandle();
 
-    const panner = opts.pan && this.ctx.createStereoPanner ? this.ctx.createStereoPanner() : null;
-    if (panner) panner.connect(this.master);
+    const spatial = opts.pan ? this.createSpatialChain() : null;
 
     this.active = {
       melody,
@@ -102,7 +176,7 @@ class AudioEngine {
       layered: opts.layered ?? false,
       noteIdx: 0,
       nextTime: this.ctx.currentTime + 0.15,
-      panner,
+      spatial,
       loop: opts.loop ?? true,
       playing: opts.loop ?? true,
     };
@@ -111,9 +185,7 @@ class AudioEngine {
     }
     return {
       stop: (fade = 0.4) => this.stopMelody(fade),
-      setPan: (p) => {
-        if (panner && this.ctx) panner.pan.setTargetAtTime(Math.max(-1, Math.min(1, p)), this.ctx.currentTime, 0.25);
-      },
+      setPan: (p, elevation = 0.5) => spatial?.set(p, elevation),
       playPhrase: () => this.playPhrase(),
     };
   }
@@ -131,7 +203,7 @@ class AudioEngine {
   /* --------------- the family's own music (CR-3, blob-backed) --------------- */
 
   private bufferCache = new Map<string, Promise<AudioBuffer | null>>();
-  private custom: { src: AudioBufferSourceNode; gain: GainNode; panner: StereoPannerNode | null } | null = null;
+  private custom: { src: AudioBufferSourceNode; gain: GainNode } | null = null;
   private customOffset = 0; // where the next "after a look" snippet starts
 
   private loadBuffer(meta: CustomAudio): Promise<AudioBuffer | null> {
@@ -168,7 +240,7 @@ class AudioEngine {
     const ctx = this.ctx;
     const master = this.master;
     let stopped = false;
-    let panner: StereoPannerNode | null = null;
+    const spatial = opts.pan ? this.createSpatialChain() : null;
 
     void this.loadBuffer(meta).then((buffer) => {
       if (stopped) return;
@@ -184,11 +256,10 @@ class AudioEngine {
       const gain = ctx.createGain();
       gain.gain.setValueAtTime(0.0001, ctx.currentTime);
       gain.gain.setTargetAtTime(0.5 * meta.gain, ctx.currentTime, 0.5); // ≥ soft attack (SR-2 analogue)
-      panner = opts.pan && ctx.createStereoPanner ? ctx.createStereoPanner() : null;
       src.connect(gain);
-      (panner ? gain.connect(panner).connect(master) : gain.connect(master));
+      gain.connect(spatial?.input ?? master);
       src.start();
-      this.custom = { src, gain, panner };
+      this.custom = { src, gain };
     });
 
     return {
@@ -196,9 +267,7 @@ class AudioEngine {
         stopped = true;
         this.stopCustom(fade);
       },
-      setPan: (p) => {
-        if (panner) panner.pan.setTargetAtTime(Math.max(-1, Math.min(1, p)), ctx.currentTime, 0.25);
-      },
+      setPan: (p, elevation = 0.5) => spatial?.set(p, elevation),
       playPhrase: () => void this.playCustomSnippet(meta),
     };
   }
@@ -251,7 +320,7 @@ class AudioEngine {
     this.phraseBusy = true;
     for (let i = 0; i < count; i++) {
       const [midi, beats] = melody.notes[(start + i) % melody.notes.length];
-      if (midi > 0) this.note(midi, t, beats * secPerBeat, melody.voice, a?.panner ?? null, a?.layered ?? false);
+      if (midi > 0) this.note(midi, t, beats * secPerBeat, melody.voice, a?.spatial?.input ?? null, a?.layered ?? false);
       t += beats * secPerBeat;
     }
     if (a) a.noteIdx = (start + count) % melody.notes.length;
@@ -274,7 +343,7 @@ class AudioEngine {
         continue;
       }
       const [midi, beats] = a.melody.notes[a.noteIdx];
-      if (midi > 0) this.note(midi, a.nextTime, beats * secPerBeat, a.melody.voice, a.panner, a.layered);
+      if (midi > 0) this.note(midi, a.nextTime, beats * secPerBeat, a.melody.voice, a.spatial?.input ?? null, a.layered);
       a.nextTime += beats * secPerBeat;
       a.noteIdx++;
     }

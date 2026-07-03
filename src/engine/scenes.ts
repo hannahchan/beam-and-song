@@ -947,6 +947,19 @@ function backdropStars(scene: Scene, seed: number): void {
   }
 }
 
+/**
+ * The scene's main target — the biggest, brightest real item. Used by the
+ * player for sound elevation (FR-10) and region tallies (PT-13).
+ */
+export function primarySceneItem(items: readonly SceneItem[]): SceneItem | null {
+  let best: SceneItem | null = null;
+  for (const it of items) {
+    if (it.r <= 0.03 || it.shape === 'bloom') continue;
+    if (!best || it.alpha * it.r > best.alpha * best.r) best = it;
+  }
+  return best;
+}
+
 /** The end-of-session rest screen: a dim moon, everything winding down (PT-6). */
 export function restScene(p: EngineParams, tMs: number): Scene {
   const breatheSlow = 1 + safeMod(tMs / 1000, 0.08, 0.04);
