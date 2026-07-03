@@ -92,16 +92,24 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
     resize();
     window.addEventListener('resize', resize);
 
+    // CR-3 — the family's own song, when chosen, replaces the built-in melody.
+    const customMeta =
+      settings.melodySource !== 'builtin'
+        ? profile.audio.find((a) => a.id === settings.melodySource)
+        : undefined;
+
     const melodyWanted = () => settings.audioMode === 'with' && spec.behavior !== 'audioAlternate';
     const startMelodyIfWanted = () => {
       if (!melodyWanted() || melody || !audio.unlocked) return;
       const usePan = settings.soundFollowsTarget || spec.behavior === 'audioPan';
-      melody = audio.startMelody(spec.melody, {
-        tempoScale: params.tempoScale,
-        pan: usePan,
-        layered: settings.audioStyle === 'layered',
-        loop: true,
-      });
+      melody = customMeta
+        ? audio.startCustom(customMeta, spec.melody, { pan: usePan, loop: true })
+        : audio.startMelody(spec.melody, {
+            tempoScale: params.tempoScale,
+            pan: usePan,
+            layered: settings.audioStyle === 'layered',
+            loop: true,
+          });
     };
 
     const beginLesson = (nextIdx: number) => {
@@ -213,12 +221,14 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
         if (after === before) return; // inside cooldown — scene & sound ignore it too
       } else if (settings.audioMode === 'after') {
         // FR-6b — the grown-up taps when the baby looks; the song answers.
-        melody ??= audio.startMelody(spec.melody, {
-          tempoScale: params.tempoScale,
-          pan: false,
-          layered: settings.audioStyle === 'layered',
-          loop: false,
-        });
+        melody ??= customMeta
+          ? audio.startCustom(customMeta, spec.melody, { pan: false, loop: false })
+          : audio.startMelody(spec.melody, {
+              tempoScale: params.tempoScale,
+              pan: false,
+              layered: settings.audioStyle === 'layered',
+              loop: false,
+            });
         melody.playPhrase();
         buzz(settings.haptics);
       }

@@ -37,8 +37,22 @@ describe('profiles persist locally (TR-2, PT-1, PT-2)', () => {
   it('nickname only — no other identifying fields exist on a fresh profile (PV-1)', () => {
     const p = store.createProfile('Bean');
     expect(Object.keys(p).sort()).toEqual(
-      ['createdAt', 'favorites', 'id', 'lastReviewAt', 'nickname', 'photos', 'programs', 'sessions', 'settings'].sort(),
+      ['audio', 'createdAt', 'favorites', 'id', 'lastReviewAt', 'nickname', 'photos', 'programs', 'sessions', 'settings'].sort(),
     );
+  });
+
+  it('imports strip audio metadata — blobs never travel with exports (PV-5)', () => {
+    const p = store.createProfile('Bean');
+    store.updateProfile(p.id, (prof) => {
+      prof.audio.push({ id: 'song1', label: 'lullaby', duration: 60, gain: 1, addedAt: 'now' });
+      prof.settings.melodySource = 'song1';
+    });
+    const exported = store.exportProfile(p.id)!;
+    const result = store.importProfile(exported);
+    expect(result.ok).toBe(true);
+    const copy = store.getState().profiles[1];
+    expect(copy.audio).toEqual([]);
+    expect(copy.settings.melodySource).toBe('builtin');
   });
 
   it('programs: create, reorder, remove (PT-9)', () => {

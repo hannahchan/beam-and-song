@@ -45,6 +45,8 @@ export interface ChildSettings {
   haptics: boolean;
   /** PT-6 */
   sessionMinutes: number;
+  /** PR-9 / CR-3 — 'builtin' or the id of one of the profile's own recordings. */
+  melodySource: 'builtin' | string;
 }
 
 export interface CustomPhoto {
@@ -52,6 +54,19 @@ export interface CustomPhoto {
   label: string;
   /** Downscaled JPEG data URL, produced client-side (TR-7). Never leaves the device (PV-5). */
   dataUrl: string;
+  addedAt: string;
+}
+
+/**
+ * CR-3 — a favourite song or familiar voice. The blob lives in IndexedDB
+ * (see lib/media.ts); this is just its passport. Audio never leaves the
+ * device and is not included in profile exports.
+ */
+export interface CustomAudio {
+  id: string;
+  label: string;
+  duration: number; // seconds
+  gain: number; // normalization applied at playback
   addedAt: string;
 }
 
@@ -89,6 +104,7 @@ export interface Profile {
   favorites: string[]; // lesson ids, in order
   programs: Program[];
   photos: CustomPhoto[];
+  audio: CustomAudio[];
   sessions: SessionRecord[];
   /** PT-5 — when settings were last deliberately reviewed. */
   lastReviewAt: string;

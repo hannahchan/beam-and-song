@@ -5,6 +5,7 @@ import { PRESETS } from '../../lib/presets';
 import { TARGET_COLORS } from '../../safety/constants';
 import { MAX_PHOTOS_PER_PROFILE, processPhotoFile } from '../../lib/photos';
 import { uid } from '../../lib/store';
+import { analyzeAudio, checkAudioFile, deleteBlob, MAX_AUDIO_FILES, putBlob } from '../../lib/media';
 import { Card, RadioGroup, RangeField, Toggle } from './bits';
 
 /**
@@ -225,6 +226,7 @@ export function Settings({ profile }: { profile: Profile | null }) {
           hint="The song sits where the target is and travels with it — joining looking and listening. Needs stereo speakers to be felt."
           onChange={(soundFollowsTarget) => set({ soundFollowsTarget })}
         />
+        <AudioManager profile={profile} />
         <Toggle
           label="A tiny vibration on touch rewards"
           checked={s.haptics}
@@ -259,6 +261,122 @@ export function Settings({ profile }: { profile: Profile | null }) {
           Mark settings as reviewed today
         </button>
       </Card>
+    </div>
+  );
+}
+
+/**
+ * CR-3 — a favourite song or a familiar voice as the session music.
+ * Files stay in this browser's storage; they are not part of profile exports.
+ */
+function AudioManager({ profile }: { profile: Profile }) {
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null);
+  const s = profile.settings;
+
+  const onFile = async (file: File | undefined) => {
+    if (!file) return;
+    const problem = checkAudioFile(file);
+    if (problem) {
+      setMsg({ kind: 'err', text: problem });
+      return;
+    }
+    setBusy(true);
+    setMsg(null);
+    try {
+      const { duration, gain } = await analyzeAudio(file);
+      const id = uid();
+      await putBlob(id, file);
+      updateProfile(profile.id, (p) => {
+        p.audio.push({
+          id,
+          label: file.name.replace(/\.[a-z0-9]+$/i, ''),
+          duration,
+          gain,
+          addedAt: new Date().toISOString(),
+        });
+      });
+      setMsg({ kind: 'ok', text: 'Added. It stays on this device and is not part of profile exports.' });
+    } catch (e) {
+      setMsg({ kind: 'err', text: e instanceof Error ? e.message : 'That file could not be read.' });
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const removeAudio = async (id: string) => {
+    updateProfile(profile.id, (p) => {
+      p.audio = p.audio.filter((a) => a.id !== id);
+      if (p.settings.melodySource === id) p.settings.melodySource = 'builtin';
+    });
+    await deleteBlob(id);
+  };
+
+  return (
+    <div class="field">
+      <span class="field-label">Your own music</span>
+      <p class="hint">
+        A song {profile.nickname} already loves, or a recording of a familiar voice singing, can be more
+        motivating than anything built in. Playback is softened and volume-matched automatically. Files stay in
+        this browser only — they are never uploaded, and they don't travel with profile exports.
+      </p>
+      <fieldset>
+        <legend>Which music plays during lessons?</legend>
+        <div class="radio-row">
+          <label class="radio-item">
+            <input
+              type="radio"
+              name="melodySource"
+              checked={s.melodySource === 'builtin'}
+              onChange={() => updateSettings(profile.id, { melodySource: 'builtin' })}
+            />
+            <span class="radio-text">
+              <b>Built-in songs</b>
+              <small>Each lesson's own gentle melody.</small>
+            </span>
+          </label>
+          {profile.audio.map((a) => (
+            <label key={a.id} class="radio-item">
+              <input
+                type="radio"
+                name="melodySource"
+                checked={s.melodySource === a.id}
+                onChange={() => updateSettings(profile.id, { melodySource: a.id })}
+              />
+              <span class="radio-text">
+                <b>{a.label}</b>
+                <small>
+                  {Math.round(a.duration / 60)} min {Math.round(a.duration % 60)} s ·{' '}
+                  <button type="button" class="btn btn-small btn-ghost" onClick={() => void removeAudio(a.id)}>
+                    Remove
+                  </button>
+                </small>
+              </span>
+            </label>
+          ))}
+        </div>
+      </fieldset>
+      {profile.audio.length < MAX_AUDIO_FILES && (
+        <label class="btn">
+          {busy ? 'Listening to it…' : 'Add a song or recording'}
+          <input
+            type="file"
+            accept="audio/*"
+            class="sr-only"
+            disabled={busy}
+            onChange={(e) => {
+              const input = e.target as HTMLInputElement;
+              void onFile(input.files?.[0]);
+              input.value = '';
+            }}
+          />
+        </label>
+      )}
+      {msg && (
+        <p class={msg.kind === 'ok' ? 'msg-ok' : 'msg-err'} role="status">
+          {msg.text}
+        </p>
+      )}
     </div>
   );
 }

@@ -1,6 +1,7 @@
-import type { MelodyId } from '../lib/types';
+import type { CustomAudio, MelodyId } from '../lib/types';
 import { MELODIES, type Melody } from './melodies';
 import { SAFETY } from '../safety/constants';
+import { getBlob } from '../lib/media';
 
 /**
  * All sound is synthesized with the Web Audio API — no audio files, nothing
@@ -13,7 +14,7 @@ import { SAFETY } from '../safety/constants';
 
 type VoiceStyle = 'soft' | 'musicbox' | 'warm';
 
-interface MelodyHandle {
+export interface MelodyHandle {
   stop(fadeSec?: number): void;
   setPan(p: number): void;
   /** For "sound after a look" (FR-6b): play the next short phrase once. */
@@ -120,10 +121,120 @@ class AudioEngine {
   stopMelody(fadeSec = 0.4): void {
     if (this.active) this.active.playing = false;
     this.active = null;
+    this.stopCustom(fadeSec);
     // Scheduled notes decay on their own envelopes; the fade keeps tails gentle.
     if (this.duckGain && this.ctx) {
       this.duckGain.gain.setTargetAtTime(1, this.ctx.currentTime + fadeSec, 0.2);
     }
+  }
+
+  /* --------------- the family's own music (CR-3, blob-backed) --------------- */
+
+  private bufferCache = new Map<string, Promise<AudioBuffer | null>>();
+  private custom: { src: AudioBufferSourceNode; gain: GainNode; panner: StereoPannerNode | null } | null = null;
+  private customOffset = 0; // where the next "after a look" snippet starts
+
+  private loadBuffer(meta: CustomAudio): Promise<AudioBuffer | null> {
+    let p = this.bufferCache.get(meta.id);
+    if (!p) {
+      p = (async () => {
+        if (!this.ctx) return null;
+        const blob = await getBlob(meta.id);
+        if (!blob) return null;
+        try {
+          return await this.ctx.decodeAudioData(await blob.arrayBuffer());
+        } catch {
+          return null;
+        }
+      })();
+      this.bufferCache.set(meta.id, p);
+    }
+    return p;
+  }
+
+  /**
+   * Play one of the child's own recordings/songs as the session music.
+   * Same gentle rules as the synth: slow fade-in, normalized gain, soft stop.
+   * Returns a handle immediately; playback begins once the blob is decoded.
+   * Falls back to the given built-in melody if the blob is missing.
+   */
+  startCustom(
+    meta: CustomAudio,
+    fallback: MelodyId,
+    opts: { pan?: boolean; loop?: boolean } = {},
+  ): MelodyHandle {
+    this.stopMelody(0.25);
+    if (!this.ctx || !this.master) return this.nullHandle();
+    const ctx = this.ctx;
+    const master = this.master;
+    let stopped = false;
+    let panner: StereoPannerNode | null = null;
+
+    void this.loadBuffer(meta).then((buffer) => {
+      if (stopped) return;
+      if (!buffer) {
+        this.startMelody(fallback, { pan: opts.pan, loop: opts.loop ?? true });
+        return;
+      }
+      // loop:false means "after a look" — only playPhrase() snippets sound.
+      if (opts.loop === false) return;
+      const src = ctx.createBufferSource();
+      src.buffer = buffer;
+      src.loop = opts.loop ?? true;
+      const gain = ctx.createGain();
+      gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+      gain.gain.setTargetAtTime(0.5 * meta.gain, ctx.currentTime, 0.5); // ≥ soft attack (SR-2 analogue)
+      panner = opts.pan && ctx.createStereoPanner ? ctx.createStereoPanner() : null;
+      src.connect(gain);
+      (panner ? gain.connect(panner).connect(master) : gain.connect(master));
+      src.start();
+      this.custom = { src, gain, panner };
+    });
+
+    return {
+      stop: (fade = 0.5) => {
+        stopped = true;
+        this.stopCustom(fade);
+      },
+      setPan: (p) => {
+        if (panner) panner.pan.setTargetAtTime(Math.max(-1, Math.min(1, p)), ctx.currentTime, 0.25);
+      },
+      playPhrase: () => void this.playCustomSnippet(meta),
+    };
+  }
+
+  private stopCustom(fadeSec: number): void {
+    const c = this.custom;
+    if (!c || !this.ctx) return;
+    this.custom = null;
+    c.gain.gain.setTargetAtTime(0.0001, this.ctx.currentTime, Math.max(fadeSec, 0.15) / 3);
+    try {
+      c.src.stop(this.ctx.currentTime + fadeSec + 0.6);
+    } catch {
+      /* already stopped */
+    }
+  }
+
+  /** ~8 s of the family's song as an after-a-look reward, advancing each time. */
+  private async playCustomSnippet(meta: CustomAudio): Promise<void> {
+    if (!this.ctx || !this.master || this.phraseBusy) return;
+    const buffer = await this.loadBuffer(meta);
+    if (!buffer || !this.ctx || this.phraseBusy) return;
+    this.phraseBusy = true;
+    const ctx = this.ctx;
+    const dur = Math.min(8, buffer.duration);
+    const offset = this.customOffset % Math.max(buffer.duration - dur, 0.01);
+    this.customOffset += dur;
+    const src = ctx.createBufferSource();
+    src.buffer = buffer;
+    const gain = ctx.createGain();
+    const t = ctx.currentTime;
+    gain.gain.setValueAtTime(0.0001, t);
+    gain.gain.setTargetAtTime(0.5 * meta.gain, t, 0.3);
+    gain.gain.setTargetAtTime(0.0001, t + dur - 1, 0.35);
+    src.connect(gain).connect(this.master);
+    src.start(t, offset, dur + 1);
+    setTimeout(() => (this.phraseBusy = false), dur * 1000);
   }
 
   /** One short phrase as a reward-after-a-look (FR-6b / PR-11). */

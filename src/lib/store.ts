@@ -27,6 +27,7 @@ export const DEFAULT_SETTINGS: ChildSettings = {
   soundFollowsTarget: false,
   haptics: true,
   sessionMinutes: 4,
+  melodySource: 'builtin',
 };
 
 type Listener = () => void;
@@ -75,6 +76,7 @@ function normalizeProfile(p: Profile): Profile {
     favorites: Array.isArray(p.favorites) ? p.favorites : [],
     programs: Array.isArray(p.programs) ? p.programs.filter((x) => x && Array.isArray(x.lessonIds)) : [],
     photos: Array.isArray(p.photos) ? p.photos : [],
+    audio: Array.isArray(p.audio) ? p.audio : [],
     sessions: Array.isArray(p.sessions) ? p.sessions : [],
   };
 }
@@ -108,6 +110,7 @@ export function createProfile(nickname: string): Profile {
     favorites: [],
     programs: [],
     photos: [],
+    audio: [],
     sessions: [],
     lastReviewAt: new Date().toISOString(),
   };
@@ -145,9 +148,14 @@ export function updateProfile(id: string, patch: (p: Profile) => void): void {
 
 export function deleteProfile(id: string): void {
   const s = getState();
+  const gone = s.profiles.find((p) => p.id === id);
   s.profiles = s.profiles.filter((p) => p.id !== id);
   if (s.activeProfileId === id) s.activeProfileId = s.profiles[0]?.id ?? null;
   persist();
+  // Remove the child's audio blobs too (PV-5 — clean deletion means clean).
+  if (gone?.audio.length) {
+    void import('./media').then((m) => gone.audio.forEach((a) => void m.deleteBlob(a.id)));
+  }
 }
 
 export function updateSettings(profileId: string, patch: Partial<ChildSettings>): void {
@@ -224,6 +232,10 @@ export function importProfile(json: unknown): { ok: true; profile: Profile } | {
   }
   const p = normalizeProfile(data.profile as Profile);
   if (!p.nickname || typeof p.nickname !== 'string') return { ok: false, error: 'The profile in that file looks incomplete.' };
+  // Audio blobs live in the exporting device's IndexedDB and never travel
+  // with the file (PV-5) — drop their orphaned metadata on arrival.
+  p.audio = [];
+  if (p.settings.melodySource !== 'builtin') p.settings.melodySource = 'builtin';
   const s = getState();
   p.id = s.profiles.some((x) => x.id === p.id) ? uid() : p.id || uid();
   s.profiles.push(p);
