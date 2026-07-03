@@ -191,13 +191,34 @@ a { color: var(--focus); }
   .start-orb { animation: none; }
 }
 
-/* Quiet who-is-up labels for multi-child devices — parent-facing, never loud. */
-.landing-profile {
+/* Bottom cluster: footnote stacks above the profile/grown-ups row in normal
+   flow, so a long nickname or a wrapped footnote can never overlap it —
+   no matter the viewport width or font scale (was 3 independently
+   absolutely-positioned siblings sharing one `bottom`, which collided on
+   narrow phones). */
+.landing-footer {
   position: absolute;
-  left: max(1.2rem, env(safe-area-inset-left));
+  left: 0;
+  right: 0;
   bottom: max(1.2rem, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding-left: max(1.2rem, env(safe-area-inset-left));
+  padding-right: max(1.2rem, env(safe-area-inset-right));
+}
+.landing-footer-row {
+  display: flex;
+  align-items: center;
+  width: 100%;
+}
+
+/* Quiet who-is-up label for multi-child devices — parent-facing, never loud. */
+.landing-profile {
   color: #6b7387;
   font-size: 0.95rem;
+  margin: 0;
 }
 .chooser-for {
   color: #6b7387;
@@ -207,21 +228,16 @@ a { color: var(--focus); }
 }
 
 .landing-grownups {
-  position: absolute;
-  right: max(1.2rem, env(safe-area-inset-right));
-  bottom: max(1.2rem, env(safe-area-inset-bottom));
+  margin-left: auto;
   color: var(--inkSoft);
 }
 
 .landing-footnote {
-  position: absolute;
-  bottom: max(1.2rem, env(safe-area-inset-bottom));
-  left: 50%;
-  transform: translateX(-50%);
   max-width: min(70vw, 460px);
   text-align: center;
   color: #4d5468;
   font-size: 0.8rem;
+  margin: 0;
 }
 
 /* Child lesson chooser — few, huge, calm tiles (FR-3). */

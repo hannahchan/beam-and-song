@@ -29,14 +29,18 @@ export function Landing() {
   return (
     <main class="child-screen">
       <p class="landing-title">beam and song</p>
-      {profiles.length > 1 && active && <p class="landing-profile">ready for {active.nickname}</p>}
       <button class="start-orb" onClick={start} aria-label="Start — gentle lessons">
         Start
       </button>
-      <p class="landing-footnote">A companion to your child's vision team — gentle light and song, tuned to your child.</p>
-      <a class="btn btn-quiet landing-grownups" href="#/grown-ups">
-        For grown-ups
-      </a>
+      <div class="landing-footer">
+        <p class="landing-footnote">A companion to your child's vision team — gentle light and song, tuned to your child.</p>
+        <div class="landing-footer-row">
+          {profiles.length > 1 && active && <p class="landing-profile">ready for {active.nickname}</p>}
+          <a class="btn btn-quiet landing-grownups" href="#/grown-ups">
+            For grown-ups
+          </a>
+        </div>
+      </div>
     </main>
   );
 }
