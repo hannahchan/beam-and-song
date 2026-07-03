@@ -120,6 +120,57 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
       watchFor: 'Going still to listen, eyes shifting, or the head turning toward the side the sound has moved to.',
     },
   },
+  'find-the-star': {
+    teen: {
+      title: 'Find the Signal',
+      melody: 'tideGlass',
+      goal: 'One brighter point rests among a few dim companions — finding a thing among other things. A touch near it (or any switch press) makes it answer. The complexity setting decides how much company appears.',
+      watchFor: 'Eyes moving between the shapes and settling on the bright one, even after a long think. Finding it slowly still counts.',
+    },
+  },
+  'find-your-photo': {
+    teen: {
+      title: 'Spot the Familiar',
+      melody: 'ember',
+      goal: 'Their own familiar thing — something they genuinely care about — resting among a few dim shapes. Familiarity does the finding at first; that is the point. Add a photo in Settings to unlock.',
+      watchFor: 'A quicker, warmer settle on the photo than on the shapes around it.',
+      bridge: 'Play the same game in the room: the real object among two others, offered slowly.',
+    },
+  },
+  'near-and-far': {
+    teen: {
+      title: 'Near and Far',
+      melody: 'nightSky',
+      goal: 'The light returns large, then smaller, then small — like something seen from across a room. Smaller sizes gently work the beginnings of distance viewing.',
+      watchFor: 'Whether the small appearances still earn a look, or only the large ones — a useful thing to notice, and only ever that.',
+      bridge: 'Try the real-world version: a favourite object close, then from across the room, unhurried.',
+    },
+  },
+  'hidden-among-many': {
+    teen: {
+      title: 'Hidden in the Field',
+      melody: 'nightSky',
+      goal: 'Real visual search: the brighter point sits among more company now, and the company drifts. Challenge comes from the looking itself — never from speed. A touch near it makes it answer.',
+      watchFor: 'Systematic searching — eyes working across the screen — and the pause of success on the find.',
+    },
+  },
+  'follow-the-star': {
+    teen: {
+      title: 'Follow Through the Field',
+      melody: 'tideGlass',
+      goal: 'The point travels its slow curve while dim company drifts around it — holding on to one moving thing among others. A touch near it makes it sound.',
+      watchFor: 'Following that survives the distractions, or re-finding the target after losing it to one.',
+    },
+  },
+  'familiar-faces': {
+    teen: {
+      title: 'Familiar Faces',
+      melody: 'ember',
+      goal: 'The people they love, one at a time, held long enough to really look. Faces are among the hardest and most rewarding things to see with CVI — and only your own photos are ever used. Add face photos in Settings to unlock.',
+      watchFor: 'A change when a face appears versus a shape: stilling, brightening, vocalising — recognition wears many coats.',
+      bridge: 'Best right before time with the real person: photo first, then the face itself, close and unhurried.',
+    },
+  },
   'bell-and-drum': {
     teen: {
       title: 'Two Tones',

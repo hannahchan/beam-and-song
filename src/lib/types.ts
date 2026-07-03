@@ -148,7 +148,12 @@ export type Behavior =
   | 'riseFloat'
   | 'photoDrift'
   | 'audioPan'
-  | 'audioAlternate';
+  | 'audioAlternate'
+  | 'findAmong'
+  | 'searchClutter'
+  | 'nearFar'
+  | 'amongMoving'
+  | 'facesFamiliar';
 
 export type ShapeKind =
   | 'orb'
@@ -188,10 +193,17 @@ export interface BandVariant {
   bridge?: string;
 }
 
+/** A tap or switch press. x/y are 0..1 screen fractions; x < 0 means "switch press, no pointer" (AR-8). */
+export interface TapEvent {
+  t: number; // lesson-ms
+  x: number;
+  y: number;
+}
+
 export interface LessonSpec {
   id: string;
   title: string;
-  level: 1 | 2;
+  level: 1 | 2 | 3 | 4;
   theme: string; // CR-1 — themes recur across levels
   /** CR-5 — listening is the goal; visuals stay minimal. */
   hearingFirst?: boolean;

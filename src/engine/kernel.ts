@@ -84,6 +84,20 @@ export function effectiveTaps(tapTimesMs: readonly number[], cooldownMs?: number
   return out;
 }
 
+/** Positional variant for find/search lessons — same cooldown guarantee. */
+export function effectiveTapEvents<T extends { t: number }>(taps: readonly T[], cooldownMs?: number): T[] {
+  const cd = Math.max(cooldownMs ?? 0, SAFETY.MIN_REWARD_COOLDOWN_MS);
+  const out: T[] = [];
+  let last = -Infinity;
+  for (const ev of [...taps].sort((a, b) => a.t - b.t)) {
+    if (ev.t - last >= cd) {
+      out.push(ev);
+      last = ev.t;
+    }
+  }
+  return out;
+}
+
 /** Deterministic PRNG (mulberry32) so scenes are reproducible in tests. */
 export function makeRng(seed: number): () => number {
   let s = seed >>> 0;

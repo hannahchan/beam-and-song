@@ -68,7 +68,7 @@ describe('age bands', () => {
       const teen = resolveLesson(base, 'teen');
       const lum: number[] = [];
       const red: number[] = [];
-      const sim = { seed: 7, tapsMs: [] as number[], photos: [{ dataUrl: 'x' }] };
+      const sim = { seed: 7, taps: [], photos: [{ dataUrl: 'x' }] };
       for (let i = 0; i < 15 * FPS; i++) {
         const scene = computeScene(teen, params, (i * 1000) / FPS, sim, ((i - 1) * 1000) / FPS);
         lum.push(sceneLuminance(scene));

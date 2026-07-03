@@ -34,7 +34,7 @@ Legend: ✅ done · 🟡 partial · ⏭ deferred (with reason) · ∅ n/a at inf
 | ID | Status | Notes |
 |---|---|---|
 | L1/L2 content | ✅ | 6 + 6 lessons. |
-| L3/L4 content | ⏭ | Beyond infant v1; specs/themes designed to extend. |
+| L3/L4 content | ✅ | L3: find-among (shape & own-photo targets), near/far distance drills. L4: visual search among drifting company, follow-among-movers, familiar faces (family photos only — no stock imagery; a curated-photo track remains open, human-gated for licensing/appropriateness). |
 | CR-1 | ✅ | Stars/Fireflies/Light/Rain/Familiar-things themes recur across levels. |
 | CR-2 | ✅ | No binary assets at all — visuals procedural, audio synthesized; ~35 KB gzipped app. |
 | CR-3 | ✅ | Photo targets: client-side downscale → data URL in the profile; on-device only; drives the photo lesson. Custom **audio** deferred. |
@@ -42,7 +42,7 @@ Legend: ✅ done · 🟡 partial · ⏭ deferred (with reason) · ∅ n/a at inf
 | CR-5 | ✅ | Two listening-first lessons + "Listening first" preset. |
 | CR-6 | ✅ | Three bands (infant / child / teen) selectable per profile and in guided setup. |
 | CR-7 | ✅ | Readiness cues per lesson ("watch for") + move-up/step-back guidance in the Guide. |
-| CR-8 | ⏭ | Higher challenge ceiling comes with L3/L4. |
+| CR-8 | ✅ | Challenge scales through clutter count (complexity setting), drifting distractors, target size (near/far), movement-among-movers, and faces — all inside unchanged Section 8 limits; find/search rewards are cooldown-bound and switch-operable (a switch press always counts as a hit). |
 | CR-9 | ✅ | Band re-skins theme/music/copy only — behavior, level, interactivity provably unchanged (tested). A teen at Level 1 gets "Ember", not a duck. |
 | CR-10 | ✅ | Full teen re-skin (ambient melodies composed as note data; boat/ember/orbit themes); child band = warm content with adjusted wording; a build-breaking test bans babyish language/imagery/nursery tunes from teen output. |
 | CR-11 | 🟡 | Teen row covers Levels 1–2 + listening (14 re-skinned lessons); breadth grows with L3/L4. |

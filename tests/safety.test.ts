@@ -28,12 +28,14 @@ function simulate(
 ): { lum: number[]; red: number[] } {
   const spec = LESSONS.find((l) => l.id === lessonId)!;
   const params = buildParams(settings);
-  const taps: number[] = [];
+  const taps: Array<{ t: number; x: number; y: number }> = [];
   if (tapsPerSec > 0) {
-    for (let t = 250; t < seconds * 1000; t += 1000 / tapsPerSec) taps.push(t);
+    // Switch presses (x = -1) always count as hits — the worst case for
+    // reward-luminance, since every effective press blooms (SR-6).
+    for (let t = 250; t < seconds * 1000; t += 1000 / tapsPerSec) taps.push({ t, x: -1, y: -1 });
   }
   // No measured luminance on the photo → the model assumes worst-case white.
-  const sim: SimInput = { seed: 12345, tapsMs: taps, photos: [{ dataUrl: 'data:worst-case' }] };
+  const sim: SimInput = { seed: 12345, taps, photos: [{ dataUrl: 'data:worst-case' }] };
   const lum: number[] = [];
   const red: number[] = [];
   for (let i = 0; i < seconds * FPS; i++) {

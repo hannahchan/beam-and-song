@@ -1,10 +1,11 @@
-import type { LessonSpec, Scene, SceneItem } from '../lib/types';
+import type { LessonSpec, Scene, SceneItem, TapEvent } from '../lib/types';
 import type { EngineParams } from './params';
 import { biasBandX, biasBandY, biasPoint } from './params';
 import {
   clamp,
   clamp01,
   easeInOutSine,
+  effectiveTapEvents,
   effectiveTaps,
   envelopeLength,
   fadeEnvelope,
@@ -24,8 +25,8 @@ import { mixHex } from '../safety/luminance';
 
 export interface SimInput {
   seed: number;
-  /** Raw tap/switch timestamps in lesson-ms. Cooldown filtering happens here. */
-  tapsMs: readonly number[];
+  /** Raw tap/switch events in lesson time. Cooldown filtering happens here (SR-6). */
+  taps: readonly TapEvent[];
   /** The child's own photos (CR-3); cycled through for novelty (PR-9). */
   photos?: readonly { dataUrl: string; lum?: number }[];
 }
@@ -40,7 +41,8 @@ export function computeScene(
   prevTMs: number = tMs,
 ): Scene {
   const scene: Scene = { bg: p.bg, items: [], pan: 0, cues: [] };
-  const taps = spec.interactive ? effectiveTaps(sim.tapsMs) : EMPTY;
+  const taps = spec.interactive ? effectiveTaps(sim.taps.map((ev) => ev.t)) : EMPTY;
+  const tapEvents = spec.interactive ? effectiveTapEvents(sim.taps) : [];
   const cue = (name: string, atMs: number) => {
     if (atMs > prevTMs && atMs <= tMs) scene.cues.push(name);
   };
@@ -87,6 +89,21 @@ export function computeScene(
       break;
     case 'audioAlternate':
       audioAlternate(scene, p, tMs, cue);
+      break;
+    case 'findAmong':
+      findAmong(scene, p, tMs, sim, tapEvents, cue, { drifting: false, extraDistractors: 0 });
+      break;
+    case 'searchClutter':
+      findAmong(scene, p, tMs, sim, tapEvents, cue, { drifting: true, extraDistractors: 3 });
+      break;
+    case 'nearFar':
+      nearFar(scene, p, tMs, sim.seed);
+      break;
+    case 'amongMoving':
+      amongMoving(scene, p, tMs, sim.seed, tapEvents, cue);
+      break;
+    case 'facesFamiliar':
+      facesFamiliar(scene, p, tMs, sim.photos ?? []);
       break;
   }
 
@@ -592,6 +609,224 @@ function audioAlternate(
     });
   scene.items.push(mk(0.28, bellActive), mk(0.72, !bellActive));
   scene.pan = bellActive ? -0.5 : 0.5;
+}
+
+/* --------------------------- Levels 3–4 (CR-8) --------------------------- */
+
+/**
+ * L3 "find the item" / L4 visual search. The target rests brighter among
+ * dim same-hue distractors; a touch near the target (generous 2.2x radius,
+ * AR-1) makes it answer. A switch press with no pointer always counts as a
+ * hit — attending plus pressing is the achievement (AR-8). Misses draw a
+ * gentle lift on the target, never anything negative.
+ */
+function findAmong(
+  scene: Scene,
+  p: EngineParams,
+  tMs: number,
+  sim: SimInput,
+  taps: readonly TapEvent[],
+  cue: (name: string, atMs: number) => void,
+  opts: { drifting: boolean; extraDistractors: number },
+): void {
+  const cycleMs = envelopeLength(p.fadeMs, p.holdMs * 3, p.fadeMs) + p.holdMs * 0.7;
+  const idx = Math.floor(tMs / cycleMs);
+  const local = tMs - idx * cycleMs;
+  const env = fadeEnvelope(local, 0, p.fadeMs, p.holdMs * 3, p.fadeMs);
+  const rng = makeRng((sim.seed ^ (idx * 48271)) >>> 0);
+
+  const target = biasPoint(rng(), rng(), p.fieldBias, p.biasStrength);
+  const count = clamp(p.complexity + opts.extraDistractors, 1, 6);
+  const distractors: Array<{ x: number; y: number }> = [];
+  for (let i = 0; i < count; i++) {
+    let pt = { x: 0.14 + rng() * 0.72, y: 0.14 + rng() * 0.72 };
+    for (let attempt = 0; attempt < 4; attempt++) {
+      const clearOfTarget = Math.hypot(pt.x - target.x, pt.y - target.y) > 0.24;
+      const clearOfOthers = distractors.every((d) => Math.hypot(pt.x - d.x, pt.y - d.y) > 0.18);
+      if (clearOfTarget && clearOfOthers) break;
+      pt = { x: 0.14 + rng() * 0.72, y: 0.14 + rng() * 0.72 };
+    }
+    distractors.push(pt);
+  }
+
+  // Taps during this arrangement's visible window.
+  let answer = 0;
+  let guide = 0;
+  for (const ev of taps) {
+    if (ev.t < idx * cycleMs || ev.t > idx * cycleMs + cycleMs) continue;
+    const dt = tMs - ev.t;
+    if (dt < 0) continue;
+    const hitRadius = Math.max(2.2 * p.radius, 0.16);
+    const hit = ev.x < 0 || Math.hypot(ev.x - target.x, ev.y - target.y) <= hitRadius;
+    if (hit) {
+      cue('chime', ev.t);
+      answer = Math.max(answer, fadeEnvelope(dt, 0, 700, 400, 1200));
+    } else {
+      guide = Math.max(guide, fadeEnvelope(dt, 0, 600, 300, 900));
+    }
+  }
+
+  const drift = (i: number, ax: number) =>
+    opts.drifting ? 0.3 * safeMod(tMs / 1000, p.modHz * (0.4 + 0.08 * i), p.modDepth, i * 1.9 + ax) : 0;
+
+  for (let i = 0; i < distractors.length; i++) {
+    scene.items.push(
+      orb(p, {
+        x: clamp(distractors[i].x + drift(i, 0), 0.08, 0.92),
+        y: clamp(distractors[i].y + drift(i, 2), 0.08, 0.92),
+        r: p.radius * 0.7,
+        color: mixHex(p.color, p.bg, 0.45),
+        alpha: clamp01(0.3 * p.peakAlpha * env),
+        glow: Math.min(p.glow, 0.5),
+      }),
+    );
+  }
+
+  const photo = sim.photos?.length ? sim.photos[idx % sim.photos.length] : undefined;
+  const targetAlpha = clamp01(p.peakAlpha * (0.82 + 0.13 * guide) * breathe(p, tMs) * env);
+  if (photo) {
+    scene.items.push({
+      shape: 'photo',
+      x: target.x,
+      y: target.y,
+      r: p.radius * 1.05,
+      color: '#888888',
+      alpha: targetAlpha,
+      glow: 0,
+      photoDataUrl: photo.dataUrl,
+      photoLum: photo.lum,
+    });
+  } else {
+    scene.items.push({ ...orb(p, { x: target.x, y: target.y }), shape: 'star', alpha: targetAlpha, r: p.radius * 0.9 });
+  }
+  if (answer > 0.01) {
+    scene.items.push({
+      shape: 'bloom',
+      x: target.x,
+      y: target.y,
+      r: p.radius * (1.1 + 0.5 * answer),
+      color: mixHex(p.color, '#f7f3ea', 0.65),
+      alpha: 0.3 * answer * env,
+      glow: 0,
+    });
+  }
+  scene.pan = (target.x - 0.5) * 1.6;
+}
+
+/** L3 distance drills: the target returns at different sizes — far, near, nearer. */
+function nearFar(scene: Scene, p: EngineParams, tMs: number, seed: number): void {
+  // Larger appearances arrive even more slowly, keeping the luminance ramp
+  // of the "near" size inside the same envelope as everything else (SR-3).
+  const fade = p.fadeMs * 1.35;
+  const cycleMs = envelopeLength(fade, p.holdMs * 1.6, fade) + p.holdMs * 0.6;
+  const idx = Math.floor(tMs / cycleMs);
+  const local = tMs - idx * cycleMs;
+  const env = fadeEnvelope(local, 0, fade, p.holdMs * 1.6, fade);
+  const rng = makeRng((seed ^ (idx * 22695477)) >>> 0);
+  const pos = biasPoint(rng(), rng(), p.fieldBias, p.biasStrength);
+  const sizeSeq = [1.2, 0.8, 0.5, 0.8];
+  const scale = sizeSeq[idx % sizeSeq.length];
+  // A slow "coming closer" swell across the hold — far below any risk rate.
+  const approach = 1 + 0.08 * smooth(clamp01(local / Math.max(cycleMs - p.holdMs * 0.6, 1)));
+  const r = Math.min(p.radius * scale * approach, 0.24);
+  if (env > 0.005) {
+    scene.items.push(orb(p, { x: pos.x, y: pos.y, r, alpha: clamp01(p.peakAlpha * 0.94 * env * breathe(p, tMs)) }));
+  }
+  scene.pan = (pos.x - 0.5) * 1.6;
+}
+
+/** L4: follow the star while dim company drifts around it (visual crowding, gently). */
+function amongMoving(
+  scene: Scene,
+  p: EngineParams,
+  tMs: number,
+  seed: number,
+  taps: readonly TapEvent[],
+  cue: (name: string, atMs: number) => void,
+): void {
+  const cy = mix(biasBandY(p.fieldBias, p.biasStrength), 0.5, 0.3);
+  const omega = (p.movement ? (p.speed / 0.32) * 0.8 : 0.06);
+  const th = omega * (tMs / 1000);
+  const target = { x: 0.5 + 0.3 * Math.cos(th), y: cy + 0.13 * Math.sin(2 * th) };
+
+  const rng = makeRng(seed ^ 0x9e3779b9);
+  const count = clamp(2 + p.complexity, 3, 5);
+  for (let i = 0; i < count; i++) {
+    const baseX = 0.15 + rng() * 0.7;
+    const baseY = 0.15 + rng() * 0.7;
+    scene.items.push(
+      orb(p, {
+        x: clamp(baseX + 0.35 * safeMod(tMs / 1000, p.modHz * (0.35 + 0.07 * i), p.modDepth, i * 2.3), 0.08, 0.92),
+        y: clamp(baseY + 0.35 * safeMod(tMs / 1000, p.modHz * (0.3 + 0.06 * i), p.modDepth, i * 1.4 + 1), 0.08, 0.92),
+        r: p.radius * 0.55,
+        color: mixHex(p.color, p.bg, 0.5),
+        alpha: clamp01(0.25 * p.peakAlpha * entry(tMs, p)),
+        glow: 0,
+      }),
+    );
+  }
+
+  let answer = 0;
+  for (const ev of taps) {
+    const dt = tMs - ev.t;
+    if (dt < 0) continue;
+    const hit = ev.x < 0 || Math.hypot(ev.x - target.x, ev.y - target.y) <= Math.max(2.2 * p.radius, 0.18);
+    if (hit) {
+      cue('chime', ev.t);
+      answer = Math.max(answer, fadeEnvelope(dt, 0, 700, 400, 1200));
+    }
+  }
+
+  scene.items.push({
+    ...orb(p, { x: target.x, y: target.y }),
+    shape: 'star',
+    r: p.radius * 0.85,
+    alpha: clamp01(p.peakAlpha * 0.94 * breathe(p, tMs) * entry(tMs, p)),
+    rot: 0.1 * Math.sin(th),
+  });
+  if (answer > 0.01) {
+    scene.items.push({
+      shape: 'bloom',
+      x: target.x,
+      y: target.y,
+      r: p.radius * (1.0 + 0.5 * answer),
+      color: mixHex(p.color, '#f7f3ea', 0.65),
+      alpha: 0.3 * answer,
+      glow: 0,
+    });
+  }
+  scene.pan = clamp((target.x - 0.5) * 1.8, -0.85, 0.85);
+}
+
+/** L4: the people they love, held long enough to really look (CR-3, faces). */
+function facesFamiliar(
+  scene: Scene,
+  p: EngineParams,
+  tMs: number,
+  photos: readonly { dataUrl: string; lum?: number }[],
+): void {
+  const pos = biasPoint(0.5, 0.48, p.fieldBias, p.biasStrength);
+  const cycleMs = envelopeLength(p.fadeMs * 1.6, p.holdMs * 3.5, p.fadeMs * 1.6) + p.holdMs;
+  const idx = Math.floor(tMs / cycleMs);
+  const local = tMs - idx * cycleMs;
+  const env = fadeEnvelope(local, 0, p.fadeMs * 1.6, p.holdMs * 3.5, p.fadeMs * 1.6);
+  // The slow lean-in of a face coming close — one gentle swell per appearance.
+  const zoom = 1 + 0.06 * smooth(clamp01(local / cycleMs));
+  const photo = photos.length ? photos[idx % photos.length] : undefined;
+  if (env > 0.005) {
+    scene.items.push({
+      shape: 'photo',
+      x: pos.x,
+      y: pos.y,
+      r: p.radius * 1.7 * zoom,
+      color: '#888888',
+      alpha: clamp01(p.peakAlpha * 0.95 * env),
+      glow: 0,
+      photoDataUrl: photo?.dataUrl,
+      photoLum: photo?.lum,
+    });
+  }
+  scene.pan = (pos.x - 0.5) * 1.2;
 }
 
 /** Complexity level 3: a handful of near-invisible resting points, never patterns. */

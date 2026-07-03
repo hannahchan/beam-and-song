@@ -9,7 +9,7 @@ import { createPhotoCache, drawScene } from '../engine/render';
 import { audio } from '../engine/audio';
 import { buzz } from '../engine/haptics';
 import { effectiveTaps } from '../engine/kernel';
-import { SESSION_TAGS, type LessonSpec, type ResponseLevel, type SessionTag } from '../lib/types';
+import { SESSION_TAGS, type LessonSpec, type ResponseLevel, type SessionTag, type TapEvent } from '../lib/types';
 
 type Phase = 'running' | 'paused' | 'resting' | 'observe';
 
@@ -52,7 +52,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
   softRef.current = soft;
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const tapsRef = useRef<number[]>([]);
+  const tapsRef = useRef<TapEvent[]>([]);
   const startedAtRef = useRef(0);
   const againRef = useRef<(() => void) | null>(null);
 
@@ -74,7 +74,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
 
     let idx = 0;
     let spec = queue[0];
-    let sim: SimInput = { seed: 20260703, tapsMs: tapsRef.current, photos };
+    let sim: SimInput = { seed: 20260703, taps: tapsRef.current, photos };
     let raf = 0;
     let lessonT = 0;
     let prevT = 0;
@@ -118,7 +118,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
       idx = nextIdx;
       spec = queue[idx];
       tapsRef.current.length = 0;
-      sim = { seed: 20260703 + idx * 101, tapsMs: tapsRef.current, photos };
+      sim = { seed: 20260703 + idx * 101, taps: tapsRef.current, photos };
       lessonT = 0;
       prevT = 0;
       handover = null;
@@ -209,17 +209,22 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
     };
     raf = requestAnimationFrame(frame);
 
-    /** Tap / switch input — anywhere counts (AR-1, AR-3, AR-8). */
-    const onTap = () => {
+    /**
+     * Tap / switch input — anywhere counts (AR-1, AR-3, AR-8). Pointer taps
+     * carry a position for the find/search lessons; a switch press carries
+     * x = -1, which those lessons treat as a hit (attending + pressing is
+     * the achievement — position accuracy must never exclude switch users).
+     */
+    const onTap = (x = -1, y = -1) => {
       if (phaseRef.current !== 'running' || handover) return;
       if (!audio.unlocked) {
         void audio.unlock().then(startMelodyIfWanted);
       }
       const t = lessonT;
       if (spec.interactive) {
-        const before = effectiveTaps(tapsRef.current).length;
-        tapsRef.current.push(t);
-        const after = effectiveTaps(tapsRef.current).length;
+        const before = effectiveTaps(tapsRef.current.map((ev) => ev.t)).length;
+        tapsRef.current.push({ t, x, y });
+        const after = effectiveTaps(tapsRef.current.map((ev) => ev.t)).length;
         if (after === before) return; // inside cooldown — scene & sound ignore it too
       } else if (settings.audioMode === 'after') {
         // FR-6b — the grown-up taps when the baby looks; the song answers.
@@ -237,7 +242,8 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
     };
     const onPointerDown = (e: PointerEvent) => {
       if ((e.target as HTMLElement).closest('button, a, .overlay')) return;
-      onTap();
+      const rect = canvas.getBoundingClientRect();
+      onTap((e.clientX - rect.left) / Math.max(rect.width, 1), (e.clientY - rect.top) / Math.max(rect.height, 1));
     };
     const onKey = (e: KeyboardEvent) => {
       if (e.repeat) return;

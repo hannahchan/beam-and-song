@@ -24,6 +24,16 @@ export function Library({ profile }: { profile: Profile | null }) {
       filter: (l) => l.level === 2 && !l.hearingFirst,
     },
     {
+      title: 'Level 3 · Toward the world',
+      blurb: 'Finding one thing among a few, and the beginnings of distance. Company on screen stays dim and calm.',
+      filter: (l) => l.level === 3 && !l.hearingFirst,
+    },
+    {
+      title: 'Level 4 · Higher-order looking',
+      blurb: 'Visual search among drifting company, following through distraction, and familiar faces. Challenge comes from the looking — never from speed; every safety rule holds unchanged here.',
+      filter: (l) => l.level === 4 && !l.hearingFirst,
+    },
+    {
       title: 'Listening lessons',
       blurb: 'Hearing is a goal of its own here — not just a helper for looking. Lovely when sound is the stronger doorway.',
       filter: (l) => !!l.hearingFirst,

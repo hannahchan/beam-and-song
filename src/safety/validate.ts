@@ -23,6 +23,11 @@ const BEHAVIORS = new Set([
   'photoDrift',
   'audioPan',
   'audioAlternate',
+  'findAmong',
+  'searchClutter',
+  'nearFar',
+  'amongMoving',
+  'facesFamiliar',
 ]);
 
 export function validateSpec(spec: LessonSpec): string[] {
@@ -31,7 +36,7 @@ export function validateSpec(spec: LessonSpec): string[] {
 
   if (!spec.id || !/^[a-z0-9-]+$/.test(spec.id)) err('id must be a kebab-case slug');
   if (!spec.title) err('missing title');
-  if (spec.level !== 1 && spec.level !== 2) err('level must be 1 or 2 in the infant build');
+  if (![1, 2, 3, 4].includes(spec.level)) err('level must be 1–4');
   if (!BEHAVIORS.has(spec.behavior)) err(`unknown behavior "${spec.behavior}"`);
 
   const melody = MELODIES[spec.melody];

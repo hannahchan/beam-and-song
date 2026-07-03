@@ -47,7 +47,7 @@ describe('field bias (PR-4)', () => {
 
   it('firefly spots actually land in the biased region', () => {
     const params = buildParams({ ...DEFAULT_SETTINGS, fieldBias: 'lower', biasStrength: 'strong' });
-    const sim: SimInput = { seed: 99, tapsMs: [] };
+    const sim: SimInput = { seed: 99, taps: [] };
     const cycle = 2 * Math.max(params.fadeMs, 500) + params.holdMs + params.holdMs * 0.6;
     let below = 0;
     let seen = 0;
@@ -106,9 +106,9 @@ describe('reward cooldown (SR-6)', () => {
 
   it('spamming Magic Touch produces bounded cues and items', () => {
     const params = buildParams(DEFAULT_SETTINGS);
-    const taps: number[] = [];
-    for (let t = 0; t < 10_000; t += 125) taps.push(t);
-    const sim: SimInput = { seed: 1, tapsMs: taps };
+    const taps: Array<{ t: number; x: number; y: number }> = [];
+    for (let t = 0; t < 10_000; t += 125) taps.push({ t, x: -1, y: -1 });
+    const sim: SimInput = { seed: 1, taps };
     let chimes = 0;
     let maxItems = 0;
     for (let i = 0; i < 600; i++) {
@@ -125,7 +125,7 @@ describe('reward cooldown (SR-6)', () => {
 describe('movement setting (PR-2)', () => {
   it('movement off keeps the drifting light perfectly still', () => {
     const params = buildParams({ ...DEFAULT_SETTINGS, movement: false });
-    const sim: SimInput = { seed: 5, tapsMs: [] };
+    const sim: SimInput = { seed: 5, taps: [] };
     const a = computeScene(spec('drifting-light'), params, 5000, sim);
     const b = computeScene(spec('drifting-light'), params, 25000, sim);
     expect(a.items[0].x).toBeCloseTo(b.items[0].x, 5);
@@ -134,12 +134,59 @@ describe('movement setting (PR-2)', () => {
 
   it('movement on actually travels', () => {
     const params = buildParams({ ...DEFAULT_SETTINGS, movement: true, speed: 3 });
-    const sim: SimInput = { seed: 5, tapsMs: [] };
+    const sim: SimInput = { seed: 5, taps: [] };
     const xs = new Set<number>();
     for (let t = 2000; t < 20000; t += 2000) {
       xs.add(Math.round(computeScene(spec('drifting-light'), params, t, sim).items[0]?.x * 100));
     }
     expect(xs.size).toBeGreaterThan(3);
+  });
+});
+
+describe('find/search lessons (L3–L4, CR-8)', () => {
+  const params = () => buildParams({ ...DEFAULT_SETTINGS, complexity: 2 });
+
+  function targetOf(scene: ReturnType<typeof computeScene>) {
+    // The target is the star/photo item (distractors are dim orbs).
+    return scene.items.find((i) => i.shape === 'star' || i.shape === 'photo')!;
+  }
+
+  it('a tap near the target answers with a chime; a distant tap does not', () => {
+    const p = params();
+    const probe = computeScene(spec('find-the-star'), p, 4000, { seed: 3, taps: [] });
+    const target = targetOf(probe);
+    const hit = computeScene(spec('find-the-star'), p, 4100, { seed: 3, taps: [{ t: 4050, x: target.x, y: target.y }] }, 4000);
+    expect(hit.cues).toContain('chime');
+    const missTaps = [{ t: 4050, x: target.x > 0.5 ? 0.05 : 0.95, y: target.y > 0.5 ? 0.05 : 0.95 }];
+    const miss = computeScene(spec('find-the-star'), p, 4100, { seed: 3, taps: missTaps }, 4000);
+    expect(miss.cues).not.toContain('chime');
+  });
+
+  it('a switch press (no pointer) always counts as a hit (AR-8)', () => {
+    const p = params();
+    const scene = computeScene(spec('find-the-star'), p, 4100, { seed: 3, taps: [{ t: 4050, x: -1, y: -1 }] }, 4000);
+    expect(scene.cues).toContain('chime');
+  });
+
+  it('company scales with the complexity setting, and search adds more', () => {
+    const count = (id: string, complexity: 1 | 2 | 3) => {
+      const p = buildParams({ ...DEFAULT_SETTINGS, complexity });
+      return computeScene(spec(id), p, 5000, { seed: 3, taps: [] }).items.length;
+    };
+    expect(count('find-the-star', 3)).toBeGreaterThan(count('find-the-star', 1));
+    expect(count('hidden-among-many', 2)).toBeGreaterThan(count('find-the-star', 2));
+  });
+
+  it('near-and-far cycles through sizes', () => {
+    const p = buildParams(DEFAULT_SETTINGS);
+    const sizes = new Set<number>();
+    const fade = p.fadeMs * 1.35; // larger targets arrive more slowly (see nearFar)
+    const cycle = 2 * fade + p.holdMs * 1.6 + p.holdMs * 0.6;
+    for (let i = 0; i < 4; i++) {
+      const scene = computeScene(spec('near-and-far'), p, i * cycle + fade + 400, { seed: 5, taps: [] });
+      if (scene.items[0]) sizes.add(Math.round(scene.items[0].r * 1000));
+    }
+    expect(sizes.size).toBeGreaterThanOrEqual(3);
   });
 });
 
@@ -149,8 +196,8 @@ describe('measured photo luminance feeds the safety model (CR-3/SR-8)', () => {
     const params = buildParams({ ...DEFAULT_SETTINGS, brightness: 3, size: 5 });
     const photoSpec = spec('familiar-photo');
     const t = 5000; // mid-hold, fully faded in
-    const dark = computeScene(photoSpec, params, t, { seed: 1, tapsMs: [], photos: [{ dataUrl: 'x', lum: 0.05 }] });
-    const worst = computeScene(photoSpec, params, t, { seed: 1, tapsMs: [], photos: [{ dataUrl: 'x' }] });
+    const dark = computeScene(photoSpec, params, t, { seed: 1, taps: [], photos: [{ dataUrl: 'x', lum: 0.05 }] });
+    const worst = computeScene(photoSpec, params, t, { seed: 1, taps: [], photos: [{ dataUrl: 'x' }] });
     expect(sceneLuminance(dark)).toBeLessThan(sceneLuminance(worst) * 0.4);
   });
 
@@ -162,7 +209,7 @@ describe('measured photo luminance feeds the safety model (CR-3/SR-8)', () => {
     ];
     const seen = new Set<string>();
     for (let t = 3000; t < 120_000; t += 4000) {
-      const scene = computeScene(spec('familiar-photo'), params, t, { seed: 1, tapsMs: [], photos });
+      const scene = computeScene(spec('familiar-photo'), params, t, { seed: 1, taps: [], photos });
       const url = scene.items.find((i) => i.shape === 'photo')?.photoDataUrl;
       if (url) seen.add(url);
     }
@@ -173,7 +220,7 @@ describe('measured photo luminance feeds the safety model (CR-3/SR-8)', () => {
 describe('determinism (testability of everything above)', () => {
   it('same seed, same time, same scene', () => {
     const params = buildParams(DEFAULT_SETTINGS);
-    const sim: SimInput = { seed: 42, tapsMs: [1000] };
+    const sim: SimInput = { seed: 42, taps: [{ t: 1000, x: -1, y: -1 }] };
     for (const l of LESSONS) {
       const a = computeScene(l, params, 7321, sim, 7300);
       const b = computeScene(l, params, 7321, sim, 7300);

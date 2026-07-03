@@ -100,6 +100,18 @@ export function Guide() {
           Moving “up” can simply mean: slightly smaller target, a touch more speed, one more thing on screen — one
           change at a time. And no level is a grade: meeting your child where they are <em>is</em> the practice.
         </p>
+        <p>Toward Level 3 (finding among things), look for:</p>
+        <ul>
+          <li>Comfortable, reliable looks at single targets even at quicker paces</li>
+          <li>Interest surviving when a second thing is on screen (complexity setting at two)</li>
+          <li>Recognition moments with familiar objects — the ball, the photo</li>
+        </ul>
+        <p>Toward Level 4 (search and faces), look for:</p>
+        <ul>
+          <li>Finding the bright target among dim company most sessions, without distress</li>
+          <li>Following a moving target and re-finding it after losing it</li>
+          <li>Comfortable sessions at smaller target sizes (the distance lesson)</li>
+        </ul>
       </Card>
 
       <Card title="From the screen to the world">
