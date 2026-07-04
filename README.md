@@ -39,8 +39,9 @@ no servers, no data leaving the device.
   photo lessons — after a find, or when a look is marked in after-a-look mode.
 - **Caregiver tooling**: profiles, instant persistence, export/import + whole-device backup, ten-second
   observations with day-context tags, trends, a summary formatted for your child's vision professional, a
-  settings-review nudge, an optional PIN — and **opt-in field-pattern observation** (PT-13) that only ever
-  speaks descriptively, after weeks
+  settings-review nudge, an optional PIN, a **lesson walk-through page** (every lesson on one screen, for
+  families and reviewers), a **printable off-screen kit** (the lessons' shapes in the child's colour) — and
+  **opt-in field-pattern observation** (PT-13) that only ever speaks descriptively, after weeks
   of data, under a tested non-diagnostic language guard (SR-7).
 - **Switch access built in** (AR-2/AR-8): one-switch auto-scanning and two-switch step-scanning with
   pace-derived dwell and a glide-only highlight; during lessons the switch belongs to the child, and in
@@ -50,8 +51,9 @@ no servers, no data leaving the device.
   cooldown-limits rewards. The test suite **simulates every lesson at 60 fps** — at default and extreme
   settings, under input mashing, across age bands — and measures the luminance timeline against
   flash-safety thresholds. It caught six real hazards during development; that is the point of it.
-- **293 unit/safety/a11y tests + 6 Playwright E2E tests**, all gating deploy in CI along with enforced
-  payload budgets (TR-9).
+- **294 unit/safety/a11y tests + 6 Playwright E2E tests**, all gating deploy in CI along with enforced
+  payload budgets (TR-9) — plus an opt-in screenshot gallery (`docs/gallery.md`) that captures every
+  lesson per age band for human review.
 
 ## Run it
 
