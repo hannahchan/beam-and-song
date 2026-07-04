@@ -1,11 +1,13 @@
-# Requirements coverage — v1 (infant scope)
+# Requirements coverage
 
 Status of every requirement ID from `CVI-training-site-requirements-final.md` in this build.
-**Scope decision:** v1 serves infants (~birth–18 months). Requirements that only bite for older
-children are deliberately deferred, not forgotten — they shape the architecture (themes are reusable,
-phase and rendering are decoupled in lesson specs, levels are data not code).
+**Scope:** the full brief — Levels 1–4 across all three age bands (infant, child, teen), plus the
+listening lessons. The build grew from an infant-first v1, and the architecture made that expansion
+clean: themes are reusable, phase and rendering are decoupled in lesson specs, and levels are data,
+not code. Everything below is implemented; the only 🟡 items are gated on a human or hardware review
+step, not on further coding.
 
-Legend: ✅ done · 🟡 partial · ⏭ deferred (with reason) · ∅ n/a at infant scope
+Legend: ✅ done · 🟡 partial (human/hardware step remaining)
 
 ## §2 Site structure & navigation
 
@@ -36,7 +38,7 @@ Legend: ✅ done · 🟡 partial · ⏭ deferred (with reason) · ∅ n/a at inf
 | L1/L2 content | ✅ | 7 + 8 lessons — L1 includes sustained contingency (Keep the Light Singing: the light answers exactly as long as a touch or held switch stays, on a slew-limited kernel envelope no press pattern can flicker); L2 includes anticipation (Peekaboo Light) and a first visually-guided reach (Reach for the Light). |
 | L3/L4 content | ✅ | L3: find-among by brightness, by the child's own colour (Find Your Colour), or by own-photo familiarity; a small resting scene; near/far distance drills. L4: visual search among drifting company, follow-among-movers, an ordered left-to-right sweep (Star by Star), familiar faces (family photos only — no stock imagery; a curated-photo track remains open, human-gated for licensing/appropriateness). |
 | CR-1 | ✅ | Stars/Fireflies/Light/Rain/Colour/Familiar-things themes recur across levels. |
-| CR-2 | ✅ | No binary assets at all — visuals procedural, audio synthesized; ~61 KB gzipped app. |
+| CR-2 | ✅ | No binary assets at all — visuals procedural, audio synthesized; the whole app gzips to a tiny bundle. |
 | CR-3 | ✅ | Photos: client-side downscale + luminance measurement, on-device, drive four lessons. Audio: the family's own songs/recordings (IndexedDB blobs, client-side normalization, duration caps) can replace the built-in melodies, including after-a-look snippets. Each photo can also carry a short **recorded caregiver voice label** (mic capture with file fallback, ≤10 s, normalized) that plays as the answer in photo lessons — the Perkins "meaningful pictures and sounds" pattern. Nothing ever leaves the device. |
 | CR-4 | ✅ | A real-object bridge on **every** lesson (validator-enforced), surfaced in the library cards — screens are the doorway, not the destination. |
 | CR-5 | ✅ | Six listening-first lessons with their own ladder: noticing (traveling song), turning toward sound (localization game with parent-marked turns), discrimination (bell/drum, drum/tune, loud/soft), then sound-announces-light (Song, Then Star — sequential, never simultaneous) + "Listening first" preset. |
@@ -109,8 +111,8 @@ copy (PR-13), and age band per profile (PR-14).
 | TR-5 | 🟡 | Responsive, touch-first, safe-areas; matrix testing on real tablets pending. |
 | TR-6 | ✅ | Start tap unlocks AudioContext; player retries unlock on first in-lesson gesture; resume handling. |
 | TR-7 | ✅ | Photos downscaled client-side to ≤512 px JPEG; stored locally; removable (PV-5). |
-| TR-8 | ✅ | 124 tests; safety suite is the priority class and gates deploy in CI. |
-| TR-9 | 🟡 | CI-enforced payload budgets (scripts/check-budgets.mjs; currently ~57 KB JS gz of a 70 KB budget, zero per-lesson fetches) + an in-player diagnostics overlay (?diag=1) and a scripted on-device soak protocol (docs/perf-budgets.md). The hardware runs themselves are the remaining human step. |
+| TR-8 | ✅ | A broad unit/safety/a11y suite; the safety suite is the priority class and gates deploy in CI. |
+| TR-9 | 🟡 | CI-enforced payload budgets (scripts/check-budgets.mjs; the JS bundle stays comfortably under budget, zero per-lesson fetches) + an in-player diagnostics overlay (?diag=1) and a scripted on-device soak protocol (docs/perf-budgets.md). The hardware runs themselves are the remaining human step. |
 | TR-10 | 🟡 | Automated: axe (all pages), contrast tests, keyboard-operable controls, scanning unit + E2E tests. docs/at-walkthrough.md scripts the manual AT passes; running them on hardware is the remaining human step. |
 
 ## §10 Privacy
