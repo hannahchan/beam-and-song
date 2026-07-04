@@ -153,14 +153,26 @@ a { color: var(--focus); }
 }
 
 .landing-title {
-  position: absolute;
-  top: max(1.2rem, env(safe-area-inset-top));
-  left: 50%;
-  transform: translateX(-50%);
+  margin: 0;
+  padding-top: max(1.2rem, env(safe-area-inset-top));
   color: #6b7387;
   font-size: 1rem;
   letter-spacing: 0.14em;
   text-transform: lowercase;
+}
+
+/* Grows to fill whatever space is left between the pinned title and footer,
+   and centers the orb within it — so on short/wide viewports the orb shrinks
+   into that space instead of the old absolutely-positioned title/footer
+   overlapping it (they weren't part of the flex flow, so nothing accounted
+   for their height). */
+.landing-orb-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .start-orb {
@@ -197,14 +209,12 @@ a { color: var(--focus); }
    absolutely-positioned siblings sharing one `bottom`, which collided on
    narrow phones). */
 .landing-footer {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: max(1.2rem, env(safe-area-inset-bottom));
+  align-self: stretch;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
+  padding-bottom: max(1.2rem, env(safe-area-inset-bottom));
   padding-left: max(1.2rem, env(safe-area-inset-left));
   padding-right: max(1.2rem, env(safe-area-inset-right));
 }
