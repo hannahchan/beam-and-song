@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Gentle light-and-song lessons for babies with CVI — a companion tool for families and vision professionals.",
+  "description": "Gentle light-and-sound lessons for babies with CVI — a companion tool for families and vision professionals.",
   "scripts": {
     "dev": "vite",
     "build": "tsc --noEmit && vite build",

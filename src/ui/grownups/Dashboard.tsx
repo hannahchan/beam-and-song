@@ -125,7 +125,7 @@ function Welcome() {
       <h1 tabindex={-1}>Welcome</h1>
       <Card title="Light & Sound, in one breath">
         <p>
-          Gentle, tunable light-and-song lessons for babies with CVI (cortical/cerebral visual impairment) — built
+          Gentle, tuneable light-and-sound lessons for babies with CVI (cortical/cerebral visual impairment) — built
           to be adjusted to <em>your</em> baby, used in short sessions, alongside your vision professional or
           early-intervention team.
         </p>

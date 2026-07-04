@@ -5,7 +5,7 @@
 listening lessons, and per-lesson guidance — plus what remains planned (see ROADMAP.md).*
 
 Thank you for looking at this. Light & Sound is a free, static web app offering short,
-highly tunable light-and-song lessons for children with CVI, built as a **companion to
+highly tuneable light-and-sound lessons for children with CVI, built as a **companion to
 professional care, never a programme or assessment**. Before we recommend it to any
 family, we want professional eyes on the content, the copy, and the safety reasoning.
 Nothing in this packet assumes you'll be gentle — critical findings are the valuable ones.
