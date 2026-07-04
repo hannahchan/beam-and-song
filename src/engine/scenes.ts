@@ -1,4 +1,4 @@
-import type { LessonSpec, Scene, SceneItem, TapEvent } from '../lib/types';
+import type { LessonSpec, Scene, SceneItem, ShapeKind, TapEvent } from '../lib/types';
 import type { EngineParams } from './params';
 import { biasBandX, biasBandY, biasPoint } from './params';
 import {
@@ -77,7 +77,8 @@ export function computeScene(
       rollBounce(scene, p, tMs, taps, cue);
       break;
     case 'glideAcross':
-      glideAcross(scene, p, tMs);
+      // The band skin may swap the glider (duck → boat); the practice is identical (CR-9).
+      glideAcross(scene, p, tMs, spec.shape);
       break;
     case 'riseFloat':
       riseFloat(scene, p, tMs, sim.seed, taps, cue);
@@ -92,10 +93,20 @@ export function computeScene(
       audioAlternate(scene, p, tMs, cue);
       break;
     case 'findAmong':
-      findAmong(scene, p, tMs, sim, tapEvents, cue, { drifting: false, extraDistractors: 0 });
+      // Only the photo-shaped lessons hunt the family's photos; the star
+      // lessons keep their star even when photos exist on the device.
+      findAmong(scene, p, tMs, sim, tapEvents, cue, {
+        drifting: false,
+        extraDistractors: 0,
+        usePhoto: spec.shape === 'photo',
+      });
       break;
     case 'searchClutter':
-      findAmong(scene, p, tMs, sim, tapEvents, cue, { drifting: true, extraDistractors: 3 });
+      findAmong(scene, p, tMs, sim, tapEvents, cue, {
+        drifting: true,
+        extraDistractors: 3,
+        usePhoto: spec.shape === 'photo',
+      });
       break;
     case 'nearFar':
       nearFar(scene, p, tMs, sim.seed);
@@ -114,6 +125,29 @@ export function computeScene(
       break;
     case 'loudSoft':
       loudSoft(scene, p, tMs, cue);
+      break;
+    case 'hideReveal':
+      hideReveal(scene, p, tMs, cue);
+      break;
+    case 'reachTouch':
+      reachTouch(scene, p, tMs, sim.seed, tapEvents, cue);
+      break;
+    case 'soundThenLight':
+      soundThenLight(scene, p, tMs, cue);
+      break;
+    case 'findColor':
+      findAmong(scene, p, tMs, sim, tapEvents, cue, {
+        drifting: false,
+        extraDistractors: 0,
+        company: 'hue',
+        targetShape: 'orb',
+      });
+      break;
+    case 'restingScene':
+      restingScene(scene, p, tMs, spec.shape);
+      break;
+    case 'sweepRow':
+      sweepRow(scene, p, tMs, tapEvents, cue);
       break;
   }
 
@@ -471,12 +505,12 @@ function rollBounce(
   scene.pan = (x - 0.5) * 1.6;
 }
 
-function glideAcross(scene: Scene, p: EngineParams, tMs: number): void {
+function glideAcross(scene: Scene, p: EngineParams, tMs: number, glider: ShapeKind): void {
   const water = clamp(biasBandY(p.fieldBias, p.biasStrength) + 0.08, 0.4, 0.72);
   if (!p.movement) {
     scene.items.push({
       ...orb(p, { x: 0.5, y: water }),
-      shape: 'duck',
+      shape: glider,
       alpha: clamp01(p.peakAlpha * entry(tMs, p) * breathe(p, tMs)),
       rot: 0,
     });
@@ -499,7 +533,7 @@ function glideAcross(scene: Scene, p: EngineParams, tMs: number): void {
   const bob = 0.35 * safeMod(tMs / 1000, p.modHz * 0.7, p.modDepth, 0.4);
   scene.items.push({
     ...orb(p, { x, y: water + bob }),
-    shape: 'duck',
+    shape: glider,
     alpha: clamp01(p.peakAlpha * env * breathe(p, tMs, 2)),
     rot: bob * 0.6,
   });
@@ -730,11 +764,15 @@ function loudSoft(
 /* --------------------------- Levels 3–4 (CR-8) --------------------------- */
 
 /**
- * L3 "find the item" / L4 visual search. The target rests brighter among
- * dim same-hue distractors; a touch near the target (generous 2.2x radius,
- * AR-1) makes it answer. A switch press with no pointer always counts as a
- * hit — attending plus pressing is the achievement (AR-8). Misses draw a
- * gentle lift on the target, never anything negative.
+ * L3 "find the item" / L4 visual search. The target rests among distractor
+ * company; a touch near the target (generous 2.2x radius, AR-1) makes it
+ * answer. A switch press with no pointer always counts as a hit — attending
+ * plus pressing is the achievement (AR-8). Misses draw a gentle lift on the
+ * target, never anything negative.
+ *
+ * Company comes in two salience flavours: 'dim' (default — the target wins
+ * by brightness) and 'hue' (findColor — company sits at similar brightness
+ * in a quiet other hue, so the child's own colour does the finding).
  */
 function findAmong(
   scene: Scene,
@@ -743,7 +781,13 @@ function findAmong(
   sim: SimInput,
   taps: readonly TapEvent[],
   cue: (name: string, atMs: number) => void,
-  opts: { drifting: boolean; extraDistractors: number },
+  opts: {
+    drifting: boolean;
+    extraDistractors: number;
+    company?: 'dim' | 'hue';
+    targetShape?: ShapeKind;
+    usePhoto?: boolean;
+  },
 ): void {
   const cycleMs = envelopeLength(p.fadeMs, p.holdMs * 3, p.fadeMs) + p.holdMs * 0.7;
   const idx = Math.floor(tMs / cycleMs);
@@ -779,20 +823,23 @@ function findAmong(
   const drift = (i: number, ax: number) =>
     opts.drifting ? 0.3 * safeMod(tMs / 1000, p.modHz * (0.4 + 0.08 * i), p.modDepth, i * 1.9 + ax) : 0;
 
+  // 'hue' company: a quiet hue from the other temperature family, at similar
+  // brightness — colour, not luminance, is the anchor (still never patterned).
+  const hueCompany = mixHex(warmHex(p.color) ? '#5b7186' : '#86755b', p.bg, 0.2);
   for (let i = 0; i < distractors.length; i++) {
     scene.items.push(
       orb(p, {
         x: clamp(distractors[i].x + drift(i, 0), 0.08, 0.92),
         y: clamp(distractors[i].y + drift(i, 2), 0.08, 0.92),
-        r: p.radius * 0.7,
-        color: mixHex(p.color, p.bg, 0.45),
-        alpha: clamp01(0.3 * p.peakAlpha * env),
-        glow: Math.min(p.glow, 0.5),
+        r: p.radius * (opts.company === 'hue' ? 0.8 : 0.7),
+        color: opts.company === 'hue' ? hueCompany : mixHex(p.color, p.bg, 0.45),
+        alpha: clamp01((opts.company === 'hue' ? 0.5 : 0.3) * p.peakAlpha * env),
+        glow: opts.company === 'hue' ? 0 : Math.min(p.glow, 0.5),
       }),
     );
   }
 
-  const photo = sim.photos?.length ? sim.photos[idx % sim.photos.length] : undefined;
+  const photo = opts.usePhoto && sim.photos?.length ? sim.photos[idx % sim.photos.length] : undefined;
   const targetAlpha = clamp01(p.peakAlpha * (0.82 + 0.13 * guide) * breathe(p, tMs) * env);
   if (photo) {
     scene.items.push({
@@ -807,10 +854,24 @@ function findAmong(
       photoLum: photo.lum,
     });
   } else {
-    scene.items.push({ ...orb(p, { x: target.x, y: target.y }), shape: 'star', alpha: targetAlpha, r: p.radius * 0.9 });
+    scene.items.push({
+      ...orb(p, { x: target.x, y: target.y }),
+      shape: opts.targetShape ?? 'star',
+      alpha: targetAlpha,
+      r: p.radius * 0.9,
+    });
   }
-  pushBloom(scene, p, target.x, target.y, p.radius * (1.1 + 0.5 * answer), 0.3 * answer * env);
+  // Kept deliberately small: with a glowing target under switch mashing, a
+  // fuller bloom pushed the 500 ms luminance swing over the SR-3 cap — the
+  // safety suite caught it (this is what it is for).
+  pushBloom(scene, p, target.x, target.y, p.radius * (1.0 + 0.35 * answer), 0.2 * answer * env);
   scene.pan = (target.x - 0.5) * 1.6;
+}
+
+/** Crude hue temperature — enough to pick a quiet companion hue from the other family. */
+function warmHex(hex: string): boolean {
+  const v = parseInt(hex.replace('#', ''), 16);
+  return ((v >> 16) & 255) >= (v & 255);
 }
 
 /** L3 distance drills: the target returns at different sizes — far, near, nearer. */
@@ -915,6 +976,273 @@ function facesFamiliar(
 }
 
 /** Complexity level 3: a handful of near-invisible resting points, never patterns. */
+/* ------------------- structural-round behaviors (L2–L4) ------------------- */
+
+/**
+ * L2 anticipation — peekaboo. The light travels to the same soft dark hill,
+ * slips behind it, waits, gives a small musical wink, and returns in the very
+ * same place. Predictability is the point: same hill, same pause, same
+ * return, every cycle. The "hiding" is an alpha fade (kernel-floored), so the
+ * safety model sees exactly what the screen shows — never an overdraw trick.
+ * With movement off the light hides in place instead of travelling.
+ */
+function hideReveal(
+  scene: Scene,
+  p: EngineParams,
+  tMs: number,
+  cue: (name: string, atMs: number) => void,
+): void {
+  // Rest on the side the child sees best; the hill takes the other side.
+  const mirrored = p.fieldBias === 'right';
+  const sx = (x: number) => (mirrored ? 1 - x : x);
+  const y = clamp(biasBandY(p.fieldBias, p.biasStrength), 0.36, 0.64);
+  const restX = sx(0.3);
+  const hideX = p.movement ? sx(0.58) : restX;
+
+  const travelMs = p.movement ? (0.28 / p.speed) * 1000 : 0;
+  const restMs = p.holdMs;
+  const hiddenMs = p.holdMs * 1.2;
+  const outAt = restMs + travelMs; // hide fade begins
+  const backAt = outAt + p.fadeMs + hiddenMs; // reveal fade begins
+  const cycleMs = backAt + p.fadeMs + travelMs + p.holdMs * 0.5;
+  const idx = Math.floor(tMs / cycleMs);
+  const local = tMs - idx * cycleMs;
+
+  // The promise before the return: a little wink from behind the hill.
+  cue('invite', idx * cycleMs + backAt - 700);
+
+  let x = restX;
+  let vis = 1;
+  if (local < restMs) {
+    x = restX;
+  } else if (local < outAt) {
+    x = mix(restX, hideX, easeInOutSine((local - restMs) / Math.max(travelMs, 1)));
+  } else if (local < outAt + p.fadeMs) {
+    // Slipping behind: keep creeping toward the hill while melting away.
+    const u = (local - outAt) / p.fadeMs;
+    x = hideX + (p.movement ? 0.04 * smooth(u) * (mirrored ? -1 : 1) : 0);
+    vis = 1 - smooth(u);
+  } else if (local < backAt) {
+    vis = 0;
+  } else if (local < backAt + p.fadeMs) {
+    // The return happens exactly where it vanished — that is the promise kept.
+    const u = (local - backAt) / p.fadeMs;
+    x = hideX + (p.movement ? 0.04 * (1 - smooth(u)) * (mirrored ? -1 : 1) : 0);
+    vis = smooth(u);
+  } else {
+    x = mix(hideX, restX, easeInOutSine((local - backAt - p.fadeMs) / Math.max(travelMs, 1)));
+  }
+
+  if (vis > 0.003) {
+    scene.items.push(
+      orb(p, { x, y, alpha: clamp01(p.peakAlpha * 0.92 * vis * breathe(p, tMs) * entry(tMs, p)) }),
+    );
+  }
+  // The hill draws after (over) the light, so the melt reads as "slipped
+  // behind" — one static, matte, near-dark dome; scenery, never a stimulus
+  // (SR-5). The tint sits well below the target but high enough to survive
+  // real screens: at 0.14 it vanished on ordinary panels and the light just
+  // seemed to evaporate, which breaks the whole object-permanence story.
+  scene.items.push({
+    shape: 'hill',
+    x: sx(0.8),
+    y: 1.24,
+    r: 0.55,
+    color: mixHex(p.bg, p.color, 0.3),
+    alpha: 0.9 * entry(tMs, p),
+    glow: 0,
+  });
+  scene.pan = (x - 0.5) * 1.5;
+}
+
+/**
+ * L2 visually guided reach — one patient light, and the first "touch the
+ * thing itself". The hit zone is enormous (AR-1) and a switch press always
+ * counts (AR-8); a miss only draws the same gentle guiding lift the find
+ * lessons use. Looking away mid-reach is expected, never penalised.
+ */
+function reachTouch(
+  scene: Scene,
+  p: EngineParams,
+  tMs: number,
+  seed: number,
+  taps: readonly TapEvent[],
+  cue: (name: string, atMs: number) => void,
+): void {
+  const cycleMs = envelopeLength(p.fadeMs, p.holdMs * 3, p.fadeMs) + p.holdMs * 0.7;
+  const idx = Math.floor(tMs / cycleMs);
+  const local = tMs - idx * cycleMs;
+  const env = fadeEnvelope(local, 0, p.fadeMs, p.holdMs * 3, p.fadeMs);
+  const rng = makeRng((seed ^ (idx * 2246822519)) >>> 0);
+  const target = biasPoint(rng(), rng(), p.fieldBias, p.biasStrength);
+
+  const hits: number[] = [];
+  let guide = 0;
+  for (const ev of taps) {
+    if (ev.t < idx * cycleMs || ev.t > idx * cycleMs + cycleMs) continue;
+    if (tapHitsTarget(ev, target, p, 0.3)) hits.push(ev.t);
+    else guide = Math.max(guide, fadeEnvelope(tMs - ev.t, 0, 600, 300, 900));
+  }
+  const answer = answerLevel(hits, tMs, cue);
+
+  scene.items.push(
+    orb(p, {
+      x: target.x,
+      y: target.y,
+      alpha: clamp01(p.peakAlpha * (0.8 + 0.12 * guide) * breathe(p, tMs) * env),
+    }),
+  );
+  // The bloom alone is the answer — an alpha lift on a full-size glowing orb
+  // stacked past the SR-3 swing cap under switch mashing (suite-caught).
+  pushBloom(scene, p, target.x, target.y, p.radius * (1.05 + 0.35 * answer), 0.2 * answer * env);
+  scene.pan = (target.x - 0.5) * 1.6;
+}
+
+/**
+ * L2 listening — sound announces, light arrives; never both at once. The
+ * call and the star share a side, and the sides alternate slowly, cycle by
+ * cycle. This is PR-11's insight ("the senses take turns") as a lesson.
+ */
+function soundThenLight(
+  scene: Scene,
+  p: EngineParams,
+  tMs: number,
+  cue: (name: string, atMs: number) => void,
+): void {
+  const y = biasBandY(p.fieldBias, p.biasStrength);
+  const quietMs = p.holdMs;
+  const callMs = 3400; // the five-note call runs ~2.8 s, plus a breath
+  const waitMs = p.holdMs * 0.8;
+  const starMs = envelopeLength(p.fadeMs, p.holdMs * 1.6, p.fadeMs);
+  const cycleMs = quietMs + callMs + waitMs + starMs + p.holdMs * 0.5;
+  const idx = Math.floor(tMs / cycleMs);
+  const local = tMs - idx * cycleMs;
+  const side = idx % 2 === 0 ? -1 : 1;
+  const x = side < 0 ? 0.27 : 0.73;
+  cue('call', idx * cycleMs + quietMs + 200);
+
+  // A resting ember keeps the screen alive between arrivals — far too dim to
+  // compete with the ear (the listening-lesson convention).
+  scene.items.push(
+    orb(p, {
+      x: 0.5,
+      y: 0.86,
+      r: p.radius * 0.3,
+      alpha: clamp01(0.1 * p.peakAlpha * entry(tMs, p)),
+      glow: Math.min(p.glow, 0.6),
+    }),
+  );
+
+  const starEnv = fadeEnvelope(local, quietMs + callMs + waitMs, p.fadeMs, p.holdMs * 1.6, p.fadeMs);
+  if (starEnv > 0.005) {
+    scene.items.push({
+      ...orb(p, { x, y }),
+      shape: 'star',
+      r: p.radius * 0.75,
+      alpha: clamp01(0.8 * p.peakAlpha * starEnv * breathe(p, tMs)),
+    });
+  }
+  scene.pan = local >= quietMs ? side * 0.85 : 0;
+}
+
+/**
+ * L3 — two or three familiar things resting together; nothing asked at all.
+ * The band skin picks the cast (duck & friends, or a night harbour);
+ * complexity decides how much of it appears. Everything is still except one
+ * gentle breath, and the entries stagger by more than a full fade so their
+ * luminance ramps queue rather than stack.
+ */
+function restingScene(scene: Scene, p: EngineParams, tMs: number, primary: ShapeKind): void {
+  const ground = clamp(biasBandY(p.fieldBias, p.biasStrength) + 0.12, 0.48, 0.74);
+  const dx = (biasBandX(p.fieldBias, p.biasStrength) - 0.5) * 0.5;
+  const cast: Array<{ shape: ShapeKind; x: number; y: number; scale: number }> =
+    primary === 'boat'
+      ? [
+          { shape: 'boat', x: 0.42, y: ground, scale: 1 },
+          { shape: 'moon', x: 0.72, y: 0.24, scale: 0.7 },
+          { shape: 'star', x: 0.26, y: 0.2, scale: 0.45 },
+        ]
+      : [
+          { shape: primary, x: 0.42, y: ground, scale: 1 },
+          { shape: 'star', x: 0.68, y: 0.22, scale: 0.6 },
+          { shape: 'ball', x: 0.66, y: ground + 0.02, scale: 0.6 },
+        ];
+  const count = p.complexity >= 2 ? 3 : 2;
+  for (let i = 0; i < count; i++) {
+    const c = cast[i];
+    const env = smooth(clamp01((tMs - i * p.fadeMs * 1.6) / p.fadeMs));
+    const alive = i === 0 ? breathe(p, tMs) : 1 + safeMod(tMs / 1000, p.modHz * 0.5, p.modDepth * 0.5, i * 2.1);
+    scene.items.push({
+      ...orb(p, { x: clamp(c.x + dx, 0.12, 0.88), y: c.y }),
+      shape: c.shape,
+      r: p.radius * c.scale * 0.9,
+      alpha: clamp01(p.peakAlpha * (i === 0 ? 0.92 : 0.6) * env * alive),
+      glow: i === 0 ? p.glow : Math.min(p.glow, 0.6),
+      rot: 0,
+    });
+  }
+  scene.pan = (clamp(cast[0].x + dx, 0.12, 0.88) - 0.5) * 1.2;
+}
+
+/**
+ * L4 — an ordered sweep: one quiet row, each star taking its glowing turn
+ * left to right, always the same direction. Eyes learning to travel a row
+ * predictably is the practice (the sweep that shelves — and one day lines of
+ * text — ask for). A touch near the glowing star answers; a switch press
+ * always counts (AR-8). Rewards gate on each star's own glow envelope, so
+ * they can never ramp on top of the row's transitions (the inviteTwo rule).
+ */
+function sweepRow(
+  scene: Scene,
+  p: EngineParams,
+  tMs: number,
+  taps: readonly TapEvent[],
+  cue: (name: string, atMs: number) => void,
+): void {
+  const y = clamp(biasBandY(p.fieldBias, p.biasStrength), 0.3, 0.7);
+  const count = clamp(2 + p.complexity, 3, 5);
+  const xs: number[] = [];
+  for (let i = 0; i < count; i++) xs.push(mix(0.18, 0.82, i / (count - 1)));
+  const stepMs = envelopeLength(p.fadeMs, p.holdMs, p.fadeMs);
+  const restMs = p.holdMs;
+  const cycleMs = count * stepMs + restMs;
+  const idx = Math.floor(tMs / cycleMs);
+  const local = tMs - idx * cycleMs;
+
+  const litAt = (t: number): number => {
+    const li = Math.floor((t - Math.floor(t / cycleMs) * cycleMs) / stepMs);
+    return li < count ? li : -1;
+  };
+
+  for (let i = 0; i < count; i++) cue('invite', idx * cycleMs + i * stepMs + p.fadeMs * 0.6);
+
+  // A tap answers the star that was glowing at the moment of the tap.
+  const hitsFor: number[][] = xs.map(() => []);
+  for (const ev of taps) {
+    const li = litAt(ev.t);
+    if (li >= 0 && tapHitsTarget(ev, { x: xs[li], y }, p, 0.18)) hitsFor[li].push(ev.t);
+  }
+
+  for (let i = 0; i < count; i++) {
+    const env = fadeEnvelope(local, i * stepMs, p.fadeMs, p.holdMs, p.fadeMs);
+    const answer = answerLevel(hitsFor[i], tMs, cue);
+    scene.items.push({
+      ...orb(p, { x: xs[i], y }),
+      shape: 'star',
+      r: p.radius * 0.72,
+      alpha: clamp01(p.peakAlpha * (0.26 + 0.66 * env) * breathe(p, tMs, i * 1.3) * entry(tMs, p)),
+      rot: 0,
+    });
+    // Small on purpose: an answer bloom can land while the next star's rise
+    // overlaps this one's fall, so its own ramp must stay well inside SR-3.
+    pushBloom(scene, p, xs[i], y, p.radius * (0.85 + 0.3 * answer), 0.18 * answer * env);
+  }
+
+  const li = litAt(tMs);
+  scene.pan =
+    li >= 0 ? (xs[li] - 0.5) * 1.4 * fadeEnvelope(local, li * stepMs, p.fadeMs, p.holdMs, p.fadeMs) : 0;
+}
+
 function backdropStars(scene: Scene, seed: number): void {
   const rng = makeRng(seed ^ 0x5f3759df);
   for (let i = 0; i < 5; i++) {
@@ -937,7 +1265,9 @@ function backdropStars(scene: Scene, seed: number): void {
 export function primarySceneItem(items: readonly SceneItem[]): SceneItem | null {
   let best: SceneItem | null = null;
   for (const it of items) {
-    if (it.r <= 0.03 || it.shape === 'bloom') continue;
+    // Blooms are rewards and hills are scenery — neither is ever "the target"
+    // (a hill would otherwise win on sheer size and skew PT-13's quadrants).
+    if (it.r <= 0.03 || it.shape === 'bloom' || it.shape === 'hill') continue;
     if (!best || it.alpha * it.r > best.alpha * best.r) best = it;
   }
   return best;

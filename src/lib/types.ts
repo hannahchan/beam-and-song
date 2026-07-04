@@ -166,6 +166,12 @@ export const BEHAVIOR_IDS = [
   'soundSeek',
   'rhythmMelody',
   'loudSoft',
+  'hideReveal',
+  'reachTouch',
+  'soundThenLight',
+  'findColor',
+  'restingScene',
+  'sweepRow',
 ] as const;
 
 export type Behavior = (typeof BEHAVIOR_IDS)[number];
@@ -180,7 +186,9 @@ export type ShapeKind =
   | 'drop'
   | 'photo'
   | 'bloom'
-  | 'moon';
+  | 'moon'
+  /** Matte scenery (the peekaboo occluder) — flat, near-dark, no highlight, never a stimulus. */
+  | 'hill';
 
 export type MelodyId =
   | 'brahms'
@@ -230,11 +238,27 @@ export interface LessonSpec {
   /** FR-9 — a tap anywhere (or a switch press) draws a gentle response. */
   interactive: boolean;
   requiresPhoto?: boolean;
+  /**
+   * The one thing this lesson practises, as a short band-neutral phrase
+   * ("holding a look", "following side to side"). Describes the lesson,
+   * never the child (SR-7); shown as a chip in the library (PT-10).
+   */
+  skill: string;
+  /** PT-10 — ids of a gentler / bolder neighbour lesson, when one exists. */
+  stepBack?: string;
+  stepUp?: string;
+  /**
+   * Lessons where the looking itself is the work (find/search): concurrent
+   * music competes with it for many children, so the library suggests the
+   * "after a look" or "off" sound modes here (FR-6/PR-11). Guidance only —
+   * the caregiver's sound-mode setting always wins.
+   */
+  quietPreferred?: boolean;
   /** Grown-up copy */
   goal: string;
   watchFor: string;
-  /** CR-4 — optional real-object bridge prompt. */
-  bridge?: string;
+  /** CR-4 — every lesson carries a real-world bridge prompt. */
+  bridge: string;
 }
 
 /* ------------------------------ Engine interfaces ------------------------------ */

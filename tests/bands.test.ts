@@ -17,14 +17,28 @@ import { MELODIES } from '../src/engine/melodies';
 
 describe('age bands', () => {
   it('teen-resolved lessons contain no babyish language, imagery, or nursery tunes', () => {
-    const bannedCopy = /\bbaby\b|\bbabies\b|nursery|lullab|duck|cartoon|cute little/i;
+    const bannedCopy = /\bbaby\b|\bbabies\b|nursery|lullab|duck|cartoon|cute little|peekaboo|\bboo\b/i;
     const nurseryMelodies = new Set(['twinkle', 'frere', 'mary', 'row', 'brahms']);
     for (const base of LESSONS) {
       const teen = resolveLesson(base, 'teen');
-      const copy = `${teen.title} ${teen.theme} ${teen.goal} ${teen.watchFor} ${teen.bridge ?? ''}`;
+      const copy = `${teen.title} ${teen.theme} ${teen.goal} ${teen.watchFor} ${teen.bridge ?? ''} ${teen.skill}`;
       expect(copy, `${base.id} teen copy`).not.toMatch(bannedCopy);
       expect(teen.shape, `${base.id} teen shape`).not.toBe('duck');
       expect(nurseryMelodies.has(teen.melody), `${base.id} teen melody "${teen.melody}"`).toBe(false);
+    }
+  });
+
+  it('the band skin reaches the canvas: teen scenes never draw a duck', () => {
+    const params = buildParams({ ...DEFAULT_SETTINGS, movement: true });
+    for (const id of ['little-duck', 'quiet-scene']) {
+      const teen = resolveLesson(LESSONS.find((l) => l.id === id)!, 'teen');
+      const sim = { seed: 5, taps: [] as { t: number; x: number; y: number }[] };
+      for (let t = 0; t <= 60_000; t += 250) {
+        const scene = computeScene(teen, params, t, sim, t - 250);
+        for (const item of scene.items) {
+          expect(item.shape, `${id} at ${t}ms`).not.toBe('duck');
+        }
+      }
     }
   });
 

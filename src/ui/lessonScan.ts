@@ -17,6 +17,9 @@ export const CHOICE_BEHAVIORS: ReadonlySet<Behavior> = new Set<Behavior>([
   'findAmong',
   'searchClutter',
   'amongMoving',
+  'findColor',
+  'sweepRow',
+  'reachTouch',
 ]);
 
 export const LESSON_SCAN = {
@@ -49,9 +52,9 @@ export class LessonScanController {
     this.ring = { x: 0.5, y: 0.5, r: 0.1, alpha: 0, visible: false };
   }
 
-  /** The things worth stepping between: real, visible items — never blooms or dust. */
+  /** The things worth stepping between: real, visible items — never blooms, scenery, or dust. */
   candidates(items: readonly SceneItem[]): SceneItem[] {
-    return items.filter((i) => i.shape !== 'bloom' && i.r > 0.035 && i.alpha > 0.08);
+    return items.filter((i) => i.shape !== 'bloom' && i.shape !== 'hill' && i.r > 0.035 && i.alpha > 0.08);
   }
 
   /** Advance the ring; in auto mode the highlight steps on its own gentle clock. */

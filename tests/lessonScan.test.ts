@@ -19,7 +19,14 @@ const SCENE = [item(0.2, 0.3), item(0.5, 0.6), item(0.8, 0.4)];
 
 describe('in-lesson choice scanning', () => {
   it('covers exactly the choice lessons', () => {
-    expect([...CHOICE_BEHAVIORS].sort()).toEqual(['amongMoving', 'findAmong', 'searchClutter']);
+    expect([...CHOICE_BEHAVIORS].sort()).toEqual([
+      'amongMoving',
+      'findAmong',
+      'findColor',
+      'reachTouch',
+      'searchClutter',
+      'sweepRow',
+    ]);
   });
 
   it('the ring can never blink or jump: constant target alpha, gliding position', () => {

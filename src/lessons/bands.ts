@@ -55,6 +55,8 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
       melody: 'nightSky',
       goal: 'A small light rests, melts away, and reappears somewhere new — noticing and re-finding, tuned to the screen region you set.',
       watchFor: 'Searching looks after the light fades, and finding it in its new place.',
+      bridge:
+        'In a dim room, rest a small light in one place, cover it gently, and let it reappear somewhere new — slow, unhurried hide and seek.',
     },
   },
   raindrop: {
@@ -70,6 +72,8 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
       melody: 'tideGlass',
       goal: 'The point of light travels a slow curve — and with "sound follows the target" on, its tone travels with it, joining looking and listening.',
       watchFor: 'Smoother following along the curve, or turning toward the side the sound has moved to.',
+      bridge:
+        'Glide a light or a meaningful object through one slow, smooth curve while humming a line — the same journey, held in your hand.',
     },
   },
   'two-fireflies': {
@@ -78,6 +82,8 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
       melody: 'ember',
       goal: 'Two resting lights. One at a time brightens and sounds, inviting a look — a gentle experience of choosing where to look. A touch anywhere makes the bright one answer.',
       watchFor: 'A look that moves to whichever light is glowing, even slowly.',
+      bridge:
+        'Hold two small lights or objects a little apart and let one at a time "call" — a slow wiggle, a hum — and notice which one earns the look.',
     },
   },
   'rolling-ball': {
@@ -105,6 +111,8 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
       melody: 'ember',
       goal: 'A lantern-light drifts slowly upward and away, then another follows — practice lifting the gaze outward from where they see best. A touch makes it sway.',
       watchFor: 'Eyes lifting with it a little further each time.',
+      bridge:
+        'Watch slow rising things together — steam from a mug, bubbles if they enjoy them — few, gentle, and unhurried.',
     },
   },
   'familiar-photo': {
@@ -208,6 +216,65 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
       watchFor: 'Different reactions to the two sounds: a still, listening face for one, movement or vocalising for the other.',
     },
   },
+  'peekaboo-light': {
+    child: { title: 'Peekaboo Lantern', melody: 'lanternWaltz' },
+    teen: {
+      title: 'Lighthouse',
+      melody: 'tideGlass',
+      goal: 'The light slides behind a dark headland, waits, sounds a low note — and returns in the very same place, like a lighthouse coming around. Practice at expecting: knowing where something will reappear, and being there to meet it. With movement off, the light hides in place instead of travelling.',
+      watchFor: 'Eyes holding near the hiding place through the pause, or settling back there when the note sounds.',
+      bridge:
+        'The real-world twin: watch a slow, predictable coming-and-going together — a pedestrian light, headlights that sweep past and return, waves reaching and retreating.',
+    },
+  },
+  'reach-for-the-light': {
+    teen: {
+      title: 'Beacon',
+      melody: 'ember',
+      goal: 'One patient light, and an invitation: a touch on the light itself — or any switch press — makes it answer and bloom. The hit area is generous, and a miss only draws a gentle brightening. Looking first, touching second, at any speed.',
+      watchFor: 'A look, then a reach — even with a long pause between, and even looking away while the hand travels. That split is a normal way to reach.',
+      bridge: 'The same game with a real object they care about, at easy reach on a plain dark surface, in their own time.',
+    },
+  },
+  'song-then-star': {
+    teen: {
+      title: 'Call, Then Light',
+      melody: 'nightSky',
+      goal: 'A slow call sounds from one side of the dark. Then quiet. Then, on that same side, a point of light fades gently in — the sound announces, the light arrives, never both at once. Listening and looking take turns instead of competing.',
+      watchFor: 'A turn toward the call, then eyes arriving where the light appears — even long after it has faded in. The order matters more than the speed.',
+      bridge: 'Speak softly from one side of them, wait a moment, then lean slowly into view on that same side: sound first, then the sight of you.',
+    },
+  },
+  'find-your-colour': {
+    child: { melody: 'meadow' },
+    teen: {
+      title: 'Colour Signal',
+      melody: 'tideGlass',
+      goal: 'Their colour rests among a few quiet lights in other colours — not brighter, simply theirs. Where Find the Signal is won by brightness, this one is won by colour, often the strongest anchor there is. A touch near it (or any switch press) makes it answer.',
+      watchFor: 'Eyes moving between the lights and settling on their colour, even slowly — and whether that colour keeps winning across sessions.',
+      bridge: 'Gather two or three things in their colour and a few in duller colours on a plain surface, and let their colour do the choosing.',
+    },
+  },
+  'quiet-scene': {
+    teen: {
+      title: 'Night Harbour',
+      shape: 'boat',
+      melody: 'nightSky',
+      goal: 'Two or three quiet shapes resting together — a boat on still water, the moon above — with nothing asked at all. An unhurried taste of more-than-one-thing staying calmly where it is. The complexity setting decides how much company appears.',
+      watchFor: 'Eyes travelling from one thing to another and coming back — visiting the scene rather than holding one point.',
+      bridge: 'Set two or three meaningful things together on a plain surface and name them slowly, touching each in turn. No questions, just company.',
+    },
+  },
+  'star-by-star': {
+    child: { melody: 'meadow' },
+    teen: {
+      title: 'Skyline',
+      melody: 'nightSky',
+      goal: 'A quiet row of lights. One after another, left to right, each takes its turn to glow — inviting the eyes to travel the row in order, the same sweep that shelves, signs, and lines of text ask for. A touch near the glowing light (or any switch press) makes it answer.',
+      watchFor: 'Eyes arriving at the next light before it glows — the sweep becoming a habit rather than a surprise.',
+      bridge: 'Line up three meaningful things left to right on a dark surface and visit each in turn together, always the same direction.',
+    },
+  },
 };
 
 /** Mechanical wording adaptation for bands without explicit copy overrides. */
@@ -227,7 +294,7 @@ export function adaptCopy(text: string, band: AgeBand): string {
     .replace(/\bbaby\b/gi, 'young person');
 }
 
-/** Resolve a lesson for an age band: same behavior, band-appropriate skin. */
+/** Resolve a lesson for an age band: same behavior, level, skill — band-appropriate skin. */
 export function resolveLesson(spec: LessonSpec, band: AgeBand): LessonSpec {
   if (band === 'infant') return spec;
   const v = BAND_VARIANTS[spec.id]?.[band] ?? {};
@@ -239,7 +306,7 @@ export function resolveLesson(spec: LessonSpec, band: AgeBand): LessonSpec {
     melody: v.melody ?? spec.melody,
     goal: v.goal ?? adaptCopy(spec.goal, band),
     watchFor: v.watchFor ?? adaptCopy(spec.watchFor, band),
-    bridge: v.bridge ?? (spec.bridge ? adaptCopy(spec.bridge, band) : undefined),
+    bridge: v.bridge ?? adaptCopy(spec.bridge, band),
   };
 }
 

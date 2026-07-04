@@ -116,6 +116,9 @@ export function drawScene(
       case 'moon':
         drawMoon(ctx, it, x, y, r);
         break;
+      case 'hill':
+        drawHill(ctx, it, x, y, r);
+        break;
       case 'photo': {
         const c = it.photoDataUrl ? photos.get(it.photoDataUrl) : null;
         if (c) {
@@ -135,6 +138,24 @@ function hexA(hex: string, a: number): string {
   const h = hex.replace('#', '');
   const v = parseInt(h, 16);
   return `rgba(${(v >> 16) & 255},${(v >> 8) & 255},${v & 255},${a})`;
+}
+
+/**
+ * Matte scenery — the peekaboo hill. Deliberately no specular highlight (the
+ * orb gradient would make the occluder glow from within, competing with the
+ * target and inviting light-gazing). The body stays dark and flat; only a
+ * thin, slightly lighter rim marks the crest, because on ordinary screens a
+ * darkened rim melted into the background and the hill disappeared entirely.
+ */
+function drawHill(ctx: CanvasRenderingContext2D, it: SceneItem, x: number, y: number, r: number): void {
+  const grad = ctx.createRadialGradient(x, y, r * 0.35, x, y, r);
+  grad.addColorStop(0, mixHex(it.color, '#000000', 0.3));
+  grad.addColorStop(0.88, it.color);
+  grad.addColorStop(1, mixHex(it.color, '#f7f3ea', 0.16));
+  ctx.fillStyle = grad;
+  ctx.beginPath();
+  ctx.arc(x, y, r, 0, Math.PI * 2);
+  ctx.fill();
 }
 
 function drawOrb(ctx: CanvasRenderingContext2D, it: SceneItem, x: number, y: number, r: number): void {
