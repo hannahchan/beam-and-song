@@ -70,10 +70,28 @@ Mirror of D plus a TalkBack pass over Settings and the Guide.
 |---|---|---|
 | E | ☐ | |
 
+## Script F — surfaces added after the original scripts (July 2026)
+
+1. **Hold lesson** (Keep the Light Singing / Sustain): holding Space or Enter swells the
+   light and hums; releasing settles it; Escape during a hold opens the pause dialog *and*
+   the light lets go (never stuck lit). Same with a Bluetooth switch mapped to Space.
+2. **Voice labels** (Settings → photos): "Record its name in your voice", "Add a voice
+   file", Play, and Remove voice are all reachable and clearly announced per photo;
+   recording state ("tap to finish") is perceivable without vision.
+3. **Walk-through page** (Lessons → "walk through every lesson"): Previous/Next/slideshow/
+   sound buttons operable by keyboard and switch; arrow keys page; the position counter
+   ("n of 30") is read when the card is revisited.
+4. **Print pages** (Notes → print summary; Guide → off-screen kit): reachable, the Print
+   button works, and the on-screen-only controls vanish on paper.
+
+| Item | Pass? | Notes |
+|---|---|---|
+| F1–F4 | ☐ | |
+
 ## Known limitations (by design or deferred)
 
-- Built-in scanning skips text fields and sliders — those need the platform's own tools
-  (documented in Settings copy as "menus"). Deferred: scannable value adjustment.
+- Built-in scanning skips free-text fields (names, notes, PIN) — those need the platform's
+  own tools. Sliders are fully scannable via their −/+ stepper buttons.
 - The child lesson screen is deliberately non-standard (FR-2): no focusable elements
   besides the corner pause button; the whole surface is the interactive target.
 - Haptic rewards are unavailable on iPads (no web vibration API) — the visual response

@@ -109,7 +109,9 @@ real-object bridge (screen first, real thing next).
 Personalization axes: colour, background, movement+speed, complexity (1 object → subtle
 texture), visual-field bias (direction + strength), pace/latency, size, glow (off→strong),
 brightness, sound mode (**with** / **after a look** / **off**), volume, single/layered,
-sound-follows-target, haptics, session length (2–8 min).
+sound-follows-target, haptics, session length (2–8 min) — plus the family's own photos and
+music, and a recorded caregiver voice label per photo that plays as the answer in the
+photo lessons (all media on-device only).
 
 ## 5. Specific questions
 
@@ -124,8 +126,9 @@ sound-follows-target, haptics, session length (2–8 min).
    Clinically sensible split?
 7. Is there anything here that could *reinforce* light-gazing, beyond the glow control
    we already expose and caveat?
-8. The planned expansion (ROADMAP.md): age bands, then Levels 3–4 (visual search,
-   crowding, faces via family photos). Any red flags before we build?
+8. Age bands and Levels 3–4 are now built (visual search, colour-anchored finding, an
+   ordered sweep, crowding, faces via family photos — all inside the unchanged safety
+   limits). Any red flags in how they landed, and what should the *next* expansion be?
 9. What's missing that you'd actually use with a client family?
 10. **Sound during searching.** The find/search lessons now carry a card note suggesting
     the "after a look" or "off" sound modes (sensory-competition reasoning: Roman-Lantzy's
@@ -150,6 +153,12 @@ sound-follows-target, haptics, session length (2–8 min).
     humming a soft note every ~1.25 s while held. Is sustained-press demand appropriate this
     early, and are those timings kind to children with motor fatigue? (Releasing is framed as
     part of the game, never a failure.)
+16. **Voice labels.** A caregiver can record their own voice naming each photo (≤10 s,
+    on-device only, removable), and that voice replaces the chime as the answer in photo
+    lessons — including "after a look" mode, where it replaces the melody phrase. Perkins'
+    "meaningful pictures and sounds" pattern suggests this is the most meaningful reward we
+    can offer; is there any concern about pairing the caregiver's voice with screen rewards,
+    or about the recording moment itself (a parent narrating at the child)?
 
 ## 6. What this app never does
 

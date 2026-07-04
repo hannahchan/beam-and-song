@@ -115,7 +115,9 @@ remains is human-dependent:
   diagnostics (`?diag=1`) in `docs/perf-budgets.md`; CI already enforces the payload half.
 - **Curated real-photo content** for L3/L4 beyond the family's own photos — sourcing/licensing/
   appropriateness are human judgments; the build deliberately ships without stock imagery.
-- Smaller deferred threads: scannable slider/text values, per-lesson custom-audio mapping.
+- Smaller deferred threads: switch-typable text fields (platform tools cover these today), per-lesson
+  mapping of full songs, and finer complexity rungs for the find/search lessons (a persisted-settings
+  change best shaped by the clinical review).
 
 ## A note on framing
 
