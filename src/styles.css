@@ -375,7 +375,8 @@ a { color: var(--focus); }
 .gu-shell {
   max-width: 1320px;
   margin: 0 auto;
-  padding: 1.2rem 1.2rem 4rem;
+  padding: max(1.2rem, env(safe-area-inset-top)) max(1.2rem, env(safe-area-inset-right)) 4rem
+    max(1.2rem, env(safe-area-inset-left));
 }
 .gu-top {
   display: flex;
