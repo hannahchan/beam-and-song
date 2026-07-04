@@ -4,7 +4,7 @@ Static Vite + Preact + TS app: gentle lesson player for children with CVI. See R
 docs/requirements-coverage.md; the source requirements live in CVI-training-site-requirements-final.md.
 
 ## Commands
-- `npm run dev` / `npm run build` (tsc + vite) / `npm test` (vitest) / `npm run icons`
+- `npm run dev` / `npm run build` (tsc + vite) / `npm test` (vitest) / `npm run test:e2e` (playwright) / `npm run icons`
 
 ## Non-negotiables
 - **Never raise anything in `src/safety/constants.ts`.** Those are seizure-safety ceilings (SR-1..SR-8).
@@ -17,7 +17,7 @@ docs/requirements-coverage.md; the source requirements live in CVI-training-site
 - No patterned backgrounds (stripes/checks), no saturated-red flashing, no text on the child screen
   beyond dim transient hints.
 - Copy rules: companion-not-curriculum framing (SR-4); never diagnostic/clinical language —
-  `NON_DIAGNOSTIC_BANNED` in validate.ts gates lesson copy AND all PT-13 output templates;
+  `NON_DIAGNOSTIC_BANNED` in `src/safety/validate.ts` gates lesson copy AND all PT-13 output templates;
   child data is nickname-only, local-only.
 - Age bands (lessons/bands.ts): teen output must contain no babyish language/imagery/nursery
   tunes — tests/bands.test.ts breaks the build otherwise. Band resolution may change skin only,
