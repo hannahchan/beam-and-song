@@ -78,7 +78,7 @@ copy (PR-13), and age band per profile (PR-14).
 | ID | Status | Notes |
 |---|---|---|
 | AR-1 | ✅ | ≥44–56 px targets everywhere; child side is tap-anywhere. |
-| AR-2/AR-8 | ✅ | Built-in auto (one-switch) and step (two-switch) scanning: dwell derives from the pace/latency setting (≥1.5 s floor), the highlight is one steady gliding ring (≥500 ms ease, never blinks — unit-tested against the fade floor), and scanning suspends during live lessons so the switch stays the child's input. Find/search lessons treat a switch press as a hit. OS-level scanning also works throughout. Remaining niche: sliders/text fields defer to platform tools (documented). |
+| AR-2/AR-8 | ✅ | Built-in auto (one-switch) and step (two-switch) scanning: dwell derives from the pace/latency setting (≥1.5 s floor), the highlight is one steady gliding ring (≥500 ms ease, never blinks — unit-tested against the fade floor), and scanning suspends during live lessons so the switch stays the child's input. Find/search lessons treat a switch press as a hit; the hold lesson treats a held switch as a hold. Every slider has −/+ stepper buttons, so scanning operates them like any button. OS-level scanning also works throughout. Remaining niche: free-text fields (names, notes, PIN) defer to platform tools (documented). |
 | AR-3 | ✅ | Touch-first layout, `touch-action: manipulation`, safe-area insets. |
 | AR-4 | ✅ | Token palette verified ≥4.5:1 by test. |
 | AR-5 | ✅ | Plain-language grown-up UI; complexity behind presets. |

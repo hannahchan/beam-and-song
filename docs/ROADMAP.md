@@ -18,9 +18,15 @@ status per ID is in `requirements-coverage.md`.
 > photo and that voice answers in the photo lessons), and hold-to-sustain contingency
 > (Keep the Light Singing / Sustain — the Sensory Light Box model, on a slew-limited
 > kernel envelope with hold-mash and resonant-cycling safety simulation).
-> Open build-side threads, deliberately deferred: scannable slider/text-field values,
-> per-lesson mapping of full songs, a curated stock-photo track for L3/L4 (human-gated
-> on licensing/appropriateness), and whatever the clinical feedback surfaces.
+> A **printable off-screen kit** (the lessons' shapes, one per page, in the child's
+> colour — drawn by the engine's own shape code, zero assets) and an opt-in
+> **Playwright screenshot gallery** round out the build-side borrowables.
+> Open build-side threads, deliberately deferred: switch-typable text fields (names,
+> notes, PIN — platform tools cover these), per-lesson mapping of full songs, finer
+> complexity rungs for the find/search lessons (a persisted-settings change whose
+> semantics the clinical review should shape first), a curated stock-photo track for
+> L3/L4 (human-gated on licensing/appropriateness), and whatever the clinical
+> feedback surfaces.
 
 ---
 

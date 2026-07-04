@@ -155,10 +155,15 @@ export function Guide({ topic }: { topic?: string | null }) {
 
       <Card title="From the screen to the world">
         <p>
-          Screens are a doorway, not the destination. The lessons with familiar objects suggest a real-world
-          follow-up (a real ball, a real bath duck) — that little bridge, screen first and real thing next, is
-          where the learning lands. The same goes for faces: the photo lesson works best right before a real
-          cuddle with the person in the picture.
+          Screens are a doorway, not the destination. Every lesson card suggests a real-world follow-up (a
+          real ball, a real bath duck) — that little bridge, screen first and real thing next, is where the
+          learning lands. The same goes for faces: the photo lesson works best right before a real cuddle
+          with the person in the picture.
+        </p>
+        <p class="card-note">
+          There is also a <a href="#/grown-ups/print-kit">printable off-screen kit</a>: the lessons' own
+          shapes, one per page, big and bold in your child's colour — the step between the screen and the
+          real thing.
         </p>
       </Card>
 

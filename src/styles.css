@@ -761,6 +761,11 @@ details summary:hover {
 .print-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
 .print-table th, .print-table td { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
 
+/* The off-screen kit (CR-4): one bold shape per page in the child's colour. */
+.kit-page { text-align: center; padding: 1.4rem 0; }
+.kit-page img { width: min(15cm, 86vw); height: auto; display: block; margin: 0 auto; }
+.kit-caption { max-width: 34rem; margin: 0.6rem auto 0; }
+
 @media print {
   html, body { background: #fff !important; color: #000 !important; font-size: 12pt; }
   .no-print { display: none !important; }
@@ -768,6 +773,8 @@ details summary:hover {
   .print-muted { color: #444; }
   .print-table th, .print-table td { border-bottom: 1px solid #bbb; }
   .print-sheet a { color: #000; text-decoration: none; }
+  .kit-page { page-break-before: always; padding-top: 2cm; }
+  .kit-page img { width: 15cm; }
 }
 
 @media (prefers-reduced-motion: reduce) {

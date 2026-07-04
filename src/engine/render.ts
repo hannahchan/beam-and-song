@@ -1,4 +1,4 @@
-import type { Scene, SceneItem } from '../lib/types';
+import type { Scene, SceneItem, ShapeKind } from '../lib/types';
 import { mixHex } from '../safety/luminance';
 
 /**
@@ -58,6 +58,51 @@ export function createPhotoCache(): PhotoCache {
       return null;
     },
   };
+}
+
+/**
+ * One shape rendered alone on a transparent ground — the printable
+ * off-screen kit (CR-4) uses these as full-page images in the child's
+ * colour. Returns '' where canvas is unavailable (tests, odd embeds).
+ */
+export function shapeSprite(shape: ShapeKind, color: string, px = 1024): string {
+  const canvas = document.createElement('canvas');
+  canvas.width = px;
+  canvas.height = px;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return '';
+  const it: SceneItem = { shape, x: 0.5, y: 0.5, r: 0.42, color, alpha: 1, glow: 0 };
+  const x = px / 2;
+  const y = px / 2;
+  const r = px * 0.42;
+  ctx.save();
+  switch (shape) {
+    case 'star':
+      drawStar(ctx, it, x, y, r);
+      break;
+    case 'ball':
+      drawBall(ctx, it, x, y, r);
+      break;
+    case 'duck':
+      drawDuck(ctx, it, x, y, r);
+      break;
+    case 'boat':
+      drawBoat(ctx, it, x, y, r);
+      break;
+    case 'balloon':
+      drawBalloon(ctx, it, x, y, r);
+      break;
+    case 'drop':
+      drawDrop(ctx, it, x, y, r);
+      break;
+    case 'moon':
+      drawMoon(ctx, it, x, y, r);
+      break;
+    default:
+      drawOrb(ctx, it, x, y, r);
+  }
+  ctx.restore();
+  return canvas.toDataURL('image/png');
 }
 
 export function drawScene(
