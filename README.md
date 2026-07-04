@@ -11,17 +11,22 @@ no servers, no data leaving the device.
 
 ## What's inside
 
-- **23 lessons across Levels 1–4** plus listening lessons, all rendered procedurally on canvas and scored
-  by a Web Audio synthesizer (note data only — zero binary assets, ~48 KB gzipped total):
+- **29 lessons across Levels 1–4** plus listening lessons, all rendered procedurally on canvas and scored
+  by a Web Audio synthesizer (note data only — zero binary assets, ~61 KB gzipped total):
   - **Level 1 · Noticing** — one target on black: glow, star, drifting light, tap-anywhere
     cause-and-effect, firefly, raindrop.
-  - **Level 2 · Following & finding** — curved paths with travelling sound, two fireflies inviting a
-    look, ball, duck/boat, balloon, the child's own photo.
-  - **Level 3 · Toward the world** — find-the-target among dim company (shapes or the family's own
-    photo), near/far distance drills.
+  - **Level 2 · Following & finding** — curved paths with travelling sound, peekaboo anticipation
+    behind a dark hill, a first look-then-touch reach, two fireflies inviting a look, ball, duck/boat,
+    balloon, the child's own photo.
+  - **Level 3 · Toward the world** — find-the-target among dim company (by brightness, by the child's
+    own colour, or the family's own photo), a small restful scene, near/far distance drills.
   - **Level 4 · Higher-order looking** — visual search among drifting distractors, following through
-    distraction, familiar faces (family photos only — never stock imagery).
-  - **Listening lessons** — hearing as a goal in its own right (CR-5).
+    distraction, an ordered left-to-right sweep, familiar faces (family photos only — never stock imagery).
+  - **Listening lessons** — hearing as a goal in its own right (CR-5), with its own second rung:
+    sound announces, then light arrives, never both at once.
+  - **Per-lesson guidance** (PT-10/CR-4): every card names the one thing it practises, points at a
+    gentler and a bolder neighbour, carries a real-object bridge, and — on find/search lessons —
+    suggests the quiet sound modes, since searching competes with listening for many children.
 - **Three age bands** (CR-9/CR-10): the same practice re-presents itself per band — a teen at Level 1
   gets "Ember" with ambient music, never a duck with a nursery rhyme. A build-breaking test bans babyish
   language, imagery, and nursery tunes from teen output.
@@ -42,7 +47,7 @@ no servers, no data leaving the device.
   cooldown-limits rewards. The test suite **simulates every lesson at 60 fps** — at default and extreme
   settings, under input mashing, across age bands — and measures the luminance timeline against
   flash-safety thresholds. It caught six real hazards during development; that is the point of it.
-- **186 unit/safety/a11y tests + 5 Playwright E2E tests**, all gating deploy in CI along with enforced
+- **268 unit/safety/a11y tests + 6 Playwright E2E tests**, all gating deploy in CI along with enforced
   payload budgets (TR-9).
 
 ## Run it
@@ -50,7 +55,7 @@ no servers, no data leaving the device.
 ```bash
 npm install
 npm run dev        # local dev server
-npm test           # 124 tests incl. the safety simulation suite
+npm test           # 268 tests incl. the safety simulation suite
 npm run build      # type-check + production build to dist/
 ```
 

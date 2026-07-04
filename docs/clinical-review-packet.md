@@ -1,7 +1,8 @@
 # Beam and Song — clinical review packet
 
 *For vision professionals, CVI specialists, low-vision therapists, and early-intervention professionals.*
-*Prepared July 2026 · review of v1 (infant scope) and the planned expansion (see ROADMAP.md).*
+*Prepared July 2026 · covers the full current build — Levels 1–4 across three age bands,
+listening lessons, and per-lesson guidance — plus what remains planned (see ROADMAP.md).*
 
 Thank you for looking at this. Beam and Song is a free, static web app offering short,
 highly tunable light-and-song lessons for children with CVI, built as a **companion to
@@ -12,7 +13,8 @@ Nothing in this packet assumes you'll be gentle — critical findings are the va
 ## 1. What to review (in priority order)
 
 1. **Safety reasoning** (§3 below) — are the assumptions sound for a seizure-prone population?
-2. **Lesson content & progression** — do the Level 1/2 activities match early CVI practice?
+2. **Lesson content & progression** — do the activities match CVI practice at each level
+   (attention → anticipation and reach → finding among company → search, sweep, faces)?
    Are any counterproductive for some children?
 3. **Readiness cues** — each lesson's "what to watch for" and the Guide's
    "moving up, stepping back" section. Are these observations the right ones to teach a parent?
@@ -51,8 +53,9 @@ lesson at every setting:
 
 These are verified by an automated suite that simulates every lesson frame-by-frame
 (60 fps) at the most extreme settings a caregiver can reach, including button-mashing on
-interactive lessons, and measures the resulting luminance timeline. The suite rejected
-four designs during development, which we take as evidence it has teeth.
+interactive lessons, and measures the resulting luminance timeline. The suite has
+rejected designs repeatedly during development — most recently five over-bright reward
+blooms in a single content round — which we take as evidence it has teeth.
 
 **Assumptions we'd like challenged:**
 - Whole-screen average luminance is our metric; we don't model localized retinal area
@@ -61,24 +64,43 @@ four designs during development, which we take as evidence it has teeth.
 - User photos: we measure each photo's actual luminance at import and bound fades accordingly.
 - We treat ≤ 0.5 Hz periodic modulation as categorically safe. Any reason to go lower?
 
-## 4. Current lesson inventory (infant band)
+## 4. Current lesson inventory (infant-band titles; every lesson re-skins for child and teen bands)
+
+The "practises" phrases below appear verbatim on the lesson cards; each card also
+names a gentler and a bolder neighbour lesson, and every lesson carries an off-screen
+real-object bridge (screen first, real thing next).
 
 | Lesson | Level | Practises | Interactive |
 |---|---|---|---|
-| Gentle Glow | 1 | first visual attention | – |
-| Little Star | 1 | sustained attention | – |
-| Drifting Light | 1 | horizontal tracking | – |
-| Magic Touch | 1 | cause & effect, visually guided reach | tap/switch |
-| Firefly | 1 | noticing & re-finding (field-aware) | – |
-| Raindrop | 1 | vertical tracking | – |
-| Star Path | 2 | curved tracking + audio-visual binding | – |
-| Two Fireflies | 2 | shifting gaze between two, invited looks | tap/switch |
-| Rolling Ball | 2 | familiar object, anticipation | tap/switch |
-| Little Duck | 2 | familiar object, tracking with pause | – |
-| Balloon | 2 | upward tracking from lower field | tap/switch |
-| A Familiar Face or Toy | 2 | familiarity/motivation (family's own photo) | – |
-| Traveling Song | 1 (hearing) | auditory localization | – |
-| Bell and Drum | 1 (hearing) | sound discrimination | – |
+| Gentle Glow | 1 | noticing a light | – |
+| Little Star | 1 | holding a look | – |
+| Drifting Light | 1 | following side to side | – |
+| Magic Touch | 1 | making something happen | tap/switch |
+| Firefly | 1 | re-finding after it moves | – |
+| Raindrop | 1 | following downward | – |
+| Star Path | 2 | following a curved path | – |
+| Peekaboo Light | 2 | expecting what comes next | – |
+| Reach for the Light | 2 | looking, then touching | tap/switch |
+| Two Fireflies | 2 | choosing where to look | tap/switch |
+| Rolling Ball | 2 | greeting a familiar thing | tap/switch |
+| Little Duck | 2 | following a familiar thing | – |
+| Balloon | 2 | lifting the gaze | tap/switch |
+| A Familiar Face or Toy | 2 | warming to a familiar thing | – |
+| Find the Star | 3 | finding one among a few | tap/switch |
+| Find Your Colour | 3 | letting colour do the finding | tap/switch |
+| Find Your Photo | 3 | finding a familiar thing | tap/switch |
+| A Quiet Scene | 3 | resting with a small scene | – |
+| Near and Far | 3 | noticing at a distance | – |
+| Hidden Among Many | 4 | searching among many | tap/switch |
+| Follow the Star | 4 | following through distraction | tap/switch |
+| Star by Star | 4 | sweeping across in order | tap/switch |
+| Familiar Faces | 4 | really looking at faces | – |
+| Traveling Song | 1 (hearing) | listening to where sound goes | – |
+| Bell and Drum | 1 (hearing) | telling two sounds apart | – |
+| Where's the Song? | 1 (hearing) | turning toward sound | tap marks a turn |
+| Drum and Tune | 1 (hearing) | telling kinds of sound apart | – |
+| Big Sound, Little Sound | 1 (hearing) | noticing louder and softer | – |
+| Song, Then Star | 2 (hearing) | listening, then looking | – |
 
 Personalization axes: colour, background, movement+speed, complexity (1 object → subtle
 texture), visual-field bias (direction + strength), pace/latency, size, glow (off→strong),
@@ -101,6 +123,24 @@ sound-follows-target, haptics, session length (2–8 min).
 8. The planned expansion (ROADMAP.md): age bands, then Levels 3–4 (visual search,
    crowding, faces via family photos). Any red flags before we build?
 9. What's missing that you'd actually use with a client family?
+10. **Sound during searching.** The find/search lessons now carry a card note suggesting
+    the "after a look" or "off" sound modes (sensory-competition reasoning: Roman-Lantzy's
+    distance-learning guidance, CVI Scotland's "eyes or ears", Pilling 2022). Should quiet
+    go further and become the *default* for those lessons — or for the earliest preset —
+    in an app whose identity is light *and* song? We deliberately left defaults unchanged
+    pending your view.
+11. **Peekaboo timing.** Peekaboo Light hides the target for ~1.2× the child's hold
+    setting and gives a small musical cue ~0.7 s before the return. Is a pre-cue right at
+    all (it pairs sound with an upcoming visual), and is the hidden window sensible?
+12. **The ordered sweep.** Star by Star always runs left → right, framed as pre-literacy
+    scanning practice. Should direction be configurable (e.g., right-to-left scripts), and
+    is an always-same-direction sweep appropriate at Level 4?
+13. **Colour company.** Find Your Colour surrounds the child's colour with similar-brightness
+    lights in a single muted hue from the opposite temperature family (warm target → slate
+    company, cool target → clay company). Is that a fair first colour-discrimination step?
+14. **The shunt note.** The Guide's setup section now cautions families of children with
+    programmable shunt valves to ask their medical team about tablet magnets. Is the wording
+    right — informative without alarm?
 
 ## 6. What this app never does
 

@@ -5,12 +5,20 @@ shippable. Requirement IDs refer to `CVI-training-site-requirements-final.md`; c
 status per ID is in `requirements-coverage.md`.
 
 > **Status (July 2026): Phases 1–5 are implemented** (see git history: one commit per
-> logical unit). What remains is exactly the human-dependent work:
+> logical unit), **plus a structural content round** informed by a survey of other CVI
+> apps and the intervention literature: six new lessons (anticipation/peekaboo, a first
+> visually-guided reach, sound-then-light listening, colour-anchored finding, a resting
+> scene, an ordered sweep), a bridge on every lesson, per-lesson skill chips and
+> gentler/bolder step links, and a quiet-looking suggestion on the search lessons.
+> What remains is exactly the human-dependent work:
 > Phase 0's clinical review and family testing, the AT hardware walkthrough
 > (`at-walkthrough.md`), and the on-device performance soak (`perf-budgets.md`).
 > Open build-side threads, deliberately deferred: scannable slider/text-field values,
-> per-lesson custom-audio mapping, a curated stock-photo track for L3/L4 (human-gated
-> on licensing/appropriateness), and whatever the clinical feedback surfaces.
+> per-lesson custom-audio mapping (strengthened by the app survey — recorded caregiver
+> voice labels per photo is the standout borrowable mechanic), a curated stock-photo
+> track for L3/L4 (human-gated on licensing/appropriateness), a hold-to-sustain
+> contingency lesson (needs touch-down/up plumbing through the safety simulator), and
+> whatever the clinical feedback surfaces.
 
 ---
 

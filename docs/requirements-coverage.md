@@ -33,27 +33,28 @@ Legend: ✅ done · 🟡 partial · ⏭ deferred (with reason) · ∅ n/a at inf
 
 | ID | Status | Notes |
 |---|---|---|
-| L1/L2 content | ✅ | 6 + 6 lessons. |
-| L3/L4 content | ✅ | L3: find-among (shape & own-photo targets), near/far distance drills. L4: visual search among drifting company, follow-among-movers, familiar faces (family photos only — no stock imagery; a curated-photo track remains open, human-gated for licensing/appropriateness). |
-| CR-1 | ✅ | Stars/Fireflies/Light/Rain/Familiar-things themes recur across levels. |
-| CR-2 | ✅ | No binary assets at all — visuals procedural, audio synthesized; ~35 KB gzipped app. |
+| L1/L2 content | ✅ | 6 + 8 lessons — L2 now includes anticipation (Peekaboo Light) and a first visually-guided reach (Reach for the Light). |
+| L3/L4 content | ✅ | L3: find-among by brightness, by the child's own colour (Find Your Colour), or by own-photo familiarity; a small resting scene; near/far distance drills. L4: visual search among drifting company, follow-among-movers, an ordered left-to-right sweep (Star by Star), familiar faces (family photos only — no stock imagery; a curated-photo track remains open, human-gated for licensing/appropriateness). |
+| CR-1 | ✅ | Stars/Fireflies/Light/Rain/Colour/Familiar-things themes recur across levels. |
+| CR-2 | ✅ | No binary assets at all — visuals procedural, audio synthesized; ~61 KB gzipped app. |
 | CR-3 | ✅ | Photos: client-side downscale + luminance measurement, on-device, drive four lessons. Audio: the family's own songs/recordings (IndexedDB blobs, client-side normalization, duration caps) can replace the built-in melodies, including after-a-look snippets. Neither ever leaves the device. |
-| CR-4 | ✅ | Bridge prompts on ball/duck/photo/touch lessons, surfaced in the library cards. |
-| CR-5 | ✅ | Five listening-first lessons (localization game with parent-marked turns, texture and loudness discrimination, traveling song, bell/drum) + "Listening first" preset. |
+| CR-4 | ✅ | A real-object bridge on **every** lesson (validator-enforced), surfaced in the library cards — screens are the doorway, not the destination. |
+| CR-5 | ✅ | Six listening-first lessons with their own ladder: noticing (traveling song), turning toward sound (localization game with parent-marked turns), discrimination (bell/drum, drum/tune, loud/soft), then sound-announces-light (Song, Then Star — sequential, never simultaneous) + "Listening first" preset. |
 | CR-6 | ✅ | Three bands (infant / child / teen) selectable per profile and in guided setup. |
-| CR-7 | ✅ | Readiness cues per lesson ("watch for") + move-up/step-back guidance in the Guide. |
-| CR-8 | ✅ | Challenge scales through clutter count (complexity setting), drifting distractors, target size (near/far), movement-among-movers, and faces — all inside unchanged Section 8 limits; find/search rewards are cooldown-bound and switch-operable (a switch press always counts as a hit). |
-| CR-9 | ✅ | Band re-skins theme/music/copy only — behavior, level, interactivity provably unchanged (tested). A teen at Level 1 gets "Ember", not a duck. |
-| CR-10 | ✅ | Full teen re-skin (ambient melodies composed as note data; boat/ember/orbit themes); child band = warm content with adjusted wording; a build-breaking test bans babyish language/imagery/nursery tunes from teen output. |
-| CR-11 | ✅ | 20 lessons × 3 bands across Levels 1–4 + listening; the historically underserved cells (older children/teens at early phases) get the full re-skinned L1–L2 row plus L3/L4. Ongoing content growth stays welcome, gated on clinical feedback. |
+| CR-7 | ✅ | Readiness cues per lesson ("watch for") + a skill chip naming what each lesson practises + gentler/bolder step links on every card + move-up/step-back guidance in the Guide. |
+| CR-8 | ✅ | Challenge scales through clutter count (complexity setting), drifting distractors, colour-anchored search, ordered sweeping, target size (near/far), movement-among-movers, and faces — all inside unchanged Section 8 limits; find/search rewards are cooldown-bound and switch-operable (a switch press always counts as a hit). |
+| CR-9 | ✅ | Band re-skins theme/music/copy only — behavior, level, interactivity provably unchanged (tested). A teen at Level 1 gets "Ember", not a duck — verified down to the drawn scene items, not just the spec. |
+| CR-10 | ✅ | Full teen re-skin (ambient melodies composed as note data; boat/ember/orbit/lighthouse/skyline themes); child band = warm content with adjusted wording; a build-breaking test bans babyish language/imagery/nursery tunes from teen output. |
+| CR-11 | ✅ | 29 lessons × 3 bands across Levels 1–4 + listening; the historically underserved cells (older children/teens at early phases) get the full re-skinned rows, and Levels 3–4 no longer depend on photos for most of their content. Ongoing content growth stays welcome, gated on clinical feedback. |
 
 ## §5 Personalization
 
 PR-1…PR-14: **all implemented** — colour+background (PR-1), movement/speed (PR-2), complexity (PR-3),
 field bias incl. strength (PR-4), pace (PR-5), size (PR-6), brightness (PR-7), audio volume/texture/binding
-(PR-8), favorites-first novelty control (PR-9), presets (PR-10), audio-competition modes (PR-11), guided
-setup (PR-12), glow-to-zero with anti-light-gazing copy (PR-13), and the age band is implicit in v1 (PR-14 ∅ —
-single band; the profile field becomes meaningful when more bands ship).
+(PR-8), favorites-first novelty control (PR-9), presets (PR-10), audio-competition modes (PR-11 — the
+find/search lesson cards now also *suggest* the quiet modes, since searching competes with listening;
+defaults unchanged pending clinical review), guided setup (PR-12), glow-to-zero with anti-light-gazing
+copy (PR-13), and age band per profile (PR-14).
 
 ## §6 Parent/caregiver tooling
 
@@ -109,7 +110,7 @@ single band; the profile field becomes meaningful when more bands ship).
 | TR-6 | ✅ | Start tap unlocks AudioContext; player retries unlock on first in-lesson gesture; resume handling. |
 | TR-7 | ✅ | Photos downscaled client-side to ≤512 px JPEG; stored locally; removable (PV-5). |
 | TR-8 | ✅ | 124 tests; safety suite is the priority class and gates deploy in CI. |
-| TR-9 | 🟡 | CI-enforced payload budgets (scripts/check-budgets.mjs; currently ~48 KB JS gz of a 70 KB budget, zero per-lesson fetches) + an in-player diagnostics overlay (?diag=1) and a scripted on-device soak protocol (docs/perf-budgets.md). The hardware runs themselves are the remaining human step. |
+| TR-9 | 🟡 | CI-enforced payload budgets (scripts/check-budgets.mjs; currently ~57 KB JS gz of a 70 KB budget, zero per-lesson fetches) + an in-player diagnostics overlay (?diag=1) and a scripted on-device soak protocol (docs/perf-budgets.md). The hardware runs themselves are the remaining human step. |
 | TR-10 | 🟡 | Automated: axe (all pages), contrast tests, keyboard-operable controls, scanning unit + E2E tests. docs/at-walkthrough.md scripts the manual AT passes; running them on hardware is the remaining human step. |
 
 ## §10 Privacy
