@@ -995,9 +995,20 @@ function hideReveal(
   // Rest on the side the child sees best; the hill takes the other side.
   const mirrored = p.fieldBias === 'right';
   const sx = (x: number) => (mirrored ? 1 - x : x);
-  const y = clamp(biasBandY(p.fieldBias, p.biasStrength), 0.36, 0.64);
-  const restX = sx(0.3);
-  const hideX = p.movement ? sx(0.58) : restX;
+  const yRest = clamp(biasBandY(p.fieldBias, p.biasStrength), 0.36, 0.64);
+
+  // Geometry note: item x/y are width/height fractions but radii follow the
+  // smaller screen dimension, so whether two things overlap depends on the
+  // aspect ratio. The hiding point therefore dives DEEP into the dome — far
+  // enough inside that the light visibly sinks behind the crest on tall
+  // tablets and wide laptops alike (tests sweep the common aspect ratios).
+  const hill = { x: sx(0.78), y: 1.08, r: 0.62 };
+  const rest = { x: sx(0.3), y: yRest };
+  const hide = p.movement ? { x: sx(0.74), y: mix(yRest, 0.8, 0.75) } : rest;
+  // The melt starts only once the light is already over the dome; the last
+  // stretch of the dive happens while fading, so it reads as slipping
+  // behind the hill — never as evaporating in open dark.
+  const rim = p.movement ? { x: mix(rest.x, hide.x, 0.8), y: mix(rest.y, hide.y, 0.8) } : rest;
 
   const travelMs = p.movement ? (0.28 / p.speed) * 1000 : 0;
   const restMs = p.holdMs;
@@ -1011,26 +1022,34 @@ function hideReveal(
   // The promise before the return: a little wink from behind the hill.
   cue('invite', idx * cycleMs + backAt - 700);
 
-  let x = restX;
+  let x = rest.x;
+  let y = rest.y;
   let vis = 1;
   if (local < restMs) {
-    x = restX;
+    // resting, breathing, being findable
   } else if (local < outAt) {
-    x = mix(restX, hideX, easeInOutSine((local - restMs) / Math.max(travelMs, 1)));
+    const u = easeInOutSine((local - restMs) / Math.max(travelMs, 1));
+    x = mix(rest.x, rim.x, u);
+    y = mix(rest.y, rim.y, u);
   } else if (local < outAt + p.fadeMs) {
-    // Slipping behind: keep creeping toward the hill while melting away.
-    const u = (local - outAt) / p.fadeMs;
-    x = hideX + (p.movement ? 0.04 * smooth(u) * (mirrored ? -1 : 1) : 0);
-    vis = 1 - smooth(u);
+    const u = smooth((local - outAt) / p.fadeMs);
+    x = mix(rim.x, hide.x, u);
+    y = mix(rim.y, hide.y, u);
+    vis = 1 - u;
   } else if (local < backAt) {
+    x = hide.x;
+    y = hide.y;
     vis = 0;
   } else if (local < backAt + p.fadeMs) {
     // The return happens exactly where it vanished — that is the promise kept.
-    const u = (local - backAt) / p.fadeMs;
-    x = hideX + (p.movement ? 0.04 * (1 - smooth(u)) * (mirrored ? -1 : 1) : 0);
-    vis = smooth(u);
+    const u = smooth((local - backAt) / p.fadeMs);
+    x = mix(hide.x, rim.x, u);
+    y = mix(hide.y, rim.y, u);
+    vis = u;
   } else {
-    x = mix(hideX, restX, easeInOutSine((local - backAt - p.fadeMs) / Math.max(travelMs, 1)));
+    const u = easeInOutSine((local - backAt - p.fadeMs) / Math.max(travelMs, 1));
+    x = mix(rim.x, rest.x, u);
+    y = mix(rim.y, rest.y, u);
   }
 
   if (vis > 0.003) {
@@ -1045,9 +1064,9 @@ function hideReveal(
   // seemed to evaporate, which breaks the whole object-permanence story.
   scene.items.push({
     shape: 'hill',
-    x: sx(0.8),
-    y: 1.24,
-    r: 0.55,
+    x: hill.x,
+    y: hill.y,
+    r: hill.r,
     color: mixHex(p.bg, p.color, 0.3),
     alpha: 0.9 * entry(tMs, p),
     glow: 0,

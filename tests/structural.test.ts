@@ -88,20 +88,20 @@ describe('peekaboo (hideReveal) — anticipation with a kept promise', () => {
 
   it('the light hides, a wink sounds during the wait, and it returns where it vanished', () => {
     const scenes = sample(spec('peekaboo-light'), moving, quiet, 65);
-    let lastSeenX: number | null = null;
+    let lastSeen: { x: number; y: number } | null = null;
     let hiddenAt = -1;
     let winked = false;
     let returned = false;
     for (const s of scenes) {
       const it = light(s);
       if (it) {
-        if (hiddenAt >= 0 && lastSeenX !== null) {
+        if (hiddenAt >= 0 && lastSeen !== null) {
           // Reappearance: the promise is kept — same place it melted away.
-          expect(Math.abs(it.x - lastSeenX)).toBeLessThan(0.08);
+          expect(Math.hypot(it.x - lastSeen.x, it.y - lastSeen.y)).toBeLessThan(0.1);
           returned = true;
           hiddenAt = -1;
         }
-        lastSeenX = it.x;
+        lastSeen = { x: it.x, y: it.y };
       } else if (hiddenAt < 0) {
         hiddenAt = 1;
         winked = false;
@@ -110,6 +110,38 @@ describe('peekaboo (hideReveal) — anticipation with a kept promise', () => {
       if (hiddenAt >= 0 && winked) returned = false; // must return after the wink
     }
     expect(returned).toBe(true);
+  });
+
+  it('the vanish point sits inside the hill on tall, square, and wide screens alike', () => {
+    // Scene x/y are width/height fractions while radii follow the smaller
+    // dimension — so occlusion must be proven per aspect ratio, not assumed.
+    const scenes = sample(spec('peekaboo-light'), moving, quiet, 65);
+    let lastSeen: { x: number; y: number } | null = null;
+    const vanishPoints: { x: number; y: number }[] = [];
+    let hidden = false;
+    for (const s of scenes) {
+      const it = light(s);
+      if (it) {
+        lastSeen = { x: it.x, y: it.y };
+        hidden = false;
+      } else if (!hidden && lastSeen) {
+        vanishPoints.push(lastSeen);
+        hidden = true;
+      }
+    }
+    expect(vanishPoints.length).toBeGreaterThanOrEqual(1);
+    const h = hill(sample(spec('peekaboo-light'), moving, quiet, 2)[10])!;
+    for (const [w, ht] of [
+      [3, 4], // tall tablet
+      [1, 1], // square
+      [16, 10], // wide laptop
+    ] as const) {
+      const min = Math.min(w, ht);
+      for (const v of vanishPoints) {
+        const d = Math.hypot((v.x - h.x) * w, (v.y - h.y) * ht);
+        expect(d, `aspect ${w}:${ht}`).toBeLessThan(h.r * min * 0.95);
+      }
+    }
   });
 
   it('the hill is scenery: present, static, matte, and never "the target"', async () => {
