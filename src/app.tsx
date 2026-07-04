@@ -40,7 +40,7 @@ export function App() {
 
   useEffect(() => {
     const titles: Record<string, string> = {
-      '/': 'Light & Sound',
+      '/': 'The Light & Sound App for Kids with CVI',
       '/choose': 'Choose a lesson — Light & Sound',
       '/play': 'Lesson — Light & Sound',
     };
