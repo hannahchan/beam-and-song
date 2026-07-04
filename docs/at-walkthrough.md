@@ -80,7 +80,7 @@ Mirror of D plus a TalkBack pass over Settings and the Guide.
    recording state ("tap to finish") is perceivable without vision.
 3. **Walk-through page** (Lessons → "walk through every lesson"): Previous/Next/slideshow/
    sound buttons operable by keyboard and switch; arrow keys page; the position counter
-   ("n of 30") is read when the card is revisited.
+   ("n of N") is read when the card is revisited.
 4. **Print pages** (Notes → print summary; Guide → off-screen kit): reachable, the Print
    button works, and the on-screen-only controls vanish on paper.
 

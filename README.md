@@ -40,7 +40,7 @@ listening-only lessons — all drawn live on a canvas and scored by a Web Audio 
   cause-and-effect, and a *hold-to-keep-it-going* light that sings for exactly as long as the touch stays.
   Plus a firefly and a raindrop.
 - **Level 2 · Following & finding** — a light that travels along a curve with its sound, peekaboo behind a
-  dark hill, a first "look, then reach," two fireflies inviting a glance, a ball, a duck, a boat, a balloon —
+  dark hill, a first "look, then reach," two fireflies inviting a glance, a ball, a duck, a balloon —
   and your child's own photo.
 - **Level 3 · Toward the world** — find the target among gentle company (by brightness, by your child's
   favourite colour, or from your family photos), a small restful scene, and near/far distance practice.
@@ -50,7 +50,7 @@ listening-only lessons — all drawn live on a canvas and scored by a Web Audio 
 - **Listening lessons** — hearing as a goal in its own right, with its own gentle progression: sound
   arrives first, *then* light — never both at once.
 
-**Made for one child at a time.** Personalize colour, size, speed, brightness, sound, and more — via simple
+**Made for one child at a time.** Personalise colour, size, speed, brightness, sound, and more — via simple
 presets, a guided setup, or full control. Build **custom programs**: named lesson sequences that play as a
 calm, crossfading session.
 
@@ -84,8 +84,9 @@ tests**. Every animation flows through one small kernel that:
 - rate-limits rewards so nothing can stutter or strobe.
 
 Then the test suite **replays every lesson at 60 fps** — at default *and* extreme settings, under frantic
-input, across every age band — and measures the brightness timeline against flash-safety thresholds. This
-caught six real hazards during development. That's exactly why it exists.
+input, across every age band — and measures the brightness timeline against flash-safety thresholds. It
+has repeatedly caught real, ship-blocking hazards during development that no one had spotted by eye. That's
+exactly why it exists.
 
 The ceilings live in `src/safety/constants.ts` and are treated as non-negotiable: lower is always fine,
 raising them is not.

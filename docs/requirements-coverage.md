@@ -27,7 +27,7 @@ Legend: ✅ done · 🟡 partial (human/hardware step remaining)
 | FR-6 | ✅ | Three sound modes: with / **after a look** (tap-to-answer) / off. |
 | FR-7 | ✅ | Pace axis multiplies all durations; nothing ever auto-advances faster than configured; session ends in a rest screen, not more content. |
 | FR-8 | ✅ | Kernel enforces ≥500 ms eased fades; verified by simulation (a hard cut was caught and fixed in development). |
-| FR-9 | ✅ | Magic Touch + interactive responses in 4 lessons; tap-anywhere; Space/Enter = switch input; rewards obey all safety caps under input mashing (tested). |
+| FR-9 | ✅ | Magic Touch + interactive responses across the cause-and-effect lessons; tap-anywhere; Space/Enter = switch input; rewards obey all safety caps under input mashing (tested). |
 | FR-10 | ✅ | StereoPanner follows target x; per-profile toggle; hearing lessons pan by design. |
 | FR-12 | ✅ | Pause overlay dims + hushes instantly; "Softer" mode halves light/sound; End is always two taps away; auto-pause when the tab hides. |
 
@@ -35,7 +35,7 @@ Legend: ✅ done · 🟡 partial (human/hardware step remaining)
 
 | ID | Status | Notes |
 |---|---|---|
-| L1/L2 content | ✅ | 7 + 8 lessons — L1 includes sustained contingency (Keep the Light Singing: the light answers exactly as long as a touch or held switch stays, on a slew-limited kernel envelope no press pattern can flicker); L2 includes anticipation (Peekaboo Light) and a first visually-guided reach (Reach for the Light). |
+| L1/L2 content | ✅ | Both levels fully built — L1 includes sustained contingency (Keep the Light Singing: the light answers exactly as long as a touch or held switch stays, on a slew-limited kernel envelope no press pattern can flicker); L2 includes anticipation (Peekaboo Light) and a first visually-guided reach (Reach for the Light). |
 | L3/L4 content | ✅ | L3: find-among by brightness, by the child's own colour (Find Your Colour), or by own-photo familiarity; a small resting scene; near/far distance drills. L4: visual search among drifting company, follow-among-movers, an ordered left-to-right sweep (Star by Star), familiar faces (family photos only — no stock imagery; a curated-photo track remains open, human-gated for licensing/appropriateness). |
 | CR-1 | ✅ | Stars/Fireflies/Light/Rain/Colour/Familiar-things themes recur across levels. |
 | CR-2 | ✅ | No binary assets at all — visuals procedural, audio synthesized; the whole app gzips to a tiny bundle. |
@@ -47,13 +47,13 @@ Legend: ✅ done · 🟡 partial (human/hardware step remaining)
 | CR-8 | ✅ | Challenge scales through clutter count (complexity setting), drifting distractors, colour-anchored search, ordered sweeping, target size (near/far), movement-among-movers, and faces — all inside unchanged Section 8 limits; find/search rewards are cooldown-bound and switch-operable (a switch press always counts as a hit). |
 | CR-9 | ✅ | Band re-skins theme/music/copy only — behavior, level, interactivity provably unchanged (tested). A teen at Level 1 gets "Ember", not a duck — verified down to the drawn scene items, not just the spec. |
 | CR-10 | ✅ | Full teen re-skin (ambient melodies composed as note data; boat/ember/orbit/lighthouse/skyline themes); child band = warm content with adjusted wording; a build-breaking test bans babyish language/imagery/nursery tunes from teen output. |
-| CR-11 | ✅ | 30 lessons × 3 bands across Levels 1–4 + listening; the historically underserved cells (older children/teens at early phases) get the full re-skinned rows, and Levels 3–4 no longer depend on photos for most of their content. Ongoing content growth stays welcome, gated on clinical feedback. |
+| CR-11 | ✅ | The full lesson set spans all three bands across Levels 1–4 + listening; the historically underserved cells (older children/teens at early phases) get the full re-skinned rows, and Levels 3–4 no longer depend on photos for most of their content. Ongoing content growth stays welcome, gated on clinical feedback. |
 
 ## §5 Personalization
 
 PR-1…PR-14: **all implemented** — colour+background (PR-1), movement/speed (PR-2), complexity (PR-3),
 field bias incl. strength (PR-4), pace (PR-5), size (PR-6), brightness (PR-7), audio volume/texture/binding
-(PR-8), favorites-first novelty control (PR-9), presets (PR-10), audio-competition modes (PR-11 — the
+(PR-8), favourites-first novelty control (PR-9), presets (PR-10), audio-competition modes (PR-11 — the
 find/search lesson cards now also *suggest* the quiet modes, since searching competes with listening;
 defaults unchanged pending clinical review), guided setup (PR-12), glow-to-zero with anti-light-gazing
 copy (PR-13), and age band per profile (PR-14).
