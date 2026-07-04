@@ -73,7 +73,7 @@ export function Sessions({ profile }: { profile: Profile | null }) {
           </a>
           <button
             class="btn"
-            onClick={() => downloadFile(`beam-and-song-summary-${profile.nickname}.txt`, buildShareText(profile), 'text/plain')}
+            onClick={() => downloadFile(`light-and-sound-summary-${profile.nickname}.txt`, buildShareText(profile), 'text/plain')}
           >
             Save a readable summary (.txt)
           </button>
@@ -81,7 +81,7 @@ export function Sessions({ profile }: { profile: Profile | null }) {
             class="btn btn-ghost"
             onClick={() => {
               const data = exportProfile(profile.id);
-              if (data) downloadFile(`beam-and-song-profile-${profile.nickname}.json`, JSON.stringify(data, null, 2), 'application/json');
+              if (data) downloadFile(`light-and-sound-profile-${profile.nickname}.json`, JSON.stringify(data, null, 2), 'application/json');
             }}
           >
             Save the full profile (.json)

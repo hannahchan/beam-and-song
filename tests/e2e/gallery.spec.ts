@@ -69,7 +69,7 @@ test.describe('lesson gallery (screenshot flip-book)', () => {
 
         const now = new Date().toISOString();
         localStorage.setItem(
-          'beam-and-song:v1',
+          'light-and-sound:v1',
           JSON.stringify({
             version: 1,
             activeProfileId: 'gallery-child',

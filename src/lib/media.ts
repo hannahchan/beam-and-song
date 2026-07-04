@@ -7,7 +7,7 @@
  * keeps the feature working for the session.
  */
 
-const DB_NAME = 'beam-and-song-media';
+const DB_NAME = 'light-and-sound-media';
 const STORE = 'blobs';
 
 export const MAX_AUDIO_FILES = 3;

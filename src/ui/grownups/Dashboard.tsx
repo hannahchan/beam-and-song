@@ -38,7 +38,7 @@ export function Dashboard({ profile }: { profile: Profile | null }) {
           </p>
           <button
             class="btn"
-            onClick={() => downloadFile('beam-and-song-backup.json', JSON.stringify(exportAll(), null, 2), 'application/json')}
+            onClick={() => downloadFile('light-and-sound-backup.json', JSON.stringify(exportAll(), null, 2), 'application/json')}
           >
             Save a backup now
           </button>
@@ -123,7 +123,7 @@ function Welcome() {
   return (
     <div class="stack">
       <h1 tabindex={-1}>Welcome</h1>
-      <Card title="Beam and Song, in one breath">
+      <Card title="Light & Sound, in one breath">
         <p>
           Gentle, tunable light-and-song lessons for babies with CVI (cortical/cerebral visual impairment) — built
           to be adjusted to <em>your</em> baby, used in short sessions, alongside your vision professional or

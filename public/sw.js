@@ -1,11 +1,11 @@
 /*
- * Beam and Song service worker (TR-4): once the app has loaded, lessons keep
+ * Light & Sound service worker (TR-4): once the app has loaded, lessons keep
  * working with flaky or no connectivity. Strategy:
  *   - hashed build assets (./assets/*): cache-first (immutable by name)
  *   - everything else same-origin:      network-first, falling back to cache
  * Bump VERSION to retire old caches on deploy.
  */
-const VERSION = 'beam-and-song-v1';
+const VERSION = 'light-and-sound-v1';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon.svg'];
 
 self.addEventListener('install', (event) => {

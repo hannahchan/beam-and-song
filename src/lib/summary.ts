@@ -83,7 +83,7 @@ export function summarize(profile: Profile, days = 28, now = Date.now()): Summar
 export function buildShareText(profile: Profile, days = 28): string {
   const s = summarize(profile, days);
   const lines: string[] = [
-    `Beam and Song — family observations for "${profile.nickname}"`,
+    `Light & Sound — family observations for "${profile.nickname}"`,
     `Window: last ${days} days · exported ${new Date().toLocaleDateString()}`,
     '',
     'These are informal observations made by family during short at-home',
@@ -131,6 +131,6 @@ export function buildShareText(profile: Profile, days = 28): string {
     for (const l of regions.lines) lines.push(`  ${l}`);
   }
 
-  lines.push('', 'Made with Beam and Song — a companion tool, not a programme or assessment.');
+  lines.push('', 'Made with Light & Sound — a companion tool, not a programme or assessment.');
   return lines.join('\n');
 }

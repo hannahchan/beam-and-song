@@ -53,13 +53,13 @@ export function Profiles({ state }: { state: AppState }) {
 
       <Card title="Bring a profile from another device">
         <p class="card-note">
-          Choose a <code>.json</code> file exported from Beam and Song — settings, notes, and photos come with it.
+          Choose a <code>.json</code> file exported from Light & Sound — settings, notes, and photos come with it.
         </p>
         <input
           ref={fileRef}
           type="file"
           accept="application/json,.json"
-          aria-label="Choose a Beam and Song profile file to import"
+          aria-label="Choose a Light & Sound profile file to import"
           onChange={async (e) => {
             const file = (e.target as HTMLInputElement).files?.[0];
             if (!file) return;
@@ -98,7 +98,7 @@ export function Profiles({ state }: { state: AppState }) {
           <button
             class="btn"
             onClick={() =>
-              downloadFile('beam-and-song-backup.json', JSON.stringify(exportAll(), null, 2), 'application/json')
+              downloadFile('light-and-sound-backup.json', JSON.stringify(exportAll(), null, 2), 'application/json')
             }
           >
             Save a backup of everyone
@@ -164,7 +164,7 @@ function ProfileCard({ profile, isActive, multiple }: { profile: Profile; isActi
                 class="btn btn-small btn-primary"
                 onClick={() => {
                   const data = exportProfile(profile.id);
-                  if (data) downloadFile(`beam-and-song-profile-${profile.nickname}.json`, JSON.stringify(data, null, 2), 'application/json');
+                  if (data) downloadFile(`light-and-sound-profile-${profile.nickname}.json`, JSON.stringify(data, null, 2), 'application/json');
                   setExporting(false);
                 }}
               >

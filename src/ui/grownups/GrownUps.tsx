@@ -14,7 +14,7 @@ import { PrintSummary } from './PrintSummary';
 import { PrintKit } from './PrintKit';
 import { Review } from './Review';
 
-export const GATE_KEY = 'beam-and-song:grownup-ok';
+export const GATE_KEY = 'light-and-sound:grownup-ok';
 
 /**
  * The grown-up area shell: child-resistant gate (FR-5), optional PIN (PV-3),
@@ -69,7 +69,7 @@ export function GrownUps({ route }: { route: Route }) {
         Skip to content
       </a>
       <header class="gu-top">
-        <p class="gu-brand">Beam and Song · for grown-ups</p>
+        <p class="gu-brand">Light & Sound · for grown-ups</p>
         <div class="row">
           {state.profiles.length > 1 && profile && (
             <label>
@@ -111,7 +111,7 @@ export function GrownUps({ route }: { route: Route }) {
       </main>
       <footer class="gu-footer">
         <p>
-          Beam and Song is a companion to your child's vision professional or early-intervention team — not a
+          Light & Sound is a companion to your child's vision professional or early-intervention team — not a
           programme, a curriculum, or any kind of assessment. Everything you save stays on this device only.
         </p>
       </footer>

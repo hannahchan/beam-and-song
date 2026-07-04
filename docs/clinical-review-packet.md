@@ -1,10 +1,10 @@
-# Beam and Song — clinical review packet
+# Light & Sound — clinical review packet
 
 *For vision professionals, CVI specialists, low-vision therapists, and early-intervention professionals.*
 *Prepared July 2026 · covers the full current build — Levels 1–4 across three age bands,
 listening lessons, and per-lesson guidance — plus what remains planned (see ROADMAP.md).*
 
-Thank you for looking at this. Beam and Song is a free, static web app offering short,
+Thank you for looking at this. Light & Sound is a free, static web app offering short,
 highly tunable light-and-song lessons for children with CVI, built as a **companion to
 professional care, never a programme or assessment**. Before we recommend it to any
 family, we want professional eyes on the content, the copy, and the safety reasoning.

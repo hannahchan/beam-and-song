@@ -28,7 +28,7 @@ export function Landing() {
 
   return (
     <main class="child-screen">
-      <p class="landing-title">beam and song</p>
+      <p class="landing-title">light & sound</p>
       <button class="start-orb" onClick={start} aria-label="Start — gentle lessons">
         Start
       </button>

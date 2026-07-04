@@ -1,4 +1,4 @@
-# Beam and Song
+# Light & Sound
 
 Gentle, tunable light-and-song lessons for **children with CVI** (cortical/cerebral visual impairment),
 from babies to teens — a companion tool for families and vision professionals. Static site, no accounts,
@@ -121,6 +121,6 @@ remains is human-dependent:
 
 ## A note on framing
 
-Beam and Song is a **companion, not a curriculum**: it supports — and never replaces — a child's vision
+Light & Sound is a **companion, not a curriculum**: it supports — and never replaces — a child's vision
 professional or early-intervention team, and it deliberately contains no assessments, scores, or
 diagnostic output of any kind.

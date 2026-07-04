@@ -7,7 +7,7 @@ import { deleteBlob } from './media';
  * caregiver-controlled way to move a profile between devices.
  */
 
-const KEY = 'beam-and-song:v1';
+const KEY = 'light-and-sound:v1';
 const MAX_SESSIONS_KEPT = 400;
 
 export const DEFAULT_SETTINGS: ChildSettings = {
@@ -209,7 +209,7 @@ export function addSession(profileId: string, rec: Omit<SessionRecord, 'id'>): v
 /* ----------------------------- export / import ----------------------------- */
 
 export interface ProfileExport {
-  app: 'beam-and-song';
+  app: 'light-and-sound';
   kind: 'profile';
   version: 1;
   exportedAt: string;
@@ -217,7 +217,7 @@ export interface ProfileExport {
 }
 
 export interface BackupExport {
-  app: 'beam-and-song';
+  app: 'light-and-sound';
   kind: 'backup';
   version: 1;
   exportedAt: string;
@@ -228,7 +228,7 @@ export interface BackupExport {
 export function exportAll(): BackupExport {
   markBackedUp();
   return {
-    app: 'beam-and-song',
+    app: 'light-and-sound',
     kind: 'backup',
     version: 1,
     exportedAt: new Date().toISOString(),
@@ -241,7 +241,7 @@ export function exportProfile(profileId: string): ProfileExport | null {
   if (!p) return null;
   markBackedUp();
   return {
-    app: 'beam-and-song',
+    app: 'light-and-sound',
     kind: 'profile',
     version: 1,
     exportedAt: new Date().toISOString(),
@@ -269,13 +269,13 @@ export function backupIsDue(state: AppState, now = Date.now()): boolean {
 export function importAny(json: unknown): { ok: true; count: number; firstNickname: string } | { ok: false; error: string } {
   if (json && typeof json === 'object' && (json as BackupExport).kind === 'backup') {
     const backup = json as Partial<BackupExport>;
-    if (backup.app !== 'beam-and-song' || !Array.isArray(backup.profiles) || backup.profiles.length === 0) {
+    if (backup.app !== 'light-and-sound' || !Array.isArray(backup.profiles) || backup.profiles.length === 0) {
       return { ok: false, error: 'That backup file looks empty or damaged.' };
     }
     let count = 0;
     let first = '';
     for (const prof of backup.profiles) {
-      const result = importProfile({ app: 'beam-and-song', kind: 'profile', version: 1, exportedAt: '', profile: prof });
+      const result = importProfile({ app: 'light-and-sound', kind: 'profile', version: 1, exportedAt: '', profile: prof });
       if (result.ok) {
         count++;
         first = first || result.profile.nickname;
@@ -292,8 +292,8 @@ export function importAny(json: unknown): { ok: true; count: number; firstNickna
 export function importProfile(json: unknown): { ok: true; profile: Profile } | { ok: false; error: string } {
   if (!json || typeof json !== 'object') return { ok: false, error: 'That file is not readable.' };
   const data = json as Partial<ProfileExport>;
-  if (data.app !== 'beam-and-song' || data.kind !== 'profile' || !data.profile) {
-    return { ok: false, error: 'That file is not a Beam and Song profile.' };
+  if (data.app !== 'light-and-sound' || data.kind !== 'profile' || !data.profile) {
+    return { ok: false, error: 'That file is not a Light & Sound profile.' };
   }
   const p = normalizeProfile(data.profile as Profile);
   if (!p.nickname || typeof p.nickname !== 'string') return { ok: false, error: 'The profile in that file looks incomplete.' };
@@ -312,7 +312,7 @@ export function importProfile(json: unknown): { ok: true; profile: Profile } | {
 /* --------------------------------- PIN (PV-3) --------------------------------- */
 
 export async function hashPin(pin: string): Promise<string> {
-  const data = new TextEncoder().encode(`beam-and-song:${pin}`);
+  const data = new TextEncoder().encode(`light-and-sound:${pin}`);
   const digest = await crypto.subtle.digest('SHA-256', data);
   return [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join('');
 }

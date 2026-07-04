@@ -42,7 +42,7 @@ export function PrintSummary({ profile }: { profile: Profile | null }) {
         </a>
       </div>
 
-      <h1>Beam and Song — family observations for “{profile.nickname}”</h1>
+      <h1>Light & Sound — family observations for “{profile.nickname}”</h1>
       <p class="print-muted">
         Last 28 days · prepared {new Date().toLocaleDateString()} · These are informal observations made by
         family during short at-home sessions. They are not measurements, clinical results, or any kind of
@@ -126,7 +126,7 @@ export function PrintSummary({ profile }: { profile: Profile | null }) {
       </table>
 
       <p class="print-muted">
-        Beam and Song is a companion tool used alongside the child's vision professional — not a programme,
+        Light & Sound is a companion tool used alongside the child's vision professional — not a programme,
         curriculum, or assessment. All data lives only on the family's device; this page was printed by the
         caregiver.
       </p>

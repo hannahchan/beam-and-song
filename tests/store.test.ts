@@ -32,7 +32,7 @@ describe('profiles persist locally (TR-2, PT-1, PT-2)', () => {
     const p = store.createProfile('Bean');
     expect(store.activeProfile()?.id).toBe(p.id);
     expect(p.settings).toEqual(store.DEFAULT_SETTINGS);
-    expect(JSON.parse(mem.get('beam-and-song:v1')!).profiles).toHaveLength(1);
+    expect(JSON.parse(mem.get('light-and-sound:v1')!).profiles).toHaveLength(1);
   });
 
   it('nickname only — no other identifying fields exist on a fresh profile (PV-1)', () => {
@@ -105,7 +105,7 @@ describe('export / import (PT-3, PV-4)', () => {
     store.addSession(p.id, { at: new Date().toISOString(), lessonId: 'firefly', durationSec: 120, response: 'clear', tags: ['good day'] });
 
     const exported = store.exportProfile(p.id)!;
-    expect(exported.app).toBe('beam-and-song');
+    expect(exported.app).toBe('light-and-sound');
 
     const result = store.importProfile(JSON.parse(JSON.stringify(exported)));
     expect(result.ok).toBe(true);
@@ -118,7 +118,7 @@ describe('export / import (PT-3, PV-4)', () => {
     expect(copy.sessions).toHaveLength(1);
   });
 
-  it('rejects files that are not Beam and Song profiles', () => {
+  it('rejects files that are not Light & Sound profiles', () => {
     expect(store.importProfile({}).ok).toBe(false);
     expect(store.importProfile(null).ok).toBe(false);
     expect(store.importProfile({ app: 'other', kind: 'profile', profile: {} }).ok).toBe(false);

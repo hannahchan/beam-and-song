@@ -1,4 +1,4 @@
-# Beam and Song — agent notes
+# Light & Sound — agent notes
 
 Static Vite + Preact + TS app: gentle lesson player for babies with CVI. See README.md and
 docs/requirements-coverage.md; the source requirements live in CVI-training-site-requirements-final.md.

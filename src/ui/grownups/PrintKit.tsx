@@ -100,7 +100,7 @@ function PrintKitInner({ profile }: { profile: Profile }) {
         </a>
       </div>
 
-      <h1>Beam and Song — an off-screen kit for “{profile.nickname}”</h1>
+      <h1>Light & Sound — an off-screen kit for “{profile.nickname}”</h1>
       <p>
         One page per shape, in {profile.nickname}'s colour — the same shapes, drawn by the same code, as the
         lessons on screen. Screens are the doorway, not the destination: these sheets are the step in

@@ -12,8 +12,8 @@ import axe from 'axe-core';
 
 beforeAll(async () => {
   document.documentElement.lang = 'en';
-  document.title = 'Beam and Song test';
-  sessionStorage.setItem('beam-and-song:grownup-ok', '1');
+  document.title = 'Light & Sound test';
+  sessionStorage.setItem('light-and-sound:grownup-ok', '1');
 
   const store = await import('../src/lib/store');
   const p = store.createProfile('Bean');

@@ -40,7 +40,7 @@ test('child flow: start → tile → animating lesson → pause → observe → 
   await expect(page.getByRole('button', { name: /^Start/ })).toBeVisible();
 
   const saved = await page.evaluate(() => {
-    const s = JSON.parse(localStorage.getItem('beam-and-song:v1')!);
+    const s = JSON.parse(localStorage.getItem('light-and-sound:v1')!);
     return s.profiles[0].sessions.at(-1);
   });
   expect(saved.response).toBe('some');
@@ -112,7 +112,7 @@ test('profile export downloads a JSON file flagged as personal (PV-4)', async ({
   const downloadPromise = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Save the file' }).click();
   const download = await downloadPromise;
-  expect(download.suggestedFilename()).toMatch(/beam-and-song-profile-.*\.json/);
+  expect(download.suggestedFilename()).toMatch(/light-and-sound-profile-.*\.json/);
 });
 
 test('a PIN re-locks the grown-up area every time you return from the child screen (PV-3)', async ({ page }) => {

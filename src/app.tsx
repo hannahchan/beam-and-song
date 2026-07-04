@@ -40,13 +40,13 @@ export function App() {
 
   useEffect(() => {
     const titles: Record<string, string> = {
-      '/': 'Beam and Song',
-      '/choose': 'Choose a lesson — Beam and Song',
-      '/play': 'Lesson — Beam and Song',
+      '/': 'Light & Sound',
+      '/choose': 'Choose a lesson — Light & Sound',
+      '/play': 'Lesson — Light & Sound',
     };
     document.title = route.path.startsWith('/grown-ups')
-      ? 'For grown-ups — Beam and Song'
-      : (titles[route.path] ?? 'Beam and Song');
+      ? 'For grown-ups — Light & Sound'
+      : (titles[route.path] ?? 'Light & Sound');
   }, [route.path]);
 
   // The refresh nudge never appears over a lesson in progress.
