@@ -32,9 +32,9 @@ It runs entirely in the browser. **No accounts, no servers, no data ever leaves 
 
 ## What it does
 
-**A whole path, from first glance to real-world looking.** 30 lessons across four levels, plus
+**A whole path, from first glance to real-world looking.** Dozens of lessons across four levels, plus
 listening-only lessons — all drawn live on a canvas and scored by a Web Audio synthesizer (just note data,
-**zero audio or image files**, about 62 KB gzipped for the whole app).
+**zero audio or image files**, so the whole app is a tiny download).
 
 - **Level 1 · Noticing** — one warm target on black: a glow, a star, a drifting light, tap-anywhere
   cause-and-effect, and a *hold-to-keep-it-going* light that sings for exactly as long as the touch stays.
@@ -97,7 +97,7 @@ raising them is not.
 ```bash
 npm install
 npm run dev        # local dev server
-npm test           # 300 automated tests, incl. the safety simulation suite
+npm test           # the full test suite, incl. the safety simulation
 npm run build      # type-check + production build to dist/
 npm run test:e2e   # Playwright end-to-end tests
 ```
