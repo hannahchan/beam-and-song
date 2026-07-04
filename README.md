@@ -1,6 +1,6 @@
-# Light & Sound
+# The Light & Sound App for Kids with CVI
 
-**Gentle light-and-song lessons for children with CVI** — a calm, tappable companion that helps babies
+**Gentle light-and-sounds lessons for children with CVI** — a calm, tappable companion that helps babies
 through teens practise *looking* and *listening*, at whatever pace and intensity suits them.
 
 CVI (cortical/cerebral visual impairment) is the most common cause of childhood visual impairment in much
