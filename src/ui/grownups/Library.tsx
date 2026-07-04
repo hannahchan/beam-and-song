@@ -59,7 +59,8 @@ export function Library({ profile }: { profile: Profile | null }) {
         Star the ones that suit {profile?.nickname ?? 'your child'} — starred lessons become the big tiles on
         their screen. Every lesson follows the colour, size, pace, sound, and <b>age</b> choices in Settings:
         the same practice is presented differently for a baby, a child, or a teen. When in doubt about level,
-        start lower: comfort first, challenge second.
+        start lower: comfort first, challenge second. Prefer to see them?{' '}
+        <a href="#/grown-ups/review">Walk through every lesson, one after another</a>.
       </p>
       {profile && <Programs profile={profile} />}
       {groups.map((g) => (

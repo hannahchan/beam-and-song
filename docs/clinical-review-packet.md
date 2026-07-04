@@ -31,6 +31,9 @@ Nothing in this packet assumes you'll be gentle — critical findings are the va
 - The child flow: tap **Start** → a lesson tile → watch a full session end in the "rest" screen.
 - The grown-up area: **For grown-ups** → hold the button (or tap "two") → explore
   Lessons, Settings, Notes, and the Guide. Try the guided setup with an imagined child.
+- **The quickest full pass:** Lessons → "Walk through every lesson, one after another" plays the
+  whole library on a single page (buttons or arrow keys, optional slideshow and sound), using the
+  active child's settings and age band — switch the band in Settings to review all three renderings.
 - Please record findings in `clinical-feedback.md` format (one finding per row) or
   however is easiest for you — email/voice notes welcome.
 

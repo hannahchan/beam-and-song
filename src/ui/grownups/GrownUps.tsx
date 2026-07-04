@@ -11,6 +11,7 @@ import { Profiles } from './Profiles';
 import { Guide } from './Guide';
 import { Setup } from './Setup';
 import { PrintSummary } from './PrintSummary';
+import { Review } from './Review';
 
 export const GATE_KEY = 'beam-and-song:grownup-ok';
 
@@ -104,6 +105,7 @@ export function GrownUps({ route }: { route: Route }) {
         {sub === 'guide' && <Guide topic={route.params.get('topic')} />}
         {sub === 'profiles' && <Profiles state={state} />}
         {sub === 'setup' && <Setup profile={profile} />}
+        {sub === 'review' && <Review profile={profile} />}
       </main>
       <footer class="gu-footer">
         <p>
