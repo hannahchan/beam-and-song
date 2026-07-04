@@ -76,6 +76,12 @@ export function Guide({ topic }: { topic?: string | null }) {
           <li><b>Quiet, too.</b> A calm room helps; competing household noise works against listening lessons especially.</li>
           <li><b>Device brightness</b> at a comfortable middle, not maximum.</li>
         </ul>
+        <p class="card-note">
+          One medical note: tablets contain magnets, and some programmable shunt valves (used for
+          hydrocephalus, which sometimes accompanies CVI) are magnet-sensitive. If your child has a
+          programmable shunt, ask your medical team about safe distances before resting a tablet against
+          them, and keep the device away from the valve.
+        </p>
       </Card>
 
       <Card title="Sound and looking — why there are three sound modes">
@@ -85,6 +91,12 @@ export function Guide({ topic }: { topic?: string | null }) {
           <b>after a look</b> mode — where you tap when your child looks, and the music arrives as a warm answer.
           Other children need the sound to arrive <em>first</em> as the invitation. Watch, try, and keep what
           works.
+        </p>
+        <p class="card-note">
+          The find-and-search lessons mark this on their cards: searching is the hardest kind of looking, and
+          it usually goes best in quiet, with music saved for the answer. And one listening lesson — Song,
+          Then Star — makes taking turns the whole point: sound announces, then light arrives, never both at
+          once.
         </p>
       </Card>
 
@@ -113,6 +125,8 @@ export function Guide({ topic }: { topic?: string | null }) {
         <p class="card-note">
           Moving “up” can simply mean: slightly smaller target, a touch more speed, one more thing on screen — one
           change at a time. And no level is a grade: meeting your child where they are <em>is</em> the practice.
+          Every lesson card names the one thing it practises and points at a gentler and a bolder neighbour, so
+          “feels early” and “feels easy” both have somewhere obvious to go.
         </p>
         <p>Toward Level 3 (finding among things), look for:</p>
         <ul>
