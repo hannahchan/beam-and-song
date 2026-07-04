@@ -11,10 +11,11 @@ no servers, no data leaving the device.
 
 ## What's inside
 
-- **29 lessons across Levels 1–4** plus listening lessons, all rendered procedurally on canvas and scored
-  by a Web Audio synthesizer (note data only — zero binary assets, ~61 KB gzipped total):
+- **30 lessons across Levels 1–4** plus listening lessons, all rendered procedurally on canvas and scored
+  by a Web Audio synthesizer (note data only — zero binary assets, ~62 KB gzipped total):
   - **Level 1 · Noticing** — one target on black: glow, star, drifting light, tap-anywhere
-    cause-and-effect, firefly, raindrop.
+    cause-and-effect, hold-to-keep-it-going (the light sings for exactly as long as the touch stays,
+    on a slew-limited envelope no press pattern can flicker), firefly, raindrop.
   - **Level 2 · Following & finding** — curved paths with travelling sound, peekaboo anticipation
     behind a dark hill, a first look-then-touch reach, two fireflies inviting a look, ball, duck/boat,
     balloon, the child's own photo.
@@ -49,7 +50,7 @@ no servers, no data leaving the device.
   cooldown-limits rewards. The test suite **simulates every lesson at 60 fps** — at default and extreme
   settings, under input mashing, across age bands — and measures the luminance timeline against
   flash-safety thresholds. It caught six real hazards during development; that is the point of it.
-- **274 unit/safety/a11y tests + 6 Playwright E2E tests**, all gating deploy in CI along with enforced
+- **293 unit/safety/a11y tests + 6 Playwright E2E tests**, all gating deploy in CI along with enforced
   payload budgets (TR-9).
 
 ## Run it
@@ -57,7 +58,7 @@ no servers, no data leaving the device.
 ```bash
 npm install
 npm run dev        # local dev server
-npm test           # 274 tests incl. the safety simulation suite
+npm test           # 293 tests incl. the safety simulation suite
 npm run build      # type-check + production build to dist/
 ```
 

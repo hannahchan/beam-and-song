@@ -179,6 +179,7 @@ export const BEHAVIOR_IDS = [
   'findColor',
   'restingScene',
   'sweepRow',
+  'holdGlow',
 ] as const;
 
 export type Behavior = (typeof BEHAVIOR_IDS)[number];

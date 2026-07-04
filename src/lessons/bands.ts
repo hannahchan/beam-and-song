@@ -227,6 +227,15 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
         'The real-world twin: watch a slow, predictable coming-and-going together — a pedestrian light, headlights that sweep past and return, waves reaching and retreating.',
     },
   },
+  'keep-the-light-singing': {
+    teen: {
+      title: 'Sustain',
+      melody: 'ember',
+      goal: 'A patient light that answers for exactly as long as a touch stays: rest a finger anywhere — or hold the switch — and it swells and hums. Let go, and it settles. Nothing needs aiming; letting go is part of the practice.',
+      watchFor: 'Holding on purpose, releasing to check, holding again — contingency discovered, then tested.',
+      bridge: 'Hum or play a note while their hand rests on yours, pausing gently when it lifts — cause and effect you can feel.',
+    },
+  },
   'reach-for-the-light': {
     teen: {
       title: 'Beacon',

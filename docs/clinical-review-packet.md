@@ -79,6 +79,7 @@ real-object bridge (screen first, real thing next).
 | Little Star | 1 | holding a look | – |
 | Drifting Light | 1 | following side to side | – |
 | Magic Touch | 1 | making something happen | tap/switch |
+| Keep the Light Singing | 1 | keeping something going | hold (touch or held switch) |
 | Firefly | 1 | re-finding after it moves | – |
 | Raindrop | 1 | following downward | – |
 | Star Path | 2 | following a curved path | – |
@@ -144,6 +145,11 @@ sound-follows-target, haptics, session length (2–8 min).
 14. **The shunt note.** The Guide's setup section now cautions families of children with
     programmable shunt valves to ask their medical team about tablet magnets. Is the wording
     right — informative without alarm?
+15. **The hold lesson.** Keep the Light Singing asks for a *sustained* press (any touch, or a
+    held switch): the light swells over ~1.4 s while held and settles over ~1.9 s on release,
+    humming a soft note every ~1.25 s while held. Is sustained-press demand appropriate this
+    early, and are those timings kind to children with motor fatigue? (Releasing is framed as
+    part of the game, never a failure.)
 
 ## 6. What this app never does
 

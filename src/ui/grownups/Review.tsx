@@ -4,9 +4,10 @@ import { buildParams } from '../../engine/params';
 import { computeScene, type SimInput } from '../../engine/scenes';
 import { createPhotoCache, drawScene, fitCanvasToDisplay } from '../../engine/render';
 import { audio } from '../../engine/audio';
-import { CUE_DRIVEN_BEHAVIORS, LESSONS } from '../../lessons/specs';
+import { CUE_DRIVEN_BEHAVIORS, HOLD_DRIVEN_BEHAVIORS, LESSONS } from '../../lessons/specs';
 import { resolveLesson } from '../../lessons/bands';
 import { enabledPhotos } from '../../lib/photos';
+import type { HoldSpan } from '../../engine/kernel';
 import { Card } from './bits';
 
 const AUTO_ADVANCE_MS = 18_000;
@@ -40,6 +41,8 @@ function ReviewInner({ profile }: { profile: Profile }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const melodyRef = useRef<ReturnType<typeof audio.startMelody> | null>(null);
   const tapsRef = useRef<TapEvent[]>([]);
+  const holdsRef = useRef<HoldSpan[]>([]);
+  const openHoldRef = useRef(-1);
   const t0Ref = useRef(performance.now());
   const prevTRef = useRef(0);
 
@@ -58,6 +61,7 @@ function ReviewInner({ profile }: { profile: Profile }) {
   simRef.current = {
     seed: 11 + idx * 7,
     taps: tapsRef.current,
+    holds: holdsRef.current,
     photos: enabledPhotos(profile.photos).map((p) => ({ dataUrl: p.dataUrl, lum: p.lum })),
   };
 
@@ -66,7 +70,26 @@ function ReviewInner({ profile }: { profile: Profile }) {
     t0Ref.current = performance.now();
     prevTRef.current = 0;
     tapsRef.current.length = 0;
+    holdsRef.current.length = 0;
+    openHoldRef.current = -1;
   }, [idx]);
+
+  // Hold-to-sustain lessons respond to press-and-hold here too.
+  useEffect(() => {
+    const release = () => {
+      if (openHoldRef.current < 0) return;
+      holdsRef.current[openHoldRef.current].end = performance.now() - t0Ref.current;
+      openHoldRef.current = -1;
+    };
+    window.addEventListener('pointerup', release);
+    window.addEventListener('pointercancel', release);
+    window.addEventListener('blur', release);
+    return () => {
+      window.removeEventListener('pointerup', release);
+      window.removeEventListener('pointercancel', release);
+      window.removeEventListener('blur', release);
+    };
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -142,6 +165,13 @@ function ReviewInner({ profile }: { profile: Profile }) {
     if (!specRef.current.interactive) return;
     const canvas = canvasRef.current;
     if (!canvas) return;
+    if (HOLD_DRIVEN_BEHAVIORS.has(specRef.current.behavior)) {
+      if (openHoldRef.current < 0) {
+        holdsRef.current.push({ start: performance.now() - t0Ref.current, end: Number.POSITIVE_INFINITY });
+        openHoldRef.current = holdsRef.current.length - 1;
+      }
+      return;
+    }
     const rect = canvas.getBoundingClientRect();
     tapsRef.current.push({
       t: performance.now() - t0Ref.current,

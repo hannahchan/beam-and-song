@@ -397,6 +397,10 @@ class AudioEngine {
       case 'invite':
         this.note(72, t, 0.8, 'musicbox', null, false, pan);
         break;
+      case 'hum':
+        // The held light "singing": one low warm note, soft and unhurried.
+        this.note(60, t, 1.5, 'warm', null, false, pan, 0.55);
+        break;
       case 'bell':
         this.note(76, t, 1.6, 'musicbox', null, false, -0.5);
         break;

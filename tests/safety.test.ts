@@ -1,11 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { LESSONS } from '../src/lessons/specs';
+import { HOLD_DRIVEN_BEHAVIORS, LESSONS } from '../src/lessons/specs';
 import { buildParams } from '../src/engine/params';
-import { computeScene, type SimInput } from '../src/engine/scenes';
+import { computeScene, HOLD_FALL_MS, HOLD_RISE_MS, type SimInput } from '../src/engine/scenes';
 import { sceneLuminance, saturatedRedArea } from '../src/safety/luminance';
 import { analyzeLuminance, assertTimelineSafe } from '../src/safety/analyze';
 import { DEFAULT_SETTINGS } from '../src/lib/store';
 import type { ChildSettings } from '../src/lib/types';
+import type { HoldSpan } from '../src/engine/kernel';
 
 /**
  * SR-8 / TR-8 — the safety constraints are *verified*, not just designed.
@@ -25,6 +26,7 @@ function simulate(
   settings: ChildSettings,
   seconds: number,
   tapsPerSec = 0,
+  holds: readonly HoldSpan[] = [],
 ): { lum: number[]; red: number[] } {
   const spec = LESSONS.find((l) => l.id === lessonId)!;
   const params = buildParams(settings);
@@ -35,7 +37,7 @@ function simulate(
     for (let t = 250; t < seconds * 1000; t += 1000 / tapsPerSec) taps.push({ t, x: -1, y: -1 });
   }
   // No measured luminance on the photo → the model assumes worst-case white.
-  const sim: SimInput = { seed: 12345, taps, photos: [{ dataUrl: 'data:worst-case' }] };
+  const sim: SimInput = { seed: 12345, taps, holds, photos: [{ dataUrl: 'data:worst-case' }] };
   const lum: number[] = [];
   const red: number[] = [];
   for (let i = 0; i < seconds * FPS; i++) {
@@ -47,10 +49,24 @@ function simulate(
   return { lum, red };
 }
 
-function check(lessonId: string, settings: ChildSettings, seconds: number, tapsPerSec = 0, label = ''): void {
-  const { lum, red } = simulate(lessonId, settings, seconds, tapsPerSec);
+function check(
+  lessonId: string,
+  settings: ChildSettings,
+  seconds: number,
+  tapsPerSec = 0,
+  label = '',
+  holds: readonly HoldSpan[] = [],
+): void {
+  const { lum, red } = simulate(lessonId, settings, seconds, tapsPerSec, holds);
   const result = analyzeLuminance(lum, red, FPS);
   assertTimelineSafe(result, `${lessonId} ${label}`);
+}
+
+/** Press patterns for hold-to-sustain lessons — including the adversarial one. */
+function holdPattern(onMs: number, offMs: number, seconds: number): HoldSpan[] {
+  const holds: HoldSpan[] = [];
+  for (let t = 0; t < seconds * 1000; t += onMs + offMs) holds.push({ start: t, end: t + onMs });
+  return holds;
 }
 
 const EXTREME_BASE: ChildSettings = {
@@ -82,6 +98,42 @@ describe('every lesson stays inside the hard safety limits (SR-1, SR-3, SR-5, SR
     if (lesson.interactive) {
       it(`${lesson.id} — input mashing cannot create a flash (SR-6)`, () => {
         check(lesson.id, { ...EXTREME_BASE, targetColor: 'white' }, 30, 8, 'tap-spam');
+      });
+    }
+
+    if (HOLD_DRIVEN_BEHAVIORS.has(lesson.behavior)) {
+      it(`${lesson.id} — rapid hold mashing cannot flicker (SR-6)`, () => {
+        check(lesson.id, { ...EXTREME_BASE, targetColor: 'white' }, 30, 0, 'hold-mash', holdPattern(240, 260, 30));
+      });
+
+      it(`${lesson.id} — resonant press/release at exactly the slew rates (worst case)`, () => {
+        // On for the full rise, off for the full fall: the largest oscillation
+        // the slew limiter permits. Must still sit inside every limit.
+        check(
+          lesson.id,
+          { ...EXTREME_BASE, targetColor: 'white' },
+          40,
+          0,
+          'hold-resonance',
+          holdPattern(HOLD_RISE_MS, HOLD_FALL_MS, 40),
+        );
+      });
+
+      it(`${lesson.id} — resonant cycling in saturated red (SR-5)`, () => {
+        check(
+          lesson.id,
+          { ...EXTREME_BASE, targetColor: 'red' },
+          40,
+          0,
+          'hold-resonance-red',
+          holdPattern(HOLD_RISE_MS, HOLD_FALL_MS, 40),
+        );
+      });
+
+      it(`${lesson.id} — held from the very first frame stacks safely with the entry fade`, () => {
+        check(lesson.id, { ...EXTREME_BASE, targetColor: 'white' }, 20, 0, 'held-throughout', [
+          { start: 0, end: Number.POSITIVE_INFINITY },
+        ]);
       });
     }
 

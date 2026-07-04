@@ -13,14 +13,14 @@ status per ID is in `requirements-coverage.md`.
 > What remains is exactly the human-dependent work:
 > Phase 0's clinical review and family testing, the AT hardware walkthrough
 > (`at-walkthrough.md`), and the on-device performance soak (`perf-budgets.md`).
-> **Per-photo caregiver voice labels have since shipped** (the app survey's standout
-> borrowable — the Perkins/My Talking Picture Board pattern): record "the red ball!"
-> on a photo and that voice answers in the photo lessons.
+> **The two headline borrowables have since shipped:** per-photo caregiver voice
+> labels (the Perkins/My Talking Picture Board pattern — record "the red ball!" on a
+> photo and that voice answers in the photo lessons), and hold-to-sustain contingency
+> (Keep the Light Singing / Sustain — the Sensory Light Box model, on a slew-limited
+> kernel envelope with hold-mash and resonant-cycling safety simulation).
 > Open build-side threads, deliberately deferred: scannable slider/text-field values,
 > per-lesson mapping of full songs, a curated stock-photo track for L3/L4 (human-gated
-> on licensing/appropriateness), a hold-to-sustain contingency lesson (needs
-> touch-down/up plumbing through the safety simulator), and whatever the clinical
-> feedback surfaces.
+> on licensing/appropriateness), and whatever the clinical feedback surfaces.
 
 ---
 

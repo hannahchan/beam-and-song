@@ -33,7 +33,7 @@ Legend: ✅ done · 🟡 partial · ⏭ deferred (with reason) · ∅ n/a at inf
 
 | ID | Status | Notes |
 |---|---|---|
-| L1/L2 content | ✅ | 6 + 8 lessons — L2 now includes anticipation (Peekaboo Light) and a first visually-guided reach (Reach for the Light). |
+| L1/L2 content | ✅ | 7 + 8 lessons — L1 includes sustained contingency (Keep the Light Singing: the light answers exactly as long as a touch or held switch stays, on a slew-limited kernel envelope no press pattern can flicker); L2 includes anticipation (Peekaboo Light) and a first visually-guided reach (Reach for the Light). |
 | L3/L4 content | ✅ | L3: find-among by brightness, by the child's own colour (Find Your Colour), or by own-photo familiarity; a small resting scene; near/far distance drills. L4: visual search among drifting company, follow-among-movers, an ordered left-to-right sweep (Star by Star), familiar faces (family photos only — no stock imagery; a curated-photo track remains open, human-gated for licensing/appropriateness). |
 | CR-1 | ✅ | Stars/Fireflies/Light/Rain/Colour/Familiar-things themes recur across levels. |
 | CR-2 | ✅ | No binary assets at all — visuals procedural, audio synthesized; ~61 KB gzipped app. |
@@ -45,7 +45,7 @@ Legend: ✅ done · 🟡 partial · ⏭ deferred (with reason) · ∅ n/a at inf
 | CR-8 | ✅ | Challenge scales through clutter count (complexity setting), drifting distractors, colour-anchored search, ordered sweeping, target size (near/far), movement-among-movers, and faces — all inside unchanged Section 8 limits; find/search rewards are cooldown-bound and switch-operable (a switch press always counts as a hit). |
 | CR-9 | ✅ | Band re-skins theme/music/copy only — behavior, level, interactivity provably unchanged (tested). A teen at Level 1 gets "Ember", not a duck — verified down to the drawn scene items, not just the spec. |
 | CR-10 | ✅ | Full teen re-skin (ambient melodies composed as note data; boat/ember/orbit/lighthouse/skyline themes); child band = warm content with adjusted wording; a build-breaking test bans babyish language/imagery/nursery tunes from teen output. |
-| CR-11 | ✅ | 29 lessons × 3 bands across Levels 1–4 + listening; the historically underserved cells (older children/teens at early phases) get the full re-skinned rows, and Levels 3–4 no longer depend on photos for most of their content. Ongoing content growth stays welcome, gated on clinical feedback. |
+| CR-11 | ✅ | 30 lessons × 3 bands across Levels 1–4 + listening; the historically underserved cells (older children/teens at early phases) get the full re-skinned rows, and Levels 3–4 no longer depend on photos for most of their content. Ongoing content growth stays welcome, gated on clinical feedback. |
 
 ## §5 Personalization
 

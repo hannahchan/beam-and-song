@@ -93,12 +93,30 @@ export const LESSONS: readonly LessonSpec[] = [
     melody: 'chime',
     interactive: true,
     skill: 'making something happen',
-    stepUp: 'reach-for-the-light',
+    stepUp: 'keep-the-light-singing',
     goal: 'Cause and effect: a touch anywhere on the screen — or a switch press — makes the light bloom softly and sing. Any touch counts; nothing needs aiming.',
     watchFor:
       'Any arm movement toward the screen, a swipe or bat, then a pause to look at what happened. Hand-over-hand help is a lovely way to start.',
     bridge:
       'Off screen, offer the same game with a real object: a gentle shake of a soft rattle each time your baby reaches.',
+  },
+  {
+    id: 'keep-the-light-singing',
+    title: 'Keep the Light Singing',
+    level: 1,
+    theme: 'Touch & light',
+    behavior: 'holdGlow',
+    shape: 'orb',
+    melody: 'humSway',
+    interactive: true,
+    skill: 'keeping something going',
+    stepBack: 'magic-touch',
+    stepUp: 'reach-for-the-light',
+    goal: 'A patient light that answers for exactly as long as a hand stays: rest a finger anywhere on the screen — or hold the switch — and the light swells and softly sings. Let go, and it settles back to its quiet glow. Nothing needs aiming, and letting go is part of the game.',
+    watchFor:
+      'The dawning of "I am doing this": holding on purpose, letting go to check, holding again. Even a few seconds of steady touch is a triumph.',
+    bridge:
+      'The skin-to-skin twin: hum while their hand rests on yours, and pause gently when it lifts — the same promise, warmer.',
   },
   {
     id: 'firefly',
@@ -181,7 +199,7 @@ export const LESSONS: readonly LessonSpec[] = [
     melody: 'chime',
     interactive: true,
     skill: 'looking, then touching',
-    stepBack: 'magic-touch',
+    stepBack: 'keep-the-light-singing',
     stepUp: 'find-the-star',
     goal: 'One patient light, and a new invitation: a touch on the light itself — or any switch press — makes it sing and bloom. The hit area is huge and forgiving, and a miss only draws a gentle brightening. Looking first, touching second is the whole game, at any speed.',
     watchFor:
@@ -567,6 +585,13 @@ export const CUE_DRIVEN_BEHAVIORS: ReadonlySet<Behavior> = new Set<Behavior>([
   'loudSoft',
   'soundThenLight',
 ]);
+
+/**
+ * Behaviors driven by pressed *intervals* rather than discrete taps: the
+ * player feeds them touch-down→up spans (and held switches), and the kernel's
+ * slew-limited holdEnvelope turns any press pattern into a calm swell.
+ */
+export const HOLD_DRIVEN_BEHAVIORS: ReadonlySet<Behavior> = new Set<Behavior>(['holdGlow']);
 
 /** Default child queue when nothing is favorited yet. */
 export const DEFAULT_LESSON_IDS = ['gentle-glow', 'little-star', 'drifting-light', 'magic-touch'];

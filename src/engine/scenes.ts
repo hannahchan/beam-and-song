@@ -5,14 +5,17 @@ import {
   clamp,
   clamp01,
   easeInOutSine,
+  effectiveHolds,
   effectiveTapEvents,
   effectiveTaps,
   envelopeLength,
   fadeEnvelope,
+  holdEnvelope,
   makeRng,
   mix,
   safeMod,
   smooth,
+  type HoldSpan,
 } from './kernel';
 import { mixHex } from '../safety/luminance';
 import { SAFETY } from '../safety/constants';
@@ -28,6 +31,12 @@ export interface SimInput {
   seed: number;
   /** Raw tap/switch events in lesson time. Cooldown filtering happens here (SR-6). */
   taps: readonly TapEvent[];
+  /**
+   * Pressed intervals (touch-down→up, or a held switch) for hold-to-sustain
+   * lessons. Slew-limiting happens in the kernel (holdEnvelope), so no press
+   * pattern can flicker (SR-1/SR-6).
+   */
+  holds?: readonly HoldSpan[];
   /** The child's own photos (CR-3); cycled through for novelty (PR-9). */
   photos?: readonly { dataUrl: string; lum?: number }[];
 }
@@ -148,6 +157,9 @@ export function computeScene(
       break;
     case 'sweepRow':
       sweepRow(scene, p, tMs, tapEvents, cue);
+      break;
+    case 'holdGlow':
+      holdGlow(scene, p, tMs, sim.holds ?? [], cue);
       break;
   }
 
@@ -1260,6 +1272,58 @@ function sweepRow(
   const li = litAt(tMs);
   scene.pan =
     li >= 0 ? (xs[li] - 0.5) * 1.4 * fadeEnvelope(local, li * stepMs, p.fadeMs, p.holdMs, p.fadeMs) : 0;
+}
+
+/**
+ * L1 sustained contingency — the light answers for exactly as long as the
+ * touch stays (Sensory Light Box's model: effect lives while touching, rests
+ * on release). The swell rides the kernel's slew-limited holdEnvelope, so no
+ * press pattern can flicker it; while genuinely held, a soft hum note repeats
+ * at a slow, fixed cadence — the light "singing".
+ */
+/**
+ * Exported so the safety suite's resonant press/release pattern always
+ * mirrors the real ramps. At 1100/1600 the swell's luminance swing grazed
+ * the SR-3 cap under worst-case settings (suite-caught); slower is safer
+ * and, for this population, kinder anyway.
+ */
+export const HOLD_RISE_MS = 1400;
+export const HOLD_FALL_MS = 1900;
+const HUM_FIRST_MS = 350; // a press must truly settle before the first hum
+const HUM_EVERY_MS = 1250;
+
+function holdGlow(
+  scene: Scene,
+  p: EngineParams,
+  tMs: number,
+  holds: readonly HoldSpan[],
+  cue: (name: string, atMs: number) => void,
+): void {
+  const pos = biasPoint(0.5, 0.55, p.fieldBias, p.biasStrength);
+  const env = smooth(holdEnvelope(tMs, holds, HOLD_RISE_MS, HOLD_FALL_MS));
+
+  // Hums come from *sustained* spans only — sub-350 ms mashing earns silence,
+  // and the fixed cadence bounds how often notes can ever arrive.
+  for (const span of effectiveHolds(holds, tMs)) {
+    const spanEnd = Math.min(span.end, tMs);
+    for (let at = span.start + HUM_FIRST_MS; at <= spanEnd; at += HUM_EVERY_MS) {
+      cue('hum', at);
+    }
+  }
+
+  const gate = entry(tMs, p);
+  scene.items.push(
+    orb(p, {
+      x: pos.x,
+      y: pos.y,
+      r: p.radius * (1 + 0.08 * env),
+      alpha: clamp01(p.peakAlpha * (0.38 + 0.42 * env) * breathe(p, tMs) * gate),
+    }),
+  );
+  // The sustained answer is a soft, desaturated halo that grows with the
+  // envelope — slew-bounded like everything else it rides on (SR-6).
+  pushBloom(scene, p, pos.x, pos.y, p.radius * (1.05 + 0.3 * env), 0.22 * env * gate);
+  scene.pan = (pos.x - 0.5) * 1.4;
 }
 
 function backdropStars(scene: Scene, seed: number): void {

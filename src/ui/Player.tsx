@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { navigate } from '../lib/router';
-import { CUE_DRIVEN_BEHAVIORS, getLesson } from '../lessons/specs';
+import { CUE_DRIVEN_BEHAVIORS, HOLD_DRIVEN_BEHAVIORS, getLesson } from '../lessons/specs';
 import { bandNoun, resolveLesson } from '../lessons/bands';
 import { activeProfile, addSession, ensureProfile } from '../lib/store';
 import { buildParams } from '../engine/params';
@@ -8,7 +8,7 @@ import { computeScene, primarySceneItem, restScene, type SimInput } from '../eng
 import { createPhotoCache, drawScene, fitCanvasToDisplay } from '../engine/render';
 import { audio } from '../engine/audio';
 import { buzz } from '../engine/haptics';
-import { effectiveTapEvents } from '../engine/kernel';
+import { effectiveTapEvents, type HoldSpan } from '../engine/kernel';
 import type { LessonSpec, TapEvent } from '../lib/types';
 import { AfterModeHint, ObservationCard } from './SessionOverlays';
 import { emptyTally, quadrantOf, type RegionTally } from '../lib/regions';
@@ -62,6 +62,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const tapsRef = useRef<TapEvent[]>([]);
+  const holdsRef = useRef<HoldSpan[]>([]);
   const startedAtRef = useRef(0);
   const againRef = useRef<(() => void) | null>(null);
   const regionsRef = useRef<RegionTally>(emptyTally());
@@ -87,7 +88,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
 
     let idx = 0;
     let spec = queue[0];
-    let sim: SimInput = { seed: 20260703, taps: tapsRef.current, photos };
+    let sim: SimInput = { seed: 20260703, taps: tapsRef.current, holds: holdsRef.current, photos };
     // AR-8 — with scanning on, find/search lessons become stepped choices.
     const lessonScan = new LessonScanController();
     const scanDwellMs = dwellFromPace(paceMultiplier(settings.pace));
@@ -126,11 +127,36 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
           });
     };
 
+    // Hold-to-sustain input (AR-8-friendly): fingers and held switches both
+    // open a span; the kernel's slew limiter makes any pattern safe.
+    const holdState = { pointers: 0, key: false, open: -1 };
+    const holdDriven = () => HOLD_DRIVEN_BEHAVIORS.has(spec.behavior);
+    const syncHold = () => {
+      const active = holdState.pointers > 0 || holdState.key;
+      const holds = holdsRef.current;
+      if (active && holdState.open < 0) {
+        holds.push({ start: lessonT, end: Number.POSITIVE_INFINITY });
+        holdState.open = holds.length - 1;
+      } else if (!active && holdState.open >= 0) {
+        holds[holdState.open].end = lessonT;
+        holdState.open = -1;
+      }
+    };
+    const releaseAllHolds = () => {
+      holdState.pointers = 0;
+      holdState.key = false;
+      syncHold();
+    };
+
     const beginLesson = (nextIdx: number) => {
       idx = nextIdx;
       spec = queue[idx];
       tapsRef.current.length = 0;
-      sim = { seed: 20260703 + idx * 101, taps: tapsRef.current, photos };
+      holdsRef.current.length = 0;
+      holdState.pointers = 0;
+      holdState.key = false;
+      holdState.open = -1;
+      sim = { seed: 20260703 + idx * 101, taps: tapsRef.current, holds: holdsRef.current, photos };
       lessonT = 0;
       prevT = 0;
       handover = null;
@@ -312,18 +338,41 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
     };
     const onPointerDown = (e: PointerEvent) => {
       if ((e.target as HTMLElement).closest('button, a, .overlay')) return;
+      if (holdDriven()) {
+        if (phaseRef.current !== 'running' || handover) return;
+        if (!audio.unlocked) void audio.unlock().then(startMelodyIfWanted);
+        holdState.pointers++;
+        syncHold();
+        return;
+      }
       const rect = canvas.getBoundingClientRect();
       onTap((e.clientX - rect.left) / Math.max(rect.width, 1), (e.clientY - rect.top) / Math.max(rect.height, 1));
     };
+    // Releases always land, even mid-pause or over the overlay — a light that
+    // cannot be let go of would be worse than no light at all.
+    const onPointerUp = () => {
+      if (holdState.pointers === 0) return;
+      holdState.pointers--;
+      syncHold();
+    };
     const onKey = (e: KeyboardEvent) => {
-      if (e.repeat) return;
-      if (e.key === 'Escape') {
+      if (e.key === 'Escape' && !e.repeat) {
         e.preventDefault();
+        releaseAllHolds();
         setPhase((p) => (p === 'running' ? 'paused' : p));
         return;
       }
       if ((e.key === ' ' || e.key === 'Enter') && !(e.target as HTMLElement).closest('button, a, input, textarea')) {
         e.preventDefault();
+        if (holdDriven()) {
+          // A held switch is a hold (AR-8): down opens the span, up closes it.
+          if (e.repeat || phaseRef.current !== 'running' || handover) return;
+          if (!audio.unlocked) void audio.unlock().then(startMelodyIfWanted);
+          holdState.key = true;
+          syncHold();
+          return;
+        }
+        if (e.repeat) return;
         // Choice scanning: the switch steps the ring / picks the highlighted
         // light, instead of the tap-anywhere auto-hit (AR-8).
         if (phaseRef.current === 'running' && choiceScanActive()) {
@@ -338,8 +387,16 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
         onTap();
       }
     };
+    const onKeyUp = (e: KeyboardEvent) => {
+      if ((e.key === ' ' || e.key === 'Enter') && holdState.key) {
+        holdState.key = false;
+        syncHold();
+      }
+    };
+    const onBlur = () => releaseAllHolds();
     const onVisibility = () => {
       if (document.hidden) {
+        releaseAllHolds();
         if (phaseRef.current === 'running') setPhase('paused');
         audio.duck(0);
       } else {
@@ -347,14 +404,22 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
       }
     };
     canvas.parentElement?.addEventListener('pointerdown', onPointerDown);
+    window.addEventListener('pointerup', onPointerUp);
+    window.addEventListener('pointercancel', onPointerUp);
     window.addEventListener('keydown', onKey);
+    window.addEventListener('keyup', onKeyUp);
+    window.addEventListener('blur', onBlur);
     document.addEventListener('visibilitychange', onVisibility);
 
     return () => {
       cancelAnimationFrame(raf);
       window.removeEventListener('resize', resize);
       canvas.parentElement?.removeEventListener('pointerdown', onPointerDown);
+      window.removeEventListener('pointerup', onPointerUp);
+      window.removeEventListener('pointercancel', onPointerUp);
       window.removeEventListener('keydown', onKey);
+      window.removeEventListener('keyup', onKeyUp);
+      window.removeEventListener('blur', onBlur);
       document.removeEventListener('visibilitychange', onVisibility);
       melody?.stop(0.5);
       audio.stopMelody(0.4);
@@ -476,5 +541,5 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
 }
 
 function isTapCue(cue: string): boolean {
-  return cue === 'chime' || cue === 'note';
+  return cue === 'chime' || cue === 'note' || cue === 'hum';
 }

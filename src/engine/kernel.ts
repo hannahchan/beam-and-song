@@ -98,6 +98,55 @@ export function effectiveTapEvents<T extends { t: number }>(taps: readonly T[], 
   return out;
 }
 
+/** A pressed interval: touch-down to touch-up, or a held switch. An end past "now" means still held. */
+export interface HoldSpan {
+  start: number;
+  end: number;
+}
+
+/** Merge unordered/overlapping hold spans (multi-touch) into a clean timeline, clipped to [0, nowMs]. */
+export function effectiveHolds(holds: readonly HoldSpan[], nowMs: number): HoldSpan[] {
+  const spans = holds
+    .map((h) => ({ start: Math.max(0, h.start), end: clamp(h.end, Math.max(0, h.start), nowMs) }))
+    .filter((h) => h.end > h.start)
+    .sort((a, b) => a.start - b.start);
+  const merged: HoldSpan[] = [];
+  for (const s of spans) {
+    const prev = merged[merged.length - 1];
+    if (prev && s.start <= prev.end) prev.end = Math.max(prev.end, s.end);
+    else merged.push({ ...s });
+  }
+  return merged;
+}
+
+/**
+ * Slew-limited sustain envelope for hold-to-keep-it-going lessons (SR-1/SR-3
+ * by construction): the value can only climb at 1/riseMs and settle at
+ * 1/fallMs — both floored at the minimum fade — no matter how fast presses
+ * arrive. Mashing therefore wiggles it gently around a level; it can never
+ * flicker. Pure function of the full hold history, so the safety suite can
+ * measure any press pattern it likes.
+ */
+export function holdEnvelope(
+  tMs: number,
+  holds: readonly HoldSpan[],
+  riseMs: number,
+  fallMs: number,
+): number {
+  const rise = Math.max(riseMs, SAFETY.MIN_FADE_MS);
+  const fall = Math.max(fallMs, SAFETY.MIN_FADE_MS);
+  let v = 0;
+  let cursor = 0;
+  for (const s of effectiveHolds(holds, tMs)) {
+    if (s.start >= tMs) break;
+    v = Math.max(0, v - (s.start - cursor) / fall); // settle through the gap
+    const activeEnd = Math.min(s.end, tMs);
+    v = Math.min(1, v + (activeEnd - s.start) / rise); // climb while held
+    cursor = activeEnd;
+  }
+  return clamp01(v - Math.max(0, tMs - cursor) / fall);
+}
+
 /** Deterministic PRNG (mulberry32) so scenes are reproducible in tests. */
 export function makeRng(seed: number): () => number {
   let s = seed >>> 0;
