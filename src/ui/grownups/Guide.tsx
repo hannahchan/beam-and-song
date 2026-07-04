@@ -100,6 +100,17 @@ export function Guide({ topic }: { topic?: string | null }) {
         </p>
       </Card>
 
+      <Card title="Finding their colour">
+        <p>
+          Many children with CVI have one colour that reaches them first — often red or yellow, but truly any.
+          If you're not sure which, try a gentle experiment: keep everything else the same, give each colour a
+          few relaxed sessions of the same lesson, and jot a quick note after each. The colour that keeps
+          earning looks is your answer for now — and it can change over time, so it's worth revisiting. The
+          preview beside Settings shows each colour the moment you pick it, and your vision professional may
+          already know the answer.
+        </p>
+      </Card>
+
       <Card title="About glow">
         <p>
           A glowing target helps many children find and hold it. For some, though, glow feeds a habit of gazing at
