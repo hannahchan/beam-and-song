@@ -34,6 +34,8 @@ no servers, no data leaving the device.
   programs** (PT-9): named lesson sequences that play as queued sessions with slow crossfades.
 - **The family's own media** (CR-3): photos (downscaled + luminance-measured client-side) and songs or
   voice recordings (IndexedDB, normalized client-side) as targets and music — on-device only, always.
+  Each photo can carry a **recorded caregiver voice label** ("the red ball!") that plays as the answer in
+  photo lessons — after a find, or when a look is marked in after-a-look mode.
 - **Caregiver tooling**: profiles, instant persistence, export/import + whole-device backup, ten-second
   observations with day-context tags, trends, a summary formatted for your child's vision professional, a
   settings-review nudge, an optional PIN — and **opt-in field-pattern observation** (PT-13) that only ever
@@ -47,7 +49,7 @@ no servers, no data leaving the device.
   cooldown-limits rewards. The test suite **simulates every lesson at 60 fps** — at default and extreme
   settings, under input mashing, across age bands — and measures the luminance timeline against
   flash-safety thresholds. It caught six real hazards during development; that is the point of it.
-- **268 unit/safety/a11y tests + 6 Playwright E2E tests**, all gating deploy in CI along with enforced
+- **274 unit/safety/a11y tests + 6 Playwright E2E tests**, all gating deploy in CI along with enforced
   payload budgets (TR-9).
 
 ## Run it
@@ -55,7 +57,7 @@ no servers, no data leaving the device.
 ```bash
 npm install
 npm run dev        # local dev server
-npm test           # 268 tests incl. the safety simulation suite
+npm test           # 274 tests incl. the safety simulation suite
 npm run build      # type-check + production build to dist/
 ```
 

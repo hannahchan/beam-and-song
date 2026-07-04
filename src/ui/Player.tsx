@@ -12,7 +12,7 @@ import { effectiveTapEvents } from '../engine/kernel';
 import type { LessonSpec, TapEvent } from '../lib/types';
 import { AfterModeHint, ObservationCard } from './SessionOverlays';
 import { emptyTally, quadrantOf, type RegionTally } from '../lib/regions';
-import { enabledPhotos } from '../lib/photos';
+import { enabledPhotos, voiceForItems } from '../lib/photos';
 import { CHOICE_BEHAVIORS, LessonScanController, LESSON_SCAN } from './lessonScan';
 import { dwellFromPace } from './scan';
 import { paceMultiplier } from '../engine/params';
@@ -66,6 +66,8 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
   const againRef = useRef<(() => void) | null>(null);
   const regionsRef = useRef<RegionTally>(emptyTally());
   const lastQuadRef = useRef<'ul' | 'ur' | 'll' | 'lr'>('ul');
+  // CR-3 — the voice label for the photo currently on screen, refreshed per frame.
+  const voiceRef = useRef<{ blobId: string; gain: number } | null>(null);
 
   const params = useMemo(() => buildParams(settings), [settings]);
   const photos = enabledPhotos(profile.photos).map((p) => ({ dataUrl: p.dataUrl, lum: p.lum }));
@@ -218,10 +220,17 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
           if (scene.cues.some(isTapCue)) regionsRef.current[q].r += 1;
         }
         const fadeK = handover ? Math.min((lessonT - handover.at) / XFADE_MS, 1) : 0;
+        voiceRef.current = voiceForItems(scene.items, profile.photos);
         for (const cue of scene.cues) {
           if (settings.audioMode === 'off' || handover) continue;
           if (settings.audioMode === 'after' && !isTapCue(cue)) continue;
-          audio.playCue(cue, scene.pan * 0.6);
+          // In photo lessons, a recorded voice label is the answer (CR-3):
+          // the caregiver's own "the red ball!" instead of the chime.
+          if (cue === 'chime' && voiceRef.current) {
+            audio.playVoiceLabel(voiceRef.current.blobId, voiceRef.current.gain);
+          } else {
+            audio.playCue(cue, scene.pan * 0.6);
+          }
           if (isTapCue(cue)) buzz(settings.haptics);
         }
         if (melody && (settings.soundFollowsTarget || spec.behavior === 'audioPan')) {
@@ -281,15 +290,21 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
         if (eff[eff.length - 1]?.t !== t) return;
       } else if (settings.audioMode === 'after') {
         // FR-6b — the grown-up taps when the baby looks; the song answers.
-        melody ??= customMeta
-          ? audio.startCustom(customMeta, spec.melody, { pan: false, loop: false })
-          : audio.startMelody(spec.melody, {
-              tempoScale: params.tempoScale,
-              pan: false,
-              layered: settings.audioStyle === 'layered',
-              loop: false,
-            });
-        melody.playPhrase();
+        // If the photo on screen has a recorded voice label, that voice IS
+        // the answer — the most meaningful sound we can offer (CR-3).
+        if (voiceRef.current) {
+          audio.playVoiceLabel(voiceRef.current.blobId, voiceRef.current.gain);
+        } else {
+          melody ??= customMeta
+            ? audio.startCustom(customMeta, spec.melody, { pan: false, loop: false })
+            : audio.startMelody(spec.melody, {
+                tempoScale: params.tempoScale,
+                pan: false,
+                layered: settings.audioStyle === 'layered',
+                loop: false,
+              });
+          melody.playPhrase();
+        }
         buzz(settings.haptics);
         // The grown-up marked a look (FR-6b) — that's a response too (PT-13).
         if (settings.fieldObservation) regionsRef.current[lastQuadRef.current].r += 1;

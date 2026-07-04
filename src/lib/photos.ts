@@ -1,3 +1,5 @@
+import type { CustomPhoto } from './types';
+
 /**
  * CR-3 / TR-7 — custom photo targets, processed entirely on this device.
  * Downscaled to a small JPEG data URL before storing; nothing is uploaded.
@@ -48,6 +50,26 @@ export function measureLuminance(ctx: CanvasRenderingContext2D, w: number, h: nu
 /** The photos lessons may show — resting a photo is not deleting it (PV-5-friendly). */
 export function enabledPhotos<T extends { enabled?: boolean }>(photos: readonly T[]): T[] {
   return photos.filter((p) => p.enabled !== false);
+}
+
+/** Where a photo's voice label lives in the blob store — derived, so removal can't miss it. */
+export function voiceBlobId(photoId: string): string {
+  return `photo-voice-${photoId}`;
+}
+
+/**
+ * The voice label to speak for the photo currently on screen, if any:
+ * match the primary photo item back to the profile photo that owns it.
+ * Pure, so the Player's cue-swap decision is unit-testable.
+ */
+export function voiceForItems(
+  items: readonly { shape: string; photoDataUrl?: string }[],
+  photos: readonly CustomPhoto[],
+): { blobId: string; gain: number } | null {
+  const shown = items.find((i) => i.shape === 'photo' && i.photoDataUrl);
+  if (!shown) return null;
+  const owner = photos.find((p) => p.dataUrl === shown.photoDataUrl && p.enabled !== false && p.voice);
+  return owner?.voice ? { blobId: voiceBlobId(owner.id), gain: owner.voice.gain } : null;
 }
 
 export function pixelLuminance(r: number, g: number, b: number): number {

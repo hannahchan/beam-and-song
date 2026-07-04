@@ -1,11 +1,20 @@
-import { useState } from 'preact/hooks';
-import type { Profile } from '../../lib/types';
+import { useEffect, useRef, useState } from 'preact/hooks';
+import type { CustomPhoto, Profile } from '../../lib/types';
 import { updateProfile, updateSettings } from '../../lib/store';
 import { PRESETS } from '../../lib/presets';
 import { TARGET_COLORS } from '../../safety/constants';
-import { MAX_PHOTOS_PER_PROFILE, processPhotoFile } from '../../lib/photos';
+import { MAX_PHOTOS_PER_PROFILE, processPhotoFile, voiceBlobId } from '../../lib/photos';
 import { uid } from '../../lib/store';
-import { analyzeAudio, checkAudioFile, deleteBlob, MAX_AUDIO_FILES, putBlob } from '../../lib/media';
+import {
+  analyzeAudio,
+  checkAudioFile,
+  deleteBlob,
+  MAX_AUDIO_FILES,
+  MAX_VOICE_SECONDS,
+  putBlob,
+  VOICE_RECORD_MS,
+} from '../../lib/media';
+import { audio } from '../../engine/audio';
 import { LivePreview } from './LivePreview';
 import { Card, RadioGroup, RangeField, Toggle } from './bits';
 
@@ -469,31 +478,39 @@ function PhotoManager({ profile }: { profile: Profile }) {
       <p class="card-note">
         A favourite toy, or a familiar, loved face: often the most motivating targets of all. Photos are shrunk
         and stored <b>on this device only</b> — never uploaded, never sent anywhere. They unlock the “A Familiar
-        Face or Toy” lesson.
+        Face or Toy” lesson. You can also record <b>your own voice</b> naming each photo — “the red ball!” —
+        and in the photo lessons that voice becomes the answer: after a find, or when you mark a look in the
+        “after a look” sound mode. Recordings stay on this device too.
       </p>
       {profile.photos.map((ph) => (
-        <div key={ph.id} class="photo-row">
-          <img class="photo-thumb" src={ph.dataUrl} alt={`Photo: ${ph.label}`} />
-          <span style={{ flex: 1 }}>{ph.label}</span>
-          <label class="check-item" style={{ minHeight: 'auto' }}>
-            <input
-              type="checkbox"
-              checked={ph.enabled !== false}
-              onChange={(e) =>
-                updateProfile(profile.id, (p) => {
-                  const target = p.photos.find((x) => x.id === ph.id);
-                  if (target) target.enabled = (e.target as HTMLInputElement).checked;
-                })
-              }
-            />
-            <span>Shown in lessons</span>
-          </label>
-          <button
-            class="btn btn-small btn-danger"
-            onClick={() => updateProfile(profile.id, (p) => (p.photos = p.photos.filter((x) => x.id !== ph.id)))}
-          >
-            Remove
-          </button>
+        <div key={ph.id} class="photo-entry">
+          <div class="photo-row">
+            <img class="photo-thumb" src={ph.dataUrl} alt={`Photo: ${ph.label}`} />
+            <span style={{ flex: 1 }}>{ph.label}</span>
+            <label class="check-item" style={{ minHeight: 'auto' }}>
+              <input
+                type="checkbox"
+                checked={ph.enabled !== false}
+                onChange={(e) =>
+                  updateProfile(profile.id, (p) => {
+                    const target = p.photos.find((x) => x.id === ph.id);
+                    if (target) target.enabled = (e.target as HTMLInputElement).checked;
+                  })
+                }
+              />
+              <span>Shown in lessons</span>
+            </label>
+            <button
+              class="btn btn-small btn-danger"
+              onClick={() => {
+                updateProfile(profile.id, (p) => (p.photos = p.photos.filter((x) => x.id !== ph.id)));
+                void deleteBlob(voiceBlobId(ph.id));
+              }}
+            >
+              Remove
+            </button>
+          </div>
+          <VoiceLabelControl profile={profile} photo={ph} />
         </div>
       ))}
       {profile.photos.length < MAX_PHOTOS_PER_PROFILE && (
@@ -518,5 +535,173 @@ function PhotoManager({ profile }: { profile: Profile }) {
         </p>
       )}
     </Card>
+  );
+}
+
+/**
+ * CR-3 — a short caregiver voice label per photo ("the red ball!"), recorded
+ * right here or added as a small audio file. It becomes the answer in the
+ * photo lessons. The clip lives in this browser's storage only (PV-5) and is
+ * removed with the photo. Recording needs the microphone once, with your
+ * permission; nothing is ever uploaded.
+ */
+function VoiceLabelControl({ profile, photo }: { profile: Profile; photo: CustomPhoto }) {
+  const [state, setState] = useState<'idle' | 'recording' | 'busy'>('idle');
+  const [err, setErr] = useState<string | null>(null);
+  const recRef = useRef<{ rec: MediaRecorder; stream: MediaStream; timer: number } | null>(null);
+  const canRecord =
+    typeof MediaRecorder !== 'undefined' && typeof navigator !== 'undefined' && !!navigator.mediaDevices?.getUserMedia;
+
+  // Never leave the microphone open if the page moves on mid-recording.
+  useEffect(
+    () => () => {
+      const r = recRef.current;
+      if (r) {
+        window.clearTimeout(r.timer);
+        try {
+          if (r.rec.state !== 'inactive') r.rec.stop();
+        } catch {
+          /* already stopped */
+        }
+        r.stream.getTracks().forEach((t) => t.stop());
+        recRef.current = null;
+      }
+    },
+    [],
+  );
+
+  const save = async (blob: Blob) => {
+    setState('busy');
+    try {
+      const { duration, gain } = await analyzeAudio(blob);
+      if (duration > MAX_VOICE_SECONDS) {
+        throw new Error('Keep it under ten seconds — just the name, said warmly.');
+      }
+      await putBlob(voiceBlobId(photo.id), blob);
+      updateProfile(profile.id, (p) => {
+        const target = p.photos.find((x) => x.id === photo.id);
+        if (target) target.voice = { duration, gain };
+      });
+      setErr(null);
+    } catch (e) {
+      setErr(e instanceof Error ? e.message : 'That recording could not be used.');
+    } finally {
+      setState('idle');
+    }
+  };
+
+  const startRecording = async () => {
+    setErr(null);
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const rec = new MediaRecorder(stream);
+      const chunks: BlobPart[] = [];
+      rec.ondataavailable = (e) => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+      rec.onstop = () => {
+        stream.getTracks().forEach((t) => t.stop());
+        recRef.current = null;
+        void save(new Blob(chunks, { type: rec.mimeType || 'audio/webm' }));
+      };
+      const timer = window.setTimeout(() => {
+        if (rec.state !== 'inactive') rec.stop();
+      }, VOICE_RECORD_MS);
+      recRef.current = { rec, stream, timer };
+      rec.start();
+      setState('recording');
+    } catch {
+      setErr('The microphone is not available here — you can add a small audio file instead.');
+    }
+  };
+
+  const stopRecording = () => {
+    const r = recRef.current;
+    if (!r) return;
+    window.clearTimeout(r.timer);
+    if (r.rec.state !== 'inactive') r.rec.stop();
+  };
+
+  const onVoiceFile = (file: File | undefined) => {
+    if (!file) return;
+    const problem = checkAudioFile(file);
+    if (problem) {
+      setErr(problem);
+      return;
+    }
+    void save(file);
+  };
+
+  const removeVoice = async () => {
+    updateProfile(profile.id, (p) => {
+      const target = p.photos.find((x) => x.id === photo.id);
+      if (target) delete target.voice;
+    });
+    await deleteBlob(voiceBlobId(photo.id));
+  };
+
+  const play = () => {
+    const v = photo.voice;
+    if (!v) return;
+    void audio.unlock().then(() => audio.playVoiceLabel(voiceBlobId(photo.id), v.gain));
+  };
+
+  return (
+    <div class="voice-row">
+      {photo.voice ? (
+        <>
+          <span class="hint" style={{ margin: 0 }}>
+            Voice label ({Math.max(1, Math.round(photo.voice.duration))} s) — plays as the answer in photo
+            lessons.
+          </span>
+          <button class="btn btn-small" aria-label={`Play the voice label for ${photo.label}`} onClick={play}>
+            Play
+          </button>
+          <button
+            class="btn btn-small btn-ghost"
+            aria-label={`Remove the voice label for ${photo.label}`}
+            onClick={() => void removeVoice()}
+          >
+            Remove voice
+          </button>
+        </>
+      ) : state === 'recording' ? (
+        <button class="btn btn-small" aria-label={`Finish recording for ${photo.label}`} onClick={stopRecording}>
+          ● Recording — tap to finish (stops by itself after 8 s)
+        </button>
+      ) : (
+        <>
+          {canRecord && (
+            <button
+              class="btn btn-small"
+              disabled={state === 'busy'}
+              aria-label={`Record a voice label for ${photo.label}`}
+              onClick={() => void startRecording()}
+            >
+              {state === 'busy' ? 'Saving…' : 'Record its name in your voice'}
+            </button>
+          )}
+          <label class="btn btn-small">
+            Add a voice file
+            <input
+              type="file"
+              accept="audio/*"
+              class="sr-only"
+              disabled={state === 'busy'}
+              onChange={(e) => {
+                const input = e.target as HTMLInputElement;
+                onVoiceFile(input.files?.[0]);
+                input.value = '';
+              }}
+            />
+          </label>
+        </>
+      )}
+      {err && (
+        <p class="msg-err" role="status" style={{ margin: 0 }}>
+          {err}
+        </p>
+      )}
+    </div>
   );
 }

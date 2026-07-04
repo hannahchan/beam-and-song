@@ -665,9 +665,18 @@ details summary:hover {
   margin-left: 0.35rem;
 }
 
-.photo-row { display: flex; align-items: center; gap: 1rem; padding: 0.6rem 0; border-bottom: 1px solid var(--line); }
-.photo-row:last-child { border-bottom: none; }
+.photo-entry { border-bottom: 1px solid var(--line); }
+.photo-entry:last-of-type { border-bottom: none; }
+.photo-row { display: flex; align-items: center; gap: 1rem; padding: 0.6rem 0; }
 .photo-thumb { width: 74px; height: 74px; border-radius: 14px; object-fit: cover; border: 1px solid var(--line); }
+/* CR-3 — the voice-label controls sit under their photo, indented past the thumbnail. */
+.voice-row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  padding: 0 0 0.8rem calc(74px + 1rem);
+}
 
 /* Settings live preview: always visible while adjusting (no screen-hopping). */
 .settings-layout {

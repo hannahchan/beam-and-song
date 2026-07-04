@@ -206,7 +206,7 @@ class AudioEngine {
   private custom: { src: AudioBufferSourceNode; gain: GainNode } | null = null;
   private customOffset = 0; // where the next "after a look" snippet starts
 
-  private loadBuffer(meta: CustomAudio): Promise<AudioBuffer | null> {
+  private loadBuffer(meta: { id: string }): Promise<AudioBuffer | null> {
     let p = this.bufferCache.get(meta.id);
     if (!p) {
       p = (async () => {
@@ -304,6 +304,35 @@ class AudioEngine {
     src.connect(gain).connect(this.master);
     src.start(t, offset, dur + 1);
     setTimeout(() => (this.phraseBusy = false), dur * 1000);
+  }
+
+  /**
+   * CR-3 — a caregiver's short voice label ("the red ball!") as the answer in
+   * photo lessons. Same gentle rules as every other sound: soft attack,
+   * gentle release, normalized gain — and it shares the phrase guard, so a
+   * voice label and a melody phrase can never stack on top of each other.
+   */
+  playVoiceLabel(blobId: string, gain: number): void {
+    void this.playVoiceLabelAsync(blobId, gain);
+  }
+
+  private async playVoiceLabelAsync(blobId: string, gain: number): Promise<void> {
+    if (!this.ctx || !this.master || this.phraseBusy) return;
+    const buffer = await this.loadBuffer({ id: blobId });
+    if (!buffer || !this.ctx || this.phraseBusy) return;
+    this.phraseBusy = true;
+    const ctx = this.ctx;
+    const dur = Math.min(buffer.duration, 10);
+    const src = ctx.createBufferSource();
+    src.buffer = buffer;
+    const g = ctx.createGain();
+    const t = ctx.currentTime;
+    g.gain.setValueAtTime(0.0001, t);
+    g.gain.setTargetAtTime(0.55 * gain, t, 0.08); // soft attack, well past the 30 ms floor
+    g.gain.setTargetAtTime(0.0001, t + Math.max(dur - 0.4, 0.1), 0.2);
+    src.connect(g).connect(this.master);
+    src.start(t, 0, dur + 0.8);
+    setTimeout(() => (this.phraseBusy = false), dur * 1000 + 300);
   }
 
   /** One short phrase as a reward-after-a-look (FR-6b / PR-11). */

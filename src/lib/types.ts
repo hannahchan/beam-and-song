@@ -62,6 +62,13 @@ export interface CustomPhoto {
   lum?: number;
   /** Absent = shown. Lets a caregiver rest a photo without deleting it. */
   enabled?: boolean;
+  /**
+   * CR-3 — a short caregiver voice label ("the red ball!"), played as the
+   * answer in photo lessons. The clip itself lives in IndexedDB under
+   * voiceBlobId(photo.id) and never leaves the device (PV-5); only this
+   * passport travels with the profile.
+   */
+  voice?: { duration: number; gain: number };
   addedAt: string;
 }
 

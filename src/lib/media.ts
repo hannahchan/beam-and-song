@@ -14,6 +14,14 @@ export const MAX_AUDIO_FILES = 3;
 export const MAX_AUDIO_BYTES = 15 * 1024 * 1024;
 export const MAX_AUDIO_SECONDS = 6 * 60;
 
+/**
+ * Voice labels (a name spoken over a photo) are answers, not session music:
+ * they stay short so the reward never becomes a soundtrack. Recording
+ * auto-stops before the ceiling; imported files are checked against it.
+ */
+export const MAX_VOICE_SECONDS = 10;
+export const VOICE_RECORD_MS = 8000;
+
 const memory = new Map<string, Blob>();
 let dbPromise: Promise<IDBDatabase | null> | null = null;
 
