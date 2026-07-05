@@ -47,10 +47,17 @@ test('child flow: start → tile → animating lesson → pause → observe → 
   expect(saved.tags).toEqual(['tired']);
 });
 
+/** The gate rotates which word opens it; the choices' group names the target. */
+async function tapGateWord(page: Page): Promise<void> {
+  const label = (await page.getByRole('group', { name: /^Tap the word / }).getAttribute('aria-label')) ?? '';
+  const word = label.replace(/^Tap the word\s+/, '').trim();
+  await page.getByRole('button', { name: word, exact: true }).click();
+}
+
 /** Pass the gate; create a child if this is a fresh browser profile. */
 async function openGrownUps(page: Page): Promise<void> {
   await page.goto('/#/grown-ups');
-  await page.getByRole('button', { name: 'two', exact: true }).click();
+  await tapGateWord(page);
   const welcome = page.getByRole('heading', { name: 'Welcome' });
   if (await welcome.isVisible().catch(() => false)) {
     await page.getByLabel(/nickname for your child/i).fill('Bean');
@@ -61,7 +68,7 @@ async function openGrownUps(page: Page): Promise<void> {
 
 test('grown-up gate: the tap-the-word path opens the area (FR-11)', async ({ page }) => {
   await page.goto('/#/grown-ups');
-  await page.getByRole('button', { name: 'two', exact: true }).click();
+  await tapGateWord(page);
   await expect(page.getByRole('heading', { name: /Welcome|space$/ })).toBeVisible();
 });
 
