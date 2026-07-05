@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { navigate } from '../lib/router';
-import { CUE_DRIVEN_BEHAVIORS, HOLD_DRIVEN_BEHAVIORS, effectiveAudioMode, getLesson } from '../lessons/specs';
+import { CUE_DRIVEN_BEHAVIORS, HOLD_DRIVEN_BEHAVIORS, cuePan, effectiveAudioMode, getLesson } from '../lessons/specs';
 import { bandLookPhrase, bandNoun, resolveLesson } from '../lessons/bands';
 import { activeProfile, addSession, ensureProfile } from '../lib/store';
 import { buildParams } from '../engine/params';
@@ -261,7 +261,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
           if (cue === 'chime' && voiceRef.current) {
             audio.playVoiceLabel(voiceRef.current.blobId, voiceRef.current.gain);
           } else {
-            audio.playCue(cue, scene.pan * 0.6);
+            audio.playCue(cue, cuePan(spec, scene.pan));
           }
           if (isTapCue(cue)) buzz(settings.haptics);
         }
