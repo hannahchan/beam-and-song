@@ -429,7 +429,9 @@ a { color: var(--focus); }
   margin: 0 0 1.1rem;
 }
 .card h2 { margin-top: 0; }
-.card-note { color: var(--inkSoft); font-size: 0.95rem; }
+/* Keep body copy at a readable measure; inline .card-note spans are unaffected
+   (max-width doesn't apply to them) and narrower containers cap it first. */
+.card-note { color: var(--inkSoft); font-size: 0.95rem; max-width: 68ch; }
 
 .stack { display: flex; flex-direction: column; gap: 1.1rem; }
 .row { display: flex; gap: 0.8rem; flex-wrap: wrap; align-items: center; }
