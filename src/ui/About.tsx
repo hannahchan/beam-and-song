@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import { Card } from './grownups/bits';
 
 /**
@@ -17,21 +17,72 @@ import { Card } from './grownups/bits';
  */
 export function About() {
   const ref = useRef<HTMLElement>(null);
+  const [copied, setCopied] = useState(false);
   useEffect(() => {
-    // Send a screen reader to the top heading on arrival (AR-6).
-    ref.current?.querySelector('h1')?.focus?.();
+    // Send a screen reader to the top heading on arrival, but keep the top bar in
+    // view for everyone else: preventScroll moves focus without jumping the page (AR-6).
+    ref.current?.querySelector('h1')?.focus?.({ preventScroll: true });
   }, []);
+
+  // Sharing keeps the app's no-network promise: it opens the native share sheet,
+  // or copies the link where no sheet exists, and sends nothing itself. The link
+  // shared is this page, so whoever receives it lands on this same explanation.
+  const share = async () => {
+    const url = location.href;
+    const data = {
+      title: 'The Light & Sound App for Kids with CVI',
+      text: 'Gentle light-and-sound lessons for children with CVI, from babies to teens.',
+      url,
+    };
+    if (navigator.share) {
+      // A cancelled share rejects; that is a normal outcome, not an error.
+      try {
+        await navigator.share(data);
+      } catch {
+        /* dismissed */
+      }
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(url);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 2500);
+    } catch {
+      /* no share sheet and no clipboard (an insecure context); nothing to do */
+    }
+  };
 
   return (
     <main class="about-screen" ref={ref}>
+      {/* A slim top bar echoing the grown-up pages (brand left, actions right), so
+          this public page reads as part of the same app. The actions ride up here,
+          visible without scrolling; a reader who reaches the end still finds a
+          "Go to the app" waiting there too. */}
+      <header class="about-top">
+        <p class="about-brand">Light &amp; Sound</p>
+        <div class="row">
+          <a class="btn btn-small btn-primary" href="#/">
+            Go to the app
+          </a>
+          <button type="button" class="btn btn-small about-share" onClick={share}>
+            <ShareIcon />
+            Share
+          </button>
+          {/* Feedback for the clipboard fallback only; the native share sheet gives
+              its own. role=status announces it without stealing focus. */}
+          <span class="about-copied" role="status" aria-live="polite">
+            {copied ? 'Link copied' : ''}
+          </span>
+        </div>
+      </header>
       <div class="stack">
-        <header>
+        <div class="about-intro">
           <h1 tabindex={-1}>The Light &amp; Sound App for Kids with CVI</h1>
           <p class="about-lede">
             Gentle light-and-sound lessons: a calm, tappable companion that helps babies through teens
             practise looking and listening, at whatever pace and intensity suits them.
           </p>
-        </header>
+        </div>
 
         <Card title="What this is">
           <p>
@@ -115,15 +166,34 @@ export function About() {
           </p>
         </Card>
 
-        <div class="row about-doors">
+        <div class="about-doors">
           <a class="btn btn-primary" href="#/">
             Go to the app
-          </a>
-          <a class="btn btn-quiet" href="#/grown-ups">
-            For grown-ups
           </a>
         </div>
       </div>
     </main>
+  );
+}
+
+/** An upward arrow rising from a tray, the near-universal "share" glyph, drawn
+ *  in the same hand as the gate's home icon. */
+function ShareIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="20"
+      height="20"
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M12 15V4" />
+      <path d="M8 8l4-4 4 4" />
+      <path d="M6 12v6a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-6" />
+    </svg>
   );
 }
