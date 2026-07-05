@@ -158,15 +158,17 @@ a { color: var(--focus); }
   overflow: hidden;
 }
 
-/* The landing is a fixed, always-one-screen door, so pin it to the viewport
-   rather than sizing it with 100dvh. On iOS Safari the dynamic viewport height
-   lags and recomputes in steps through an orientation change (landscape to
-   portrait), which made the flex-centred orb jump between two positions and
-   briefly exposed the lighter body colour (--bg0) as a "chin" below the black
-   screen. A fixed inset:0 box always covers the screen edge to edge
-   (viewport-fit=cover spans the safe areas), so there is no dynamic height to
-   re-centre against and nothing to peek through underneath. */
-.landing-screen {
+/* Full-screen "door" screens (the landing, the chooser, the grown-up gate) pin
+   themselves to the viewport instead of sizing with .child-screen's
+   min-height:100dvh. On iOS Safari the dynamic viewport height lags and
+   recomputes in steps through an orientation change (landscape to portrait), and
+   centring content against a height that keeps changing makes it leap between two
+   positions (the bar-shown and bar-hidden heights), briefly exposing the lighter
+   body colour (--bg0) as a "chin" underneath. A fixed inset:0 box (viewport-fit=
+   cover spans the safe areas) has no dynamic height to re-centre against, so
+   nothing leaps and nothing peeks through beneath. Each door layers its own
+   scrolling, padding, and background on top (see .chooser-screen, .gate-screen). */
+.pinned-screen {
   position: fixed;
   inset: 0;
   min-height: 0;
@@ -283,17 +285,13 @@ a { color: var(--focus); }
   margin: 0;
 }
 
-/* Same viewport-pinning as the landing (.landing-screen): a fixed inset:0 box
-   so the dvh recompute on the fullscreen request / orientation change can't
-   re-centre the content. Unlike the landing, the tile grid can outgrow a short
-   landscape screen, so the grid lives in a scrollable .chooser-wrap and only
-   the "For grown-ups" link is pinned to the bottom, landing where the landing
-   page's link sat so it no longer leaps on navigation. Safe-area padding keeps
-   the top row and the bottom link clear of the notch and home indicator. */
+/* Viewport-pinned via .pinned-screen. Unlike the landing, the tile grid can
+   outgrow a short landscape screen, so the grid lives in a scrollable
+   .chooser-wrap and only the "For grown-ups" link is pinned to the bottom,
+   landing where the landing page's link sat so it no longer leaps on navigation.
+   Safe-area padding keeps the top row and the bottom link clear of the notch and
+   home indicator. */
 .chooser-screen {
-  position: fixed;
-  inset: 0;
-  min-height: 0;
   padding: max(var(--edge-gap), env(safe-area-inset-top)) max(var(--edge-gap), env(safe-area-inset-right))
     max(var(--edge-gap), env(safe-area-inset-bottom)) max(var(--edge-gap), env(safe-area-inset-left));
 }
@@ -404,7 +402,10 @@ a { color: var(--focus); }
   border-radius: 20px;
   padding: 1.6rem;
   width: min(560px, 94vw);
-  max-height: 88dvh;
+  /* svh, not dvh, so a capped dialog keeps its height (and its centred position)
+     steady through the iOS URL-bar animation, the same reason .pinned-screen
+     drops dvh. */
+  max-height: 88svh;
   overflow-y: auto;
 }
 .overlay-card .btn { width: 100%; margin-top: 0.7rem; }
@@ -722,6 +723,21 @@ details summary:hover {
   border-top: 1px solid var(--line);
   padding-top: 1.2rem;
   margin-top: 2.5rem;
+}
+
+/* Viewport-pinned via .pinned-screen. The PIN form and the hold cluster can both
+   outgrow a short landscape screen, so the box scrolls with safe centring
+   (centred when it fits, anchored to the top and reachable when it cannot). The
+   gate already paints --bg0, the body colour, so it needs nothing extra to hide a
+   peeking chin. */
+.gate-screen {
+  justify-content: safe center;
+  /* Explicit, so the overflow-y below cannot compute the x-axis to auto (per CSS
+     Overflow, a non-visible axis forces a visible sibling to auto) and admit a
+     stray horizontal scrollbar. */
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding-block: env(safe-area-inset-top) env(safe-area-inset-bottom);
 }
 
 /* hold-to-enter */
