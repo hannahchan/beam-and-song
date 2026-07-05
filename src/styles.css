@@ -142,6 +142,11 @@ a { color: var(--focus); }
 /* ------------------------------ child screens ------------------------------ */
 
 .child-screen {
+  /* Minimum inset from the screen edge for content, before the safe-area takes
+     over. Shared so the "For grown-ups" link lands at the same corner on the
+     landing (its footer) and the chooser (its screen padding), with no shift
+     between the two. */
+  --edge-gap: 1.2rem;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
@@ -168,7 +173,7 @@ a { color: var(--focus); }
 
 .landing-title {
   margin: 0;
-  padding-top: max(1.2rem, env(safe-area-inset-top));
+  padding-top: max(var(--edge-gap), env(safe-area-inset-top));
   color: #6b7387;
   font-size: 1rem;
   letter-spacing: 0.14em;
@@ -241,9 +246,9 @@ a { color: var(--focus); }
   flex-direction: column;
   align-items: center;
   gap: 0.5rem;
-  padding-bottom: max(1.2rem, env(safe-area-inset-bottom));
-  padding-left: max(1.2rem, env(safe-area-inset-left));
-  padding-right: max(1.2rem, env(safe-area-inset-right));
+  padding-bottom: max(var(--edge-gap), env(safe-area-inset-bottom));
+  padding-left: max(var(--edge-gap), env(safe-area-inset-left));
+  padding-right: max(var(--edge-gap), env(safe-area-inset-right));
 }
 .landing-footer-row {
   display: flex;
@@ -288,8 +293,8 @@ a { color: var(--focus); }
   position: fixed;
   inset: 0;
   min-height: 0;
-  padding: max(0.8rem, env(safe-area-inset-top)) max(0.8rem, env(safe-area-inset-right))
-    max(0.8rem, env(safe-area-inset-bottom)) max(0.8rem, env(safe-area-inset-left));
+  padding: max(var(--edge-gap), env(safe-area-inset-top)) max(var(--edge-gap), env(safe-area-inset-right))
+    max(var(--edge-gap), env(safe-area-inset-bottom)) max(var(--edge-gap), env(safe-area-inset-left));
 }
 .chooser-wrap {
   flex: 1 1 auto;
