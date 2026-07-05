@@ -3,6 +3,11 @@
 Static Vite + Preact + TS app: gentle lesson player for children with CVI. See README.md and
 docs/requirements-coverage.md; the source requirements live in CVI-training-site-requirements-final.md.
 
+Origin and stance: built by Claude Fable 5 as a demonstration of the model. It is an
+intermittently-developed side project, not clinically reviewed or tested with
+children with CVI, and framed as-is. Keep prose in the docs and UI friendly and free of em dashes
+(they read as an AI tell); use commas, periods, or parentheses instead.
+
 ## Commands
 - `npm run dev` / `npm run build` (tsc + vite) / `npm test` (vitest) / `npm run test:e2e` (playwright) / `npm run icons`
 

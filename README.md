@@ -3,6 +3,10 @@
 **Gentle light-and-sound lessons for children with CVI.** A calm, tappable companion that helps babies
 through teens practise *looking* and *listening* at whatever pace and intensity suits them.
 
+Light & Sound was built by **Claude Fable 5** to show what the model can do when it's pointed at a real
+problem. It's a side project that gets picked up in bursts, so please treat it as a demonstration rather
+than a clinically validated tool.
+
 CVI (cortical/cerebral visual impairment) is the most common cause of childhood visual impairment in much
 of the world. The eyes often work fine; it's the brain's visual processing that needs gentle, repeated,
 low-clutter practice. Light & Sound gives a child one warm thing to notice on a black screen, lets them
@@ -10,10 +14,11 @@ make it respond, and slowly, only if it helps, adds a little more to look at.
 
 It runs entirely in the browser. **No accounts, no servers, no data ever leaves the device.**
 
-> **Where this stands:** the app is feature-complete and heavily tested, but it is a *prototype built for
-> expert review, not yet clinically reviewed*. Vision-professional review of the content and safety, plus
-> usability testing with real CVI children across the age range, is expected **before** real-world use. The
-> review packet is ready in [`docs/clinical-review-packet.md`](docs/clinical-review-packet.md).
+> **Where this stands:** the app is carefully tested in code, but it hasn't had a
+> clinical review, and it hasn't been tried with children with CVI across the age range. That kind of
+> review and testing might happen one day, or it might not. It's the work that would turn a demonstration
+> into something a vision professional could confidently recommend. A review packet was put together during
+> the build, and you can find it in [`docs/clinical-review-packet.md`](docs/clinical-review-packet.md).
 
 ---
 
@@ -151,20 +156,22 @@ containing personal information about a child.
 
 ---
 
-## Honest gaps: what only people can finish
+## Where this could go
 
-Everything is tracked against the source requirements in
-[docs/requirements-coverage.md](docs/requirements-coverage.md), with the plan ahead in
-[docs/ROADMAP.md](docs/ROADMAP.md). The build side is done; what remains is human work:
+If the project keeps growing, these are the natural next steps. None of them are promises, and anyone is
+welcome to pick up a thread. Progress against the source requirements is tracked in
+[docs/requirements-coverage.md](docs/requirements-coverage.md), with fuller notes in
+[docs/ROADMAP.md](docs/ROADMAP.md).
 
-- **Clinical review and real-family usability testing** across the age range, the gate between "prototype"
-  and "recommendable." Packet ready: [`docs/clinical-review-packet.md`](docs/clinical-review-packet.md).
-- **Assistive-tech hardware walkthrough** (VoiceOver, NVDA, iOS Switch Control, Android): scripts ready in
-  [`docs/at-walkthrough.md`](docs/at-walkthrough.md), results tables waiting.
-- **On-device performance soak** on an older iPad and a budget Android tablet: protocol and in-player
-  diagnostics (`?diag=1`) in [`docs/perf-budgets.md`](docs/perf-budgets.md).
-- **Curated real-photo content** for Levels 3–4 beyond your own photos: sourcing and licensing are human
-  judgments, so the build ships without stock imagery on purpose.
+- **Clinical review and real-family usability testing** across the age range. This is the work that would
+  move it from a demonstration toward something a professional could recommend. A starting packet is in
+  [`docs/clinical-review-packet.md`](docs/clinical-review-packet.md).
+- **An assistive-tech hardware walkthrough** (VoiceOver, NVDA, iOS Switch Control, Android). The scripts are
+  ready in [`docs/at-walkthrough.md`](docs/at-walkthrough.md), waiting for someone to run them.
+- **An on-device performance soak** on an older iPad and a budget Android tablet. The protocol and the
+  in-player diagnostics (`?diag=1`) are in [`docs/perf-budgets.md`](docs/perf-budgets.md).
+- **Curated real-photo content** for Levels 3 and 4, beyond your own photos. Sourcing and licensing are
+  human judgments, so the build ships without stock imagery on purpose.
 
 ---
 
