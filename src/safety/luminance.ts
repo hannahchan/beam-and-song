@@ -35,7 +35,7 @@ export function contrastRatio(a: string, b: string): number {
   return (hi + 0.05) / (lo + 0.05);
 }
 
-/** SR-5 — "saturated red" in the photosensitivity sense. */
+/** SR-5, "saturated red" in the photosensitivity sense. */
 export function isSaturatedRed(hex: string): boolean {
   const [r, g, b] = hexToRgb(hex).map((v) => v / 255);
   return r > 0.75 && g < 0.35 && b < 0.35;
@@ -47,7 +47,7 @@ export function isSaturatedRed(hex: string): boolean {
  * The core disc counts at full alpha. The glow halo the renderer draws is a
  * radial gradient from ~0.5 alpha down to 0 at radius r*(1+glow); its
  * area-weighted mean alpha works out to ~0.15, so the annulus is counted at
- * 0.18 — slightly above the drawn truth, i.e. still conservative.
+ * 0.18, slightly above the drawn truth, i.e. still conservative.
  */
 export function luminousArea(r: number, glow: number, alpha: number): number {
   const core = Math.PI * r * r;

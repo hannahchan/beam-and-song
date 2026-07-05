@@ -4,10 +4,10 @@ import { render } from 'preact';
 import axe from 'axe-core';
 
 /**
- * TR-10 / AR-6 — automated WCAG checks on every grown-up page with real
+ * TR-10 / AR-6, automated WCAG checks on every grown-up page with real
  * seeded data. (Contrast is covered separately in tokens.test.ts; jsdom
  * cannot compute it.) Manual keyboard/switch walkthroughs are still part of
- * the release checklist — see docs/requirements-coverage.md.
+ * the release checklist, see docs/requirements-coverage.md.
  */
 
 beforeAll(async () => {

@@ -22,7 +22,7 @@ import { SAFETY } from '../safety/constants';
 
 /**
  * Pure scene computation: (lesson, params, time, inputs) -> what is on screen.
- * No DOM, no canvas, no randomness outside the seeded RNG — so the safety
+ * No DOM, no canvas, no randomness outside the seeded RNG, so the safety
  * suite can simulate every lesson frame-by-frame and measure it (SR-8),
  * and the renderer stays a thin drawing pass.
  */
@@ -164,7 +164,7 @@ export function computeScene(
   }
 
   // Subtle texture only at complexity 3, and only ever near-invisible dim
-  // points — never stripes or patterns (SR-5).
+  // points, never stripes or patterns (SR-5).
   if (p.complexity >= 3 && !spec.hearingFirst && spec.behavior !== 'photoDrift') {
     backdropStars(scene, sim.seed);
   }
@@ -198,7 +198,7 @@ function entry(tMs: number, p: EngineParams): number {
  * so no call site can ever produce a saturated-red burst, and alpha is scaled
  * by the scene's peak intensity so "softer" mode and low brightness dim
  * rewards along with everything else (FR-12). BLOOM_MIN_ALPHA is the single
- * "too faint to draw" cutoff — call sites must not add their own thresholds.
+ * "too faint to draw" cutoff, call sites must not add their own thresholds.
  */
 const BLOOM_MIN_ALPHA = 0.003;
 function pushBloom(scene: Scene, p: EngineParams, x: number, y: number, r: number, alpha: number, whiteness = 0.65): void {
@@ -231,7 +231,7 @@ function answerLevel(tapTimes: readonly number[], tMs: number, cue: (name: strin
 }
 
 /**
- * AR-8 — the shared hit rule for find/search lessons: a switch press (x < 0)
+ * AR-8, the shared hit rule for find/search lessons: a switch press (x < 0)
  * always counts as a hit; pointer taps get a generous radius (AR-1).
  */
 function tapHitsTarget(ev: TapEvent, target: { x: number; y: number }, p: EngineParams, minRadius: number): boolean {
@@ -250,7 +250,7 @@ function pulse(scene: Scene, p: EngineParams, tMs: number): void {
   // so the pulse reads as a single slow inhale rather than a faint shimmer. The
   // size term (via r^2) is actually the largest contributor to the luminance
   // swing; it's the slow, frequency-clamped rate that keeps the breath inside the
-  // analyzer's flash budget — verified at every setting by tests/safety.test.ts.
+  // analyzer's flash budget, verified at every setting by tests/safety.test.ts.
   const wave = safeMod(tMs / 1000, p.modHz, p.modDepth);
   const a = p.peakAlpha * 0.9 * (1 + wave) * entry(tMs, p);
   scene.items.push(
@@ -306,13 +306,13 @@ function causeEffect(
   let radius = p.radius;
 
   for (const tap of taps) {
-    // A touch during the entry fade answers once the light has fully arrived —
+    // A touch during the entry fade answers once the light has fully arrived,
     // response and entry ramps never multiply into a steeper combined ramp.
     const tapAt = Math.max(tap, p.fadeMs);
     cue('chime', tapAt);
     const dt = tMs - tapAt;
     if (dt < 0) continue;
-    // The light warms to full and relaxes — all fades >= safety floor, and the
+    // The light warms to full and relaxes, all fades >= safety floor, and the
     // bloom is staggered behind the lift so their luminance ramps never stack.
     const lift = fadeEnvelope(dt, 0, 800, 900, 1400);
     alpha = Math.max(alpha, p.peakAlpha * (0.4 + 0.6 * lift) * gate);
@@ -373,7 +373,7 @@ function fallDrop(
   if (env > 0.005) {
     scene.items.push({ ...orb(p, { x, y }), shape: 'drop', r: p.radius * 0.62, alpha: clamp01(p.peakAlpha * env) });
   }
-  // Soft landing ripple — small, dim, slow (SR-6 applies to every "moment").
+  // Soft landing ripple, small, dim, slow (SR-6 applies to every "moment").
   const sinceLand = local - (p.fadeMs + fallMs);
   if (sinceLand > 0) {
     const rippleEnv = fadeEnvelope(sinceLand, 0, 500, 100, 900);
@@ -389,7 +389,7 @@ function pathArc(scene: Scene, p: EngineParams, tMs: number): void {
     return;
   }
   const cy = mix(biasBandY(p.fieldBias, p.biasStrength), 0.5, 0.3);
-  const omega = (p.speed / 0.32) * 0.9; // rad/s along the wide axis — slow by construction
+  const omega = (p.speed / 0.32) * 0.9; // rad/s along the wide axis, slow by construction
   const th = omega * (tMs / 1000);
   const x = 0.5 + 0.32 * Math.cos(th);
   const y = cy + 0.14 * Math.sin(2 * th);
@@ -435,7 +435,7 @@ function inviteTwo(
     const isInviter = i === inviter;
     const alpha = (isInviter ? lit : base) * breathe(p, tMs, i * 1.7) * entry(tMs, p);
     scene.items.push(orb(p, { x: positions[i].x, y: positions[i].y, r: p.radius * 0.85, alpha: clamp01(alpha) }));
-    // A touch can only bloom a firefly that is actually inviting — so the
+    // A touch can only bloom a firefly that is actually inviting, so the
     // reward never stacks onto the lesson's own entry or rest transitions.
     if (isInviter) {
       pushBloom(scene, p, positions[i].x, positions[i].y, p.radius * (1.0 + 0.5 * answer), 0.3 * answer * inviteEnv);
@@ -509,7 +509,7 @@ function rollBounce(
     const u = easeInOutSine(clamp01((local - exitStart) / exitMs));
     x = mix(0.5, 0.9, u);
     rot = (x - 0.12) / Math.max(p.radius, 0.04);
-    // Fade out over the last stretch of the roll — never a cut (FR-8).
+    // Fade out over the last stretch of the roll, never a cut (FR-8).
     const fadeOutStart = exitStart + Math.max(exitMs - p.fadeMs, 0);
     env = 1 - smooth(clamp01((local - fadeOutStart) / p.fadeMs));
   }
@@ -641,7 +641,7 @@ function photoDrift(
 
 /** Listening lesson: near-dark screen, the song slowly travels ear to ear (CR-5). */
 function audioPan(scene: Scene, p: EngineParams, tMs: number): void {
-  const period = 16; // seconds for a full there-and-back — far below any risk band
+  const period = 16; // seconds for a full there-and-back, far below any risk band
   const pan = Math.sin((2 * Math.PI * (tMs / 1000)) / period) * 0.85;
   const pos = biasPoint(0.5, 0.5, p.fieldBias, p.biasStrength);
   // A single ember so the screen reads as "on", far too dim to compete with listening.
@@ -701,7 +701,7 @@ function audioAlternate(
 }
 
 /**
- * CR-5 — sound localization as a game. The song calls from one side; the
+ * CR-5, sound localization as a game. The song calls from one side; the
  * grown-up taps when the child turns toward it, and it answers from that
  * same side. The screen stays nearly dark: listening is the work.
  */
@@ -750,7 +750,7 @@ function soundSeek(
   scene.pan = calling ? side * 0.85 : 0;
 }
 
-/** CR-5 — the same warm note returns quietly, then more fully. Never sharply. */
+/** CR-5, the same warm note returns quietly, then more fully. Never sharply. */
 function loudSoft(
   scene: Scene,
   p: EngineParams,
@@ -784,12 +784,12 @@ function loudSoft(
 /**
  * L3 "find the item" / L4 visual search. The target rests among distractor
  * company; a touch near the target (generous 2.2x radius, AR-1) makes it
- * answer. A switch press with no pointer always counts as a hit — attending
+ * answer. A switch press with no pointer always counts as a hit, attending
  * plus pressing is the achievement (AR-8). Misses draw a gentle lift on the
  * target, never anything negative.
  *
- * Company comes in two salience flavours: 'dim' (default — the target wins
- * by brightness) and 'hue' (findColor — company sits at similar brightness
+ * Company comes in two salience flavours: 'dim' (default, the target wins
+ * by brightness) and 'hue' (findColor, company sits at similar brightness
  * in a quiet other hue, so the child's own colour does the finding).
  */
 function findAmong(
@@ -828,7 +828,7 @@ function findAmong(
   }
 
   // Taps during this arrangement's visible window: hits answer, misses only
-  // draw a gentle guiding lift on the target — never anything negative.
+  // draw a gentle guiding lift on the target, never anything negative.
   const hits: number[] = [];
   let guide = 0;
   for (const ev of taps) {
@@ -842,7 +842,7 @@ function findAmong(
     opts.drifting ? 0.3 * safeMod(tMs / 1000, p.modHz * (0.4 + 0.08 * i), p.modDepth, i * 1.9 + ax) : 0;
 
   // 'hue' company: a quiet hue from the other temperature family, at similar
-  // brightness — colour, not luminance, is the anchor (still never patterned).
+  // brightness, colour, not luminance, is the anchor (still never patterned).
   const hueCompany = mixHex(warmHex(p.color) ? '#5b7186' : '#86755b', p.bg, 0.2);
   for (let i = 0; i < distractors.length; i++) {
     scene.items.push(
@@ -880,19 +880,19 @@ function findAmong(
     });
   }
   // Kept deliberately small: with a glowing target under switch mashing, a
-  // fuller bloom pushed the 500 ms luminance swing over the SR-3 cap — the
+  // fuller bloom pushed the 500 ms luminance swing over the SR-3 cap, the
   // safety suite caught it (this is what it is for).
   pushBloom(scene, p, target.x, target.y, p.radius * (1.0 + 0.35 * answer), 0.2 * answer * env);
   scene.pan = (target.x - 0.5) * 1.6;
 }
 
-/** Crude hue temperature — enough to pick a quiet companion hue from the other family. */
+/** Crude hue temperature, enough to pick a quiet companion hue from the other family. */
 function warmHex(hex: string): boolean {
   const v = parseInt(hex.replace('#', ''), 16);
   return ((v >> 16) & 255) >= (v & 255);
 }
 
-/** L3 distance drills: the target returns at different sizes — far, near, nearer. */
+/** L3 distance drills: the target returns at different sizes, far, near, nearer. */
 function nearFar(scene: Scene, p: EngineParams, tMs: number, seed: number): void {
   // Larger appearances arrive even more slowly, keeping the luminance ramp
   // of the "near" size inside the same envelope as everything else (SR-3).
@@ -905,7 +905,7 @@ function nearFar(scene: Scene, p: EngineParams, tMs: number, seed: number): void
   const pos = biasPoint(rng(), rng(), p.fieldBias, p.biasStrength);
   const sizeSeq = [1.2, 0.8, 0.5, 0.8];
   const scale = sizeSeq[idx % sizeSeq.length];
-  // A slow "coming closer" swell across the hold — far below any risk rate.
+  // A slow "coming closer" swell across the hold, far below any risk rate.
   const approach = 1 + 0.08 * smooth(clamp01(local / Math.max(cycleMs - p.holdMs * 0.6, 1)));
   const r = Math.min(p.radius * scale * approach, 0.24);
   if (env > 0.005) {
@@ -974,7 +974,7 @@ function facesFamiliar(
   const idx = Math.floor(tMs / cycleMs);
   const local = tMs - idx * cycleMs;
   const env = fadeEnvelope(local, 0, p.fadeMs * 1.6, p.holdMs * 3.5, p.fadeMs * 1.6);
-  // The slow lean-in of a face coming close — one gentle swell per appearance.
+  // The slow lean-in of a face coming close, one gentle swell per appearance.
   const zoom = 1 + 0.06 * smooth(clamp01(local / cycleMs));
   const photo = photos.length ? photos[idx % photos.length] : undefined;
   if (env > 0.005) {
@@ -997,11 +997,11 @@ function facesFamiliar(
 /* ------------------- structural-round behaviors (L2–L4) ------------------- */
 
 /**
- * L2 anticipation — peekaboo. The light travels to the same soft dark hill,
+ * L2 anticipation, peekaboo. The light travels to the same soft dark hill,
  * slips behind it, waits, gives a small musical wink, and returns in the very
  * same place. Predictability is the point: same hill, same pause, same
  * return, every cycle. The "hiding" is an alpha fade (kernel-floored), so the
- * safety model sees exactly what the screen shows — never an overdraw trick.
+ * safety model sees exactly what the screen shows, never an overdraw trick.
  * With movement off the light hides in place instead of travelling.
  */
 function hideReveal(
@@ -1017,7 +1017,7 @@ function hideReveal(
 
   // Geometry note: item x/y are width/height fractions but radii follow the
   // smaller screen dimension, so whether two things overlap depends on the
-  // aspect ratio. The hiding point therefore dives DEEP into the dome — far
+  // aspect ratio. The hiding point therefore dives DEEP into the dome, far
   // enough inside that the light visibly sinks behind the crest on tall
   // tablets and wide laptops alike (tests sweep the common aspect ratios).
   const hill = { x: sx(0.78), y: 1.08, r: 0.62 };
@@ -1025,7 +1025,7 @@ function hideReveal(
   const hide = p.movement ? { x: sx(0.74), y: mix(yRest, 0.8, 0.75) } : rest;
   // The melt starts only once the light is already over the dome; the last
   // stretch of the dive happens while fading, so it reads as slipping
-  // behind the hill — never as evaporating in open dark.
+  // behind the hill, never as evaporating in open dark.
   const rim = p.movement ? { x: mix(rest.x, hide.x, 0.8), y: mix(rest.y, hide.y, 0.8) } : rest;
 
   const travelMs = p.movement ? (0.28 / p.speed) * 1000 : 0;
@@ -1059,7 +1059,7 @@ function hideReveal(
     y = hide.y;
     vis = 0;
   } else if (local < backAt + p.fadeMs) {
-    // The return happens exactly where it vanished — that is the promise kept.
+    // The return happens exactly where it vanished, that is the promise kept.
     const u = smooth((local - backAt) / p.fadeMs);
     x = mix(hide.x, rim.x, u);
     y = mix(hide.y, rim.y, u);
@@ -1076,7 +1076,7 @@ function hideReveal(
     );
   }
   // The hill draws after (over) the light, so the melt reads as "slipped
-  // behind" — one static, matte, near-dark dome; scenery, never a stimulus
+  // behind", one static, matte, near-dark dome; scenery, never a stimulus
   // (SR-5). The tint sits well below the target but high enough to survive
   // real screens: at 0.14 it vanished on ordinary panels and the light just
   // seemed to evaporate, which breaks the whole object-permanence story.
@@ -1093,7 +1093,7 @@ function hideReveal(
 }
 
 /**
- * L2 visually guided reach — one patient light, and the first "touch the
+ * L2 visually guided reach, one patient light, and the first "touch the
  * thing itself". The hit zone is enormous (AR-1) and a switch press always
  * counts (AR-8); a miss only draws the same gentle guiding lift the find
  * lessons use. Looking away mid-reach is expected, never penalised.
@@ -1129,14 +1129,14 @@ function reachTouch(
       alpha: clamp01(p.peakAlpha * (0.8 + 0.12 * guide) * breathe(p, tMs) * env),
     }),
   );
-  // The bloom alone is the answer — an alpha lift on a full-size glowing orb
+  // The bloom alone is the answer, an alpha lift on a full-size glowing orb
   // stacked past the SR-3 swing cap under switch mashing (suite-caught).
   pushBloom(scene, p, target.x, target.y, p.radius * (1.05 + 0.35 * answer), 0.2 * answer * env);
   scene.pan = (target.x - 0.5) * 1.6;
 }
 
 /**
- * L2 listening — sound announces, light arrives; never both at once. The
+ * L2 listening, sound announces, light arrives; never both at once. The
  * call and the star share a side, and the sides alternate slowly, cycle by
  * cycle. This is PR-11's insight ("the senses take turns") as a lesson.
  */
@@ -1158,7 +1158,7 @@ function soundThenLight(
   const x = side < 0 ? 0.27 : 0.73;
   cue('call', idx * cycleMs + quietMs + 200);
 
-  // A resting ember keeps the screen alive between arrivals — far too dim to
+  // A resting ember keeps the screen alive between arrivals, far too dim to
   // compete with the ear (the listening-lesson convention).
   scene.items.push(
     orb(p, {
@@ -1183,7 +1183,7 @@ function soundThenLight(
 }
 
 /**
- * L3 — two or three familiar things resting together; nothing asked at all.
+ * L3, two or three familiar things resting together; nothing asked at all.
  * The band skin picks the cast (duck & friends, or a night harbour);
  * complexity decides how much of it appears. Everything is still except one
  * gentle breath, and the entries stagger by more than a full fade so their
@@ -1222,10 +1222,10 @@ function restingScene(scene: Scene, p: EngineParams, tMs: number, primary: Shape
 }
 
 /**
- * L4 — an ordered sweep: one quiet row, each star taking its glowing turn
+ * L4, an ordered sweep: one quiet row, each star taking its glowing turn
  * left to right, always the same direction. Eyes learning to travel a row
- * predictably is the practice (the sweep that shelves — and one day lines of
- * text — ask for). A touch near the glowing star answers; a switch press
+ * predictably is the practice (the sweep that shelves, and one day lines of
+ * text, ask for). A touch near the glowing star answers; a switch press
  * always counts (AR-8). Rewards gate on each star's own glow envelope, so
  * they can never ramp on top of the row's transitions (the inviteTwo rule).
  */
@@ -1281,11 +1281,11 @@ function sweepRow(
 }
 
 /**
- * L1 sustained contingency — the light answers for exactly as long as the
+ * L1 sustained contingency, the light answers for exactly as long as the
  * touch stays (Sensory Light Box's model: effect lives while touching, rests
  * on release). The swell rides the kernel's slew-limited holdEnvelope, so no
  * press pattern can flicker it; while genuinely held, a soft hum note repeats
- * at a slow, fixed cadence — the light "singing".
+ * at a slow, fixed cadence, the light "singing".
  */
 /**
  * Exported so the safety suite's resonant press/release pattern always
@@ -1308,7 +1308,7 @@ function holdGlow(
   const pos = biasPoint(0.5, 0.55, p.fieldBias, p.biasStrength);
   const env = smooth(holdEnvelope(tMs, holds, HOLD_RISE_MS, HOLD_FALL_MS));
 
-  // Hums come from *sustained* spans only — sub-350 ms mashing earns silence,
+  // Hums come from *sustained* spans only, sub-350 ms mashing earns silence,
   // and the fixed cadence bounds how often notes can ever arrive.
   for (const span of effectiveHolds(holds, tMs)) {
     const spanEnd = Math.min(span.end, tMs);
@@ -1327,7 +1327,7 @@ function holdGlow(
     }),
   );
   // The sustained answer is a soft, desaturated halo that grows with the
-  // envelope — slew-bounded like everything else it rides on (SR-6).
+  // envelope, slew-bounded like everything else it rides on (SR-6).
   pushBloom(scene, p, pos.x, pos.y, p.radius * (1.05 + 0.3 * env), 0.22 * env * gate);
   scene.pan = (pos.x - 0.5) * 1.4;
 }
@@ -1348,13 +1348,13 @@ function backdropStars(scene: Scene, seed: number): void {
 }
 
 /**
- * The scene's main target — the biggest, brightest real item. Used by the
+ * The scene's main target, the biggest, brightest real item. Used by the
  * player for sound elevation (FR-10) and region tallies (PT-13).
  */
 export function primarySceneItem(items: readonly SceneItem[]): SceneItem | null {
   let best: SceneItem | null = null;
   for (const it of items) {
-    // Blooms are rewards and hills are scenery — neither is ever "the target"
+    // Blooms are rewards and hills are scenery, neither is ever "the target"
     // (a hill would otherwise win on sheer size and skew PT-13's quadrants).
     if (it.r <= 0.03 || it.shape === 'bloom' || it.shape === 'hill') continue;
     if (!best || it.alpha * it.r > best.alpha * best.r) best = it;

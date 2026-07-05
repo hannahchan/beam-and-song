@@ -50,7 +50,7 @@ export function GrownUps({ route }: { route: Route }) {
   const sub = route.path.replace(/^\/grown-ups\/?/, '') || 'home';
   const profile = state.profiles.find((p) => p.id === state.activeProfileId) ?? state.profiles[0] ?? null;
 
-  // The print views render without the app shell — clean on paper.
+  // The print views render without the app shell, clean on paper.
   if (sub === 'print') return <PrintSummary profile={profile} />;
   if (sub === 'print-kit') return <PrintKit profile={profile} />;
 

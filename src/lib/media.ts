@@ -86,7 +86,7 @@ export async function deleteBlob(id: string): Promise<void> {
 /** Pure pre-checks, unit-testable without Web Audio. */
 export function checkAudioFile(file: { type: string; size: number }): string | null {
   if (!file.type.startsWith('audio/')) return 'Please choose an audio file (a song or a recording).';
-  if (file.size > MAX_AUDIO_BYTES) return 'That file is quite large — please choose one under 15 MB.';
+  if (file.size > MAX_AUDIO_BYTES) return 'That file is quite large, please choose one under 15 MB.';
   return null;
 }
 
@@ -105,12 +105,12 @@ export async function analyzeAudio(file: Blob): Promise<ImportedAudio> {
   const ctx = new OfflineCtx(1, 1, 44100);
   const buf = await ctx.decodeAudioData(await file.arrayBuffer());
   if (buf.duration > MAX_AUDIO_SECONDS) {
-    throw new Error('Please choose something under 6 minutes — sessions are short by design.');
+    throw new Error('Please choose something under 6 minutes, sessions are short by design.');
   }
   let peak = 0;
   for (let ch = 0; ch < buf.numberOfChannels; ch++) {
     const data = buf.getChannelData(ch);
-    // Sample every ~10ms — plenty for a peak estimate.
+    // Sample every ~10ms, plenty for a peak estimate.
     for (let i = 0; i < data.length; i += 441) {
       const v = Math.abs(data[i]);
       if (v > peak) peak = v;

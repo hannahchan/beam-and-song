@@ -1,7 +1,7 @@
 import type { CustomPhoto } from './types';
 
 /**
- * CR-3 / TR-7 — custom photo targets, processed entirely on this device.
+ * CR-3 / TR-7, custom photo targets, processed entirely on this device.
  * Downscaled to a small JPEG data URL before storing; nothing is uploaded.
  */
 const MAX_DIM = 512;
@@ -10,7 +10,7 @@ export const MAX_PHOTOS_PER_PROFILE = 3;
 
 export interface ProcessedPhoto {
   dataUrl: string;
-  /** Measured average relative luminance — feeds the safety model honestly (SR-3/SR-8). */
+  /** Measured average relative luminance, feeds the safety model honestly (SR-3/SR-8). */
   lum: number;
 }
 
@@ -47,12 +47,12 @@ export function measureLuminance(ctx: CanvasRenderingContext2D, w: number, h: nu
   return n ? Math.min(1, sum / n) : 1;
 }
 
-/** The photos lessons may show — resting a photo is not deleting it (PV-5-friendly). */
+/** The photos lessons may show, resting a photo is not deleting it (PV-5-friendly). */
 export function enabledPhotos<T extends { enabled?: boolean }>(photos: readonly T[]): T[] {
   return photos.filter((p) => p.enabled !== false);
 }
 
-/** Where a photo's voice label lives in the blob store — derived, so removal can't miss it. */
+/** Where a photo's voice label lives in the blob store, derived, so removal can't miss it. */
 export function voiceBlobId(photoId: string): string {
   return `photo-voice-${photoId}`;
 }

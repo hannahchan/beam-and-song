@@ -19,7 +19,7 @@ export function App() {
     return () => window.removeEventListener('bs-update-ready', onReady);
   }, []);
 
-  // AR-2/AR-8 — switch scanning follows the active child's settings, with
+  // AR-2/AR-8, switch scanning follows the active child's settings, with
   // dwell timing derived from their pace/latency setting.
   const active = state.profiles.find((p) => p.id === state.activeProfileId) ?? state.profiles[0];
   const scanning = active?.settings.scanning ?? 'off';
@@ -28,7 +28,7 @@ export function App() {
     scanner.configure(scanning, dwellFromPace(paceMultiplier(pace)));
   }, [scanning, pace]);
 
-  // FR-5/PV-3 — leaving the grown-up area always re-locks it, so a parent who
+  // FR-5/PV-3, leaving the grown-up area always re-locks it, so a parent who
   // opens Settings first and then hands the tablet to their child doesn't leave
   // the grown-up area unlocked behind them. With a PIN set the PIN re-prompts on
   // return; without one, the press-and-hold / tap-the-word gate does.
@@ -41,11 +41,11 @@ export function App() {
   useEffect(() => {
     const titles: Record<string, string> = {
       '/': 'The Light & Sound App for Kids with CVI',
-      '/choose': 'Choose a lesson — Light & Sound',
-      '/play': 'Lesson — Light & Sound',
+      '/choose': 'Choose a lesson, Light & Sound',
+      '/play': 'Lesson, Light & Sound',
     };
     document.title = route.path.startsWith('/grown-ups')
-      ? 'For grown-ups — Light & Sound'
+      ? 'For grown-ups, Light & Sound'
       : (titles[route.path] ?? 'Light & Sound');
   }, [route.path]);
 

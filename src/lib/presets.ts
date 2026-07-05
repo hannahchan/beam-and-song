@@ -1,7 +1,7 @@
 import type { ChildSettings } from './types';
 
 /**
- * PR-10 — presets first, fine-tuning second. Four starting profiles so no one
+ * PR-10, presets first, fine-tuning second. Four starting profiles so no one
  * faces a wall of sliders on day one. PR-12's guided setup recommends one.
  */
 export interface Preset {
@@ -55,7 +55,7 @@ export const PRESETS: readonly Preset[] = [
   {
     id: 'looking-and-listening',
     title: 'Looking and listening together',
-    blurb: 'Sound travels with the target, and gentle choices appear — for a baby who follows and re-finds fairly reliably.',
+    blurb: 'Sound travels with the target, and gentle choices appear, for a baby who follows and re-finds fairly reliably.',
     settings: {
       movement: true,
       speed: 2,
@@ -96,7 +96,7 @@ export function getPreset(id: string): Preset | undefined {
   return PRESETS.find((p) => p.id === id);
 }
 
-/* ----------------------- PR-12 — guided setup answers ----------------------- */
+/* ----------------------- PR-12, guided setup answers ----------------------- */
 
 export interface SetupAnswers {
   color: 'red' | 'yellow' | 'unsure';
@@ -124,7 +124,7 @@ export function recommendFromSetup(a: SetupAnswers): SetupRecommendation {
   if (a.soundEffect === 'pulls-away') {
     overrides.audioMode = 'after';
     notes.push(
-      'Because sound seems to pull attention away, songs are set to play after a look — you tap when your child looks, and the music answers. You can change this in Settings.',
+      'Because sound seems to pull attention away, songs are set to play after a look, you tap when your child looks, and the music answers. You can change this in Settings.',
     );
   } else if (a.soundEffect === 'unsure') {
     overrides.volume = 0.4;
@@ -133,7 +133,7 @@ export function recommendFromSetup(a: SetupAnswers): SetupRecommendation {
 
   overrides.targetColor = a.color === 'yellow' ? 'yellow' : 'red';
   if (a.color === 'unsure') {
-    notes.push('Red is a common starting colour for CVI, but every child is different — try yellow or white too and watch what happens.');
+    notes.push('Red is a common starting colour for CVI, but every child is different, try yellow or white too and watch what happens.');
   }
 
   if (a.movementHelps === 'yes' && presetId === 'first-light') {
@@ -149,7 +149,7 @@ export function recommendFromSetup(a: SetupAnswers): SetupRecommendation {
     overrides.fieldBias = a.strongerSide;
     overrides.biasStrength = 'gentle';
     notes.push(
-      `Targets will favour the ${a.strongerSide} part of the screen, where you feel they notice most. This is a comfort setting, not an assessment — your vision professional can help you tune it.`,
+      `Targets will favour the ${a.strongerSide} part of the screen, where you feel they notice most. This is a comfort setting, not an assessment, your vision professional can help you tune it.`,
     );
   }
 

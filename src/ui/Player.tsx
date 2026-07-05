@@ -20,15 +20,15 @@ import { paceMultiplier } from '../engine/params';
 type Phase = 'running' | 'paused' | 'resting' | 'observe';
 
 /**
- * FR-2 — the full-screen, distraction-free lesson player.
+ * FR-2, the full-screen, distraction-free lesson player.
  *
  * Plays either a single lesson or a named program (PT-9) as a queued session:
  * each lesson gets an equal slice of the session time and hands over with a
- * slow crossfade and a beat of quiet — never a cut (FR-8).
+ * slow crossfade and a beat of quiet, never a cut (FR-8).
  *
  * A child can never get stuck (FR-5): the only chrome is one dim corner
  * button that opens the grown-up overlay. Opening it immediately dims the
- * scene and softens the sound (FR-12) — the overlay *is* the calm-down.
+ * scene and softens the sound (FR-12), the overlay *is* the calm-down.
  * It is a single ordinary button, so a motor-impaired or switch-using
  * caregiver can operate it like any other control (FR-11); a baby cannot
  * complete the two-step Resume/End choice it reveals.
@@ -52,7 +52,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
   const [soft, setSoft] = useState(false);
   const [againCount, setAgainCount] = useState(0);
   const [current, setCurrent] = useState<LessonSpec>(queue[0]);
-  // TR-9 — on-device diagnostics for the scripted hardware soak (docs/perf-budgets.md).
+  // TR-9, on-device diagnostics for the scripted hardware soak (docs/perf-budgets.md).
   const diag = location.hash.includes('diag=1');
   const [diagText, setDiagText] = useState('');
   const phaseRef = useRef(phase);
@@ -67,7 +67,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
   const againRef = useRef<(() => void) | null>(null);
   const regionsRef = useRef<RegionTally>(emptyTally());
   const lastQuadRef = useRef<'ul' | 'ur' | 'll' | 'lr'>('ul');
-  // CR-3 — the voice label for the photo currently on screen, refreshed per frame.
+  // CR-3, the voice label for the photo currently on screen, refreshed per frame.
   const voiceRef = useRef<{ blobId: string; gain: number } | null>(null);
 
   const params = useMemo(() => buildParams(settings), [settings]);
@@ -89,7 +89,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
     let idx = 0;
     let spec = queue[0];
     let sim: SimInput = { seed: 20260703, taps: tapsRef.current, holds: holdsRef.current, photos };
-    // AR-8 — with scanning on, find/search lessons become stepped choices.
+    // AR-8, with scanning on, find/search lessons become stepped choices.
     const lessonScan = new LessonScanController();
     const scanDwellMs = dwellFromPace(paceMultiplier(settings.pace));
     const choiceScanActive = () => settings.scanning !== 'off' && CHOICE_BEHAVIORS.has(spec.behavior);
@@ -107,7 +107,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
     resize();
     window.addEventListener('resize', resize);
 
-    // CR-3 — the family's own song, when chosen, replaces the built-in melody.
+    // CR-3, the family's own song, when chosen, replaces the built-in melody.
     const customMeta =
       settings.melodySource !== 'builtin'
         ? profile.audio.find((a) => a.id === settings.melodySource)
@@ -260,7 +260,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
           if (isTapCue(cue)) buzz(settings.haptics);
         }
         if (melody && (settings.soundFollowsTarget || spec.behavior === 'audioPan')) {
-          // FR-10: the music sits where the target sits — including its height.
+          // FR-10: the music sits where the target sits, including its height.
           melody.setPan(scene.pan, main?.y ?? 0.5);
         }
         drawScene(ctx, scene, w, h, photoCache);
@@ -297,10 +297,10 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
     raf = requestAnimationFrame(frame);
 
     /**
-     * Tap / switch input — anywhere counts (AR-1, AR-3, AR-8). Pointer taps
+     * Tap / switch input, anywhere counts (AR-1, AR-3, AR-8). Pointer taps
      * carry a position for the find/search lessons; a switch press carries
      * x = -1, which those lessons treat as a hit (attending + pressing is
-     * the achievement — position accuracy must never exclude switch users).
+     * the achievement, position accuracy must never exclude switch users).
      */
     const onTap = (x = -1, y = -1) => {
       if (phaseRef.current !== 'running' || handover) return;
@@ -315,9 +315,9 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
         const eff = effectiveTapEvents(tapsRef.current);
         if (eff[eff.length - 1]?.t !== t) return;
       } else if (settings.audioMode === 'after') {
-        // FR-6b — the grown-up taps when the baby looks; the song answers.
+        // FR-6b, the grown-up taps when the baby looks; the song answers.
         // If the photo on screen has a recorded voice label, that voice IS
-        // the answer — the most meaningful sound we can offer (CR-3).
+        // the answer, the most meaningful sound we can offer (CR-3).
         if (voiceRef.current) {
           audio.playVoiceLabel(voiceRef.current.blobId, voiceRef.current.gain);
         } else {
@@ -332,7 +332,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
           melody.playPhrase();
         }
         buzz(settings.haptics);
-        // The grown-up marked a look (FR-6b) — that's a response too (PT-13).
+        // The grown-up marked a look (FR-6b), that's a response too (PT-13).
         if (settings.fieldObservation) regionsRef.current[lastQuadRef.current].r += 1;
       }
     };
@@ -348,7 +348,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
       const rect = canvas.getBoundingClientRect();
       onTap((e.clientX - rect.left) / Math.max(rect.width, 1), (e.clientY - rect.top) / Math.max(rect.height, 1));
     };
-    // Releases always land, even mid-pause or over the overlay — a light that
+    // Releases always land, even mid-pause or over the overlay, a light that
     // cannot be let go of would be worse than no light at all.
     const onPointerUp = () => {
       if (holdState.pointers === 0) return;
@@ -429,7 +429,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queue.map((q) => q.id).join('|')]);
 
-  // FR-12 — opening the overlay is itself the calm-down: dim + hush at once.
+  // FR-12, opening the overlay is itself the calm-down: dim + hush at once.
   useEffect(() => {
     if (phase === 'paused' || phase === 'observe') audio.duck(0.12, 0.4);
     else audio.duck(1, 0.6);
@@ -474,7 +474,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
       )}
 
       {phase === 'paused' && (
-        <div class="overlay" role="dialog" aria-modal="true" aria-label="Paused — grown-up controls">
+        <div class="overlay" role="dialog" aria-modal="true" aria-label="Paused, grown-up controls">
           <div class="overlay-card">
             <h2>Paused</h2>
             <p class="card-note">The screen is dimmed and the sound is hushed. Take all the time you need.</p>
@@ -482,7 +482,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
               Continue the lesson
             </button>
             <button class="btn" aria-pressed={soft} onClick={() => setSoft(!soft)}>
-              {soft ? 'Softer mode is on' : 'Softer — dim the light, quiet the song'}
+              {soft ? 'Softer mode is on' : 'Softer, dim the light, quiet the song'}
             </button>
             <button class="btn" onClick={finish}>
               End the session
@@ -509,7 +509,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
         </div>
       )}
       {phase === 'resting' && againCount >= 1 && (
-        <p class="player-hint">Short and sweet is best — looking is genuinely hard work.</p>
+        <p class="player-hint">Short and sweet is best. Looking is genuinely hard work.</p>
       )}
 
       {phase === 'observe' && (

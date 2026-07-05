@@ -12,7 +12,7 @@ import {
 } from './labels';
 
 /**
- * PT-7 — turn raw observations into something a caregiver (and their vision
+ * PT-7, turn raw observations into something a caregiver (and their vision
  * professional) can actually read. Descriptive and tentative by design: counts and phrasing,
  * never scores, grades, or clinical language (SR-7 spirit).
  */
@@ -81,7 +81,7 @@ export function summarize(profile: Profile, days = 28, now = Date.now()): Summar
     taggedHardDays: taggedHard.length,
     hardDayLine:
       taggedHard.length > 0 && quietHard > 0
-        ? `${quietHard} of the quieter sessions fell on days you tagged tired, unwell, or similar — quieter responses on hard days are expected with CVI and don't mean going backwards.`
+        ? `${quietHard} of the quieter sessions fell on days you tagged tired, unwell, or similar, quieter responses on hard days are expected with CVI and don't mean going backwards.`
         : null,
     topLesson,
     weeks,
@@ -92,7 +92,7 @@ export function summarize(profile: Profile, days = 28, now = Date.now()): Summar
 export function buildShareText(profile: Profile, days = 28): string {
   const s = summarize(profile, days);
   const lines: string[] = [
-    `Light & Sound — family observations for "${profile.nickname}"`,
+    `Light & Sound, family observations for "${profile.nickname}"`,
     `Window: last ${days} ${plural(days, { one: 'day', other: 'days' })} · exported ${formatDate(Date.now())}`,
     '',
     'These are informal observations made by family during short at-home',
@@ -130,7 +130,7 @@ export function buildShareText(profile: Profile, days = 28): string {
         r.response === 'none' ? 'no response noticed' :
         r.response === 'unsure' ? 'hard to say' : 'not recorded';
       const tags = r.tags.length ? ` [${r.tags.map((t) => TAG_LABELS[t]).join(', ')}]` : '';
-      const note = r.note ? ` — ${r.note}` : '';
+      const note = r.note ? `, ${r.note}` : '';
       lines.push(`  ${d} · ${getLesson(r.lessonId)?.title ?? r.lessonId} · ${resp}${tags}${note}`);
     }
   }
@@ -140,6 +140,6 @@ export function buildShareText(profile: Profile, days = 28): string {
     for (const l of regions.lines) lines.push(`  ${l}`);
   }
 
-  lines.push('', 'Made with Light & Sound — a companion tool, not a programme or assessment.');
+  lines.push('', 'Made with Light & Sound, a companion tool, not a programme or assessment.');
   return lines.join('\n');
 }

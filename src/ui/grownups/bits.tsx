@@ -15,7 +15,7 @@ export function Card({ title, children, id }: { title?: string; children: Compon
 /**
  * Press-and-hold control for the grown-up gate (FR-5). Works with pointer
  * *or* a held Space/Enter key. A tap-the-word alternative sits beside it for
- * anyone who cannot sustain a hold (FR-11) — both paths are equivalent.
+ * anyone who cannot sustain a hold (FR-11), both paths are equivalent.
  */
 export function HoldButton({ label, onComplete, ms = 1600 }: { label: string; onComplete: () => void; ms?: number }) {
   const [progress, setProgress] = useState(0);
@@ -94,7 +94,7 @@ export function RangeField({
   value: number;
   min: number;
   max: number;
-  /** Plain-language value names, indexed from min — spoken by screen readers too. */
+  /** Plain-language value names, indexed from min, spoken by screen readers too. */
   words: string[];
   hint?: string;
   onChange: (v: number) => void;
@@ -109,7 +109,7 @@ export function RangeField({
         </span>
         {hint && <p class="hint">{hint}</p>}
         <span class="range-row">
-          {/* Steppers make every slider operable by single taps — and by
+          {/* Steppers make every slider operable by single taps, and by
               switch scanning, which cannot drag (AR-1, AR-8). */}
           <button
             type="button"
@@ -201,7 +201,7 @@ export function RadioGroup<T extends string>({
   );
 }
 
-/** Save a text/JSON file locally (PT-3, PV-4 — sharing stays in the caregiver's hands). */
+/** Save a text/JSON file locally (PT-3, PV-4, sharing stays in the caregiver's hands). */
 export function downloadFile(name: string, content: string, type: string): void {
   const blob = new Blob([content], { type });
   const url = URL.createObjectURL(blob);

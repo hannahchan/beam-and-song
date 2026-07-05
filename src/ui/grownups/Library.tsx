@@ -10,7 +10,7 @@ import { Card } from './bits';
 const resolveFor = (l: LessonSpec, profile: Profile | null) => resolveLesson(l, profile?.ageBand ?? 'infant');
 
 /**
- * FR-4 — the browsable lesson library, grouped by level, with starring.
+ * FR-4, the browsable lesson library, grouped by level, with starring.
  * Levels are described as what they practise, not as grades to pass (PT-10).
  */
 export function Library({ profile }: { profile: Profile | null }) {
@@ -29,7 +29,7 @@ export function Library({ profile }: { profile: Profile | null }) {
     {
       title: 'Level 3 · Toward the world',
       blurb:
-        'Finding one thing among a few — by brightness, by colour, by familiarity — plus small restful scenes and the beginnings of distance. Company on screen stays dim and calm.',
+        'Finding one thing among a few, by brightness, by colour, by familiarity, plus small restful scenes and the beginnings of distance. Company on screen stays dim and calm.',
       filter: (l) => l.level === 3 && !l.hearingFirst,
     },
     {
@@ -37,7 +37,7 @@ export function Library({ profile }: { profile: Profile | null }) {
       blurb: (
         <>
           Visual search among drifting company, following through distraction, an ordered left-to-right
-          sweep, and familiar faces. The challenge comes from the looking itself — these lessons never get
+          sweep, and familiar faces. The challenge comes from the looking itself, these lessons never get
           faster, brighter, or flashier than the gentle ones (
           <a href="#/grown-ups/guide?topic=safety">how lessons stay gentle</a>).
         </>
@@ -47,7 +47,7 @@ export function Library({ profile }: { profile: Profile | null }) {
     {
       title: 'Listening lessons',
       blurb:
-        'Hearing is a goal of its own here — not just a helper for looking. A little ladder of its own: noticing sound, turning toward it, telling sounds apart, and finally sound leading the eyes.',
+        'Hearing is a goal of its own here, not just a helper for looking. A little ladder of its own: noticing sound, turning toward it, telling sounds apart, and finally sound leading the eyes.',
       filter: (l) => !!l.hearingFirst,
     },
   ];
@@ -56,7 +56,7 @@ export function Library({ profile }: { profile: Profile | null }) {
     <div>
       <h1 tabindex={-1}>Lessons</h1>
       <p class="card-note">
-        Star the ones that suit {profile?.nickname ?? 'your child'} — starred lessons become the big tiles on
+        Star the ones that suit {profile?.nickname ?? 'your child'}, starred lessons become the big tiles on
         their screen. Every lesson follows the colour, size, pace, sound, and <b>age</b> choices in Settings:
         the same practice is presented differently for a baby, a child, or a teen. When in doubt about level,
         start lower: comfort first, challenge second. Prefer to see them?{' '}
@@ -79,15 +79,15 @@ export function Library({ profile }: { profile: Profile | null }) {
 }
 
 /**
- * PT-9 — named, ordered lesson sequences. Reordering uses plain up/down
+ * PT-9, named, ordered lesson sequences. Reordering uses plain up/down
  * buttons so it works by keyboard and switch, never drag-only (AR-2).
  */
 function Programs({ profile }: { profile: Profile }) {
   const [newName, setNewName] = useState('');
   return (
-    <Card title="Programs — a sequence for one session">
+    <Card title="Programs: a sequence for one session">
       <p class="card-note">
-        String a few lessons into a named session — yours or one your vision professional suggests. Programs
+        String a few lessons into a named session, yours or one your vision professional suggests. Programs
         appear as tiles on the child screen and play in order, each lesson handing over with a slow fade. A
         lovely shape: an easy favourite first as the warm-up, then the newer work, and something restful to
         end on.
@@ -198,7 +198,7 @@ function ProgramEditor({ profile, program }: { profile: Profile; program: Progra
         </button>
       </div>
       {program.lessonIds.length > 4 && (
-        <p class="hint">Long programs make long sessions — a few lessons is usually plenty (each gets at least 45 seconds).</p>
+        <p class="hint">Long programs make long sessions. A few lessons is usually plenty (each gets at least 45 seconds).</p>
       )}
     </div>
   );
@@ -229,7 +229,7 @@ function LessonCard({ lesson: base, profile }: { lesson: LessonSpec; profile: Pr
       <p class="card-note">{lesson.goal}</p>
       {lesson.quietPreferred && (
         <p class="card-note">
-          This kind of looking is easier in quiet — the “after a look” or “off” sound modes in Settings
+          This kind of looking is easier in quiet. The “after a look” or “off” sound modes in Settings
           often suit it best.
         </p>
       )}
@@ -255,7 +255,7 @@ function LessonCard({ lesson: base, profile }: { lesson: LessonSpec; profile: Pr
 }
 
 /**
- * PT-10 — every lesson can point at a gentler and a bolder neighbour, so
+ * PT-10, every lesson can point at a gentler and a bolder neighbour, so
  * "feels early" and "feels easy" both have somewhere obvious to go. The
  * links describe the lessons, never the child (SR-7).
  */

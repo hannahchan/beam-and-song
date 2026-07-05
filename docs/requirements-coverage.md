@@ -1,7 +1,7 @@
 # Requirements coverage
 
 Status of every requirement ID from `CVI-training-site-requirements-final.md` in this build.
-**Scope:** the full brief — Levels 1–4 across all three age bands (infant, child, teen), plus the
+**Scope:** the full brief, Levels 1–4 across all three age bands (infant, child, teen), plus the
 listening lessons. The build grew from an infant-first v1, and the architecture made that expansion
 clean: themes are reusable, phase and rendering are decoupled in lesson specs, and levels are data,
 not code. Everything below is implemented; the only 🟡 items are gated on a human or hardware review
@@ -35,25 +35,25 @@ Legend: ✅ done · 🟡 partial (human/hardware step remaining)
 
 | ID | Status | Notes |
 |---|---|---|
-| L1/L2 content | ✅ | Both levels fully built — L1 includes sustained contingency (Keep the Light Singing: the light answers exactly as long as a touch or held switch stays, on a slew-limited kernel envelope no press pattern can flicker); L2 includes anticipation (Peekaboo Light) and a first visually-guided reach (Reach for the Light). |
-| L3/L4 content | ✅ | L3: find-among by brightness, by the child's own colour (Find Your Colour), or by own-photo familiarity; a small resting scene; near/far distance drills. L4: visual search among drifting company, follow-among-movers, an ordered left-to-right sweep (Star by Star), familiar faces (family photos only — no stock imagery; a curated-photo track remains open, human-gated for licensing/appropriateness). |
+| L1/L2 content | ✅ | Both levels fully built, L1 includes sustained contingency (Keep the Light Singing: the light answers exactly as long as a touch or held switch stays, on a slew-limited kernel envelope no press pattern can flicker); L2 includes anticipation (Peekaboo Light) and a first visually-guided reach (Reach for the Light). |
+| L3/L4 content | ✅ | L3: find-among by brightness, by the child's own colour (Find Your Colour), or by own-photo familiarity; a small resting scene; near/far distance drills. L4: visual search among drifting company, follow-among-movers, an ordered left-to-right sweep (Star by Star), familiar faces (family photos only, no stock imagery; a curated-photo track remains open, human-gated for licensing/appropriateness). |
 | CR-1 | ✅ | Stars/Fireflies/Light/Rain/Colour/Familiar-things themes recur across levels. |
-| CR-2 | ✅ | No binary assets at all — visuals procedural, audio synthesized; the whole app gzips to a tiny bundle. |
-| CR-3 | ✅ | Photos: client-side downscale + luminance measurement, on-device, drive four lessons. Audio: the family's own songs/recordings (IndexedDB blobs, client-side normalization, duration caps) can replace the built-in melodies, including after-a-look snippets. Each photo can also carry a short **recorded caregiver voice label** (mic capture with file fallback, ≤10 s, normalized) that plays as the answer in photo lessons — the Perkins "meaningful pictures and sounds" pattern. Nothing ever leaves the device. |
-| CR-4 | ✅ | A real-object bridge on **every** lesson (validator-enforced), surfaced in the library cards — screens are the doorway, not the destination. |
-| CR-5 | ✅ | Six listening-first lessons with their own ladder: noticing (traveling song), turning toward sound (localization game with parent-marked turns), discrimination (bell/drum, drum/tune, loud/soft), then sound-announces-light (Song, Then Star — sequential, never simultaneous) + "Listening first" preset. |
+| CR-2 | ✅ | No binary assets at all, visuals procedural, audio synthesized; the whole app gzips to a tiny bundle. |
+| CR-3 | ✅ | Photos: client-side downscale + luminance measurement, on-device, drive four lessons. Audio: the family's own songs/recordings (IndexedDB blobs, client-side normalization, duration caps) can replace the built-in melodies, including after-a-look snippets. Each photo can also carry a short **recorded caregiver voice label** (mic capture with file fallback, ≤10 s, normalized) that plays as the answer in photo lessons, the Perkins "meaningful pictures and sounds" pattern. Nothing ever leaves the device. |
+| CR-4 | ✅ | A real-object bridge on **every** lesson (validator-enforced), surfaced in the library cards, screens are the doorway, not the destination. |
+| CR-5 | ✅ | Six listening-first lessons with their own ladder: noticing (traveling song), turning toward sound (localization game with parent-marked turns), discrimination (bell/drum, drum/tune, loud/soft), then sound-announces-light (Song, Then Star, sequential, never simultaneous) + "Listening first" preset. |
 | CR-6 | ✅ | Three bands (infant / child / teen) selectable per profile and in guided setup. |
 | CR-7 | ✅ | Readiness cues per lesson ("watch for") + a skill chip naming what each lesson practises + gentler/bolder step links on every card + move-up/step-back guidance in the Guide. |
-| CR-8 | ✅ | Challenge scales through clutter count (complexity setting), drifting distractors, colour-anchored search, ordered sweeping, target size (near/far), movement-among-movers, and faces — all inside unchanged Section 8 limits; find/search rewards are cooldown-bound and switch-operable (a switch press always counts as a hit). |
-| CR-9 | ✅ | Band re-skins theme/music/copy only — behavior, level, interactivity provably unchanged (tested). A teen at Level 1 gets "Ember", not a duck — verified down to the drawn scene items, not just the spec. |
+| CR-8 | ✅ | Challenge scales through clutter count (complexity setting), drifting distractors, colour-anchored search, ordered sweeping, target size (near/far), movement-among-movers, and faces, all inside unchanged Section 8 limits; find/search rewards are cooldown-bound and switch-operable (a switch press always counts as a hit). |
+| CR-9 | ✅ | Band re-skins theme/music/copy only, behavior, level, interactivity provably unchanged (tested). A teen at Level 1 gets "Ember", not a duck, verified down to the drawn scene items, not just the spec. |
 | CR-10 | ✅ | Full teen re-skin (ambient melodies composed as note data; boat/ember/orbit/lighthouse/skyline themes); child band = warm content with adjusted wording; a build-breaking test bans babyish language/imagery/nursery tunes from teen output. |
 | CR-11 | ✅ | The full lesson set spans all three bands across Levels 1–4 + listening; the historically underserved cells (older children/teens at early phases) get the full re-skinned rows, and Levels 3–4 no longer depend on photos for most of their content. Ongoing content growth stays welcome, gated on clinical feedback. |
 
 ## §5 Personalization
 
-PR-1…PR-14: **all implemented** — colour+background (PR-1), movement/speed (PR-2), complexity (PR-3),
+PR-1…PR-14: **all implemented**: colour+background (PR-1), movement/speed (PR-2), complexity (PR-3),
 field bias incl. strength (PR-4), pace (PR-5), size (PR-6), brightness (PR-7), audio volume/texture/binding
-(PR-8), favourites-first novelty control (PR-9), presets (PR-10), audio-competition modes (PR-11 — the
+(PR-8), favourites-first novelty control (PR-9), presets (PR-10), audio-competition modes (PR-11, the
 find/search lesson cards now also *suggest* the quiet modes, since searching competes with listening;
 defaults unchanged pending clinical review), guided setup (PR-12), glow-to-zero with anti-light-gazing
 copy (PR-13), and age band per profile (PR-14).
@@ -72,7 +72,7 @@ copy (PR-13), and age band per profile (PR-14).
 | PT-9 | ✅ | Named ordered programs with a button-based (switch-friendly) builder; programs play as queued sessions with slow crossfades; program tiles on the child screen. |
 | PT-10 | ✅ | Guide section + per-lesson cues, now including L2→L3 and L3→L4. |
 | PT-11 | ✅ | Room/lighting/distance/positioning guidance in Guide + dashboard reminder. |
-| PT-12 | ✅ | "What CVI is / what a response looks like / when to stop / find a professional" — orientation framing only. |
+| PT-12 | ✅ | "What CVI is / what a response looks like / when to stop / find a professional", orientation framing only. |
 | PT-13 | ✅ | Opt-in, off by default. Quadrant exposure/response tallies per session; surfaces only after ≥8 qualifying sessions across ≥14 days with per-quadrant exposure floors; stale data ignored. Output descriptive + hedged + routed to the professional; every producible sentence is tested against the SR-7 language guard; at most a field-bias *experiment* is suggested. |
 
 ## §7 Accessibility
@@ -80,7 +80,7 @@ copy (PR-13), and age band per profile (PR-14).
 | ID | Status | Notes |
 |---|---|---|
 | AR-1 | ✅ | ≥44–56 px targets everywhere; child side is tap-anywhere. |
-| AR-2/AR-8 | ✅ | Built-in auto (one-switch) and step (two-switch) scanning: dwell derives from the pace/latency setting (≥1.5 s floor), the highlight is one steady gliding ring (≥500 ms ease, never blinks — unit-tested against the fade floor), and scanning suspends during live lessons so the switch stays the child's input. Find/search lessons treat a switch press as a hit; the hold lesson treats a held switch as a hold. Every slider has −/+ stepper buttons, so scanning operates them like any button. OS-level scanning also works throughout. Remaining niche: free-text fields (names, notes, PIN) defer to platform tools (documented). |
+| AR-2/AR-8 | ✅ | Built-in auto (one-switch) and step (two-switch) scanning: dwell derives from the pace/latency setting (≥1.5 s floor), the highlight is one steady gliding ring (≥500 ms ease, never blinks, unit-tested against the fade floor), and scanning suspends during live lessons so the switch stays the child's input. Find/search lessons treat a switch press as a hit; the hold lesson treats a held switch as a hold. Every slider has −/+ stepper buttons, so scanning operates them like any button. OS-level scanning also works throughout. Remaining niche: free-text fields (names, notes, PIN) defer to platform tools (documented). |
 | AR-3 | ✅ | Touch-first layout, `touch-action: manipulation`, safe-area insets. |
 | AR-4 | ✅ | Token palette verified ≥4.5:1 by test. |
 | AR-5 | ✅ | Plain-language grown-up UI; complexity behind presets. |
@@ -127,5 +127,5 @@ downloads are local) · PV-5 ✅ (photos listed, removable, never transmitted).
 - No accounts/cloud; adding them later would trigger new privacy work. ✅ (none added)
 - Glow framed as vision-professional-coordinated, off-able. ✅
 - **Validation expectation surfaced, not assumed away:** this build has **not** had vision-professional/clinical review or
-  family usability testing. That review — across content, copy, and the safety analysis assumptions
-  (e.g., the luminance model’s halo weighting) — is the gate between "prototype" and "recommendable".
+  family usability testing. That review, across content, copy, and the safety analysis assumptions
+  (e.g., the luminance model’s halo weighting), is the gate between "prototype" and "recommendable".

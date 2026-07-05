@@ -1,7 +1,7 @@
 import type { Profile, SessionRecord } from './types';
 
 /**
- * PT-13 — optional field-pattern observation, under hard SR-7 guardrails.
+ * PT-13, optional field-pattern observation, under hard SR-7 guardrails.
  *
  * What this is: a tuning-and-conversation aid. Sessions quietly count where
  * on screen the target sat (quadrants) and where marked responses landed.
@@ -11,7 +11,7 @@ import type { Profile, SessionRecord } from './types';
  * What this is never: an assessment, a map of vision, a score, or anything
  * with clinical vocabulary. The templates below are covered by the
  * NON_DIAGNOSTIC_BANNED language test, and nothing surfaces from single
- * sessions (fatigue, mood, and latency dominate those — PT-8).
+ * sessions (fatigue, mood, and latency dominate those, PT-8).
  */
 
 export type Quadrant = 'ul' | 'ur' | 'll' | 'lr';
@@ -41,7 +41,7 @@ const QUADRANT_WORDS: Record<Quadrant, string> = {
 export interface RegionInsight {
   /** Descriptive, tentative, session-bound (SR-7). */
   lines: string[];
-  /** An experiment to try, phrased as exactly that — or null. */
+  /** An experiment to try, phrased as exactly that, or null. */
   suggestion: string | null;
   sessionsUsed: number;
 }
@@ -101,12 +101,12 @@ export function regionInsight(profile: Profile, now = Date.now()): RegionInsight
     }
   } else {
     lines.push(
-      `Across ${sessions.length} sessions over these weeks, the moments you marked were spread fairly evenly around the screen — no corner stands out.`,
+      `Across ${sessions.length} sessions over these weeks, the moments you marked were spread fairly evenly around the screen, no corner stands out.`,
     );
   }
 
   lines.push(
-    'This only describes these sessions — tiredness, mood, and the long pauses of CVI shape every one of them, and days vary a lot.',
+    'This only describes these sessions, tiredness, mood, and the long pauses of CVI shape every one of them, and days vary a lot.',
     'It is a conversation starter for their vision professional, never a finding about vision itself.',
   );
 

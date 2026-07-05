@@ -7,7 +7,7 @@ import { formatDate, formatDuration, plural } from '../../lib/fmt';
 import { TAG_LABELS } from '../../lib/labels';
 import { Card, downloadFile } from './bits';
 
-/** PT-4 / PT-7 / PT-8 — notes, a readable trend, and a shareable summary. */
+/** PT-4 / PT-7 / PT-8, notes, a readable trend, and a shareable summary. */
 export function Sessions({ profile }: { profile: Profile | null }) {
   if (!profile) {
     return (
@@ -28,19 +28,19 @@ export function Sessions({ profile }: { profile: Profile | null }) {
     <div class="stack">
       <h1 tabindex={-1}>Notes for {profile.nickname}</h1>
       <p class="card-note">
-        These are your own informal observations — a picture that builds over weeks, not a test of any kind. CVI
+        These are your own informal observations, a picture that builds over weeks, not a test of any kind. CVI
         function genuinely swings day to day with tiredness, health, and mood; single days mean very little on
         their own.
       </p>
 
       <Card title="The last four weeks">
         {s.total === 0 ? (
-          <p class="card-note">Nothing noted yet — after each lesson you'll be offered a ten-second note.</p>
+          <p class="card-note">Nothing noted yet, after each lesson you'll be offered a ten-second note.</p>
         ) : (
           <>
             <p>
               {s.total} {plural(s.total, { one: 'session', other: 'sessions' })} · a response you noticed in{' '}
-              {s.withResponse} · clearest friend so far: {s.topLesson ? <b>{s.topLesson.title}</b> : '—'}
+              {s.withResponse} · clearest friend so far: {s.topLesson ? <b>{s.topLesson.title}</b> : ', '}
             </p>
             <div class="bars" role="img" aria-label={weeksAria(s.weeks)}>
               {s.weeks.map((w) => (
@@ -65,7 +65,7 @@ export function Sessions({ profile }: { profile: Profile | null }) {
 
       <Card title="Share with the vision team">
         <p class="card-note">
-          Both files are saved to <b>this device</b> for you to share however you choose — nothing is sent
+          Both files are saved to <b>this device</b> for you to share however you choose. Nothing is sent
           anywhere by the app. They contain personal notes about {profile.nickname}, so treat them like any
           private document.
         </p>
@@ -114,7 +114,7 @@ export function Sessions({ profile }: { profile: Profile | null }) {
 }
 
 /**
- * PT-13 surface — appears only when the optional setting is on AND enough
+ * PT-13 surface, appears only when the optional setting is on AND enough
  * sessions across enough weeks exist. Descriptive and tentative by design;
  * interpretation always routes to the professional (SR-7).
  */
@@ -135,7 +135,7 @@ function RegionCard({ profile }: { profile: Profile }) {
       ) : (
         <p class="card-note">
           This builds quietly in the background. Once there are at least a couple of weeks of sessions with
-          marked responses, anything worth mentioning appears here — described gently, never as a measurement.
+          marked responses, anything worth mentioning appears here, described gently, never as a measurement.
         </p>
       )}
     </Card>

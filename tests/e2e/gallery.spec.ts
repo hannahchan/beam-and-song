@@ -4,7 +4,7 @@ import { expect, test } from '@playwright/test';
 import { LESSONS } from '../../src/lessons/specs';
 
 /**
- * Opt-in lesson gallery — a screenshot flip-book of the whole library for
+ * Opt-in lesson gallery, a screenshot flip-book of the whole library for
  * human review (see docs/gallery.md). Deliberately NOT part of the default
  * `npx playwright test` run that gates CI deploys: every test here is
  * skipped unless GALLERY is set.
@@ -21,7 +21,7 @@ const BANDS = ['infant', 'child', 'teen'] as const;
 type Band = (typeof BANDS)[number];
 const band = (process.env.BAND ?? 'infant') as Band;
 if (!BANDS.includes(band)) {
-  throw new Error(`BAND must be one of ${BANDS.join(', ')} — got "${process.env.BAND}"`);
+  throw new Error(`BAND must be one of ${BANDS.join(', ')}, got "${process.env.BAND}"`);
 }
 
 /** Long enough for every scene to develop past its entry fade-in (SR-2). */
@@ -29,7 +29,7 @@ const SETTLE_MS = 4_500;
 
 const OUT_DIR = fileURLToPath(new URL(`../../test-results/gallery/${band}/`, import.meta.url));
 
-// Captures are independent — let them spread across workers.
+// Captures are independent, let them spread across workers.
 test.describe.configure({ mode: 'parallel' });
 
 test.describe('lesson gallery (screenshot flip-book)', () => {

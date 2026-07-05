@@ -2,7 +2,7 @@ import { useEffect, useState } from 'preact/hooks';
 import { SESSION_TAGS, type ResponseLevel, type SessionTag } from '../lib/types';
 import { TAG_LABELS } from '../lib/labels';
 
-/** The Player's DOM overlays — kept apart so Player.tsx stays the session engine. */
+/** The Player's DOM overlays, kept apart so Player.tsx stays the session engine. */
 
 export function AfterModeHint({ interactive, lookPhrase }: { interactive: boolean; lookPhrase: string }) {
   const [gone, setGone] = useState(false);
@@ -13,13 +13,13 @@ export function AfterModeHint({ interactive, lookPhrase }: { interactive: boolea
   return (
     <p class="player-hint" style={{ opacity: gone ? 0 : 1 }}>
       {interactive
-        ? 'Sound plays after a touch — any touch or switch press counts.'
+        ? 'Sound plays after a touch. Any touch or switch press counts.'
         : `Sound is set to follow a look: tap the screen when ${lookPhrase}, and the music will answer.`}
     </p>
   );
 }
 
-/** PT-4 / PT-8 — one-tap session observation, entirely skippable. */
+/** PT-4 / PT-8, one-tap session observation, entirely skippable. */
 export function ObservationCard({
   noun,
   onDone,
@@ -39,7 +39,7 @@ export function ObservationCard({
       <div class="overlay-card">
         <h2>How did it go?</h2>
         <p class="card-note">
-          A ten-second note builds a picture over time. Quiet days are information too — never a verdict.
+          A ten-second note builds a picture over time. Quiet days are information too, never a verdict.
         </p>
         <div class="chips" role="group" aria-label={`Did ${noun} respond?`}>
           {(

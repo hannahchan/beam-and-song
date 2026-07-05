@@ -12,10 +12,10 @@ import { enabledPhotos } from '../../lib/photos';
 const DEFAULT_PREVIEW = 'drifting-light';
 
 /**
- * The live preview beside Settings — the caregiver sees every change the
+ * The live preview beside Settings, the caregiver sees every change the
  * instant they make it, without bouncing between screens. It runs the *real*
  * lesson engine (same scenes, same safety kernel), so what you see is
- * exactly what plays, smaller — and any lesson can be chosen for preview.
+ * exactly what plays, smaller, and any lesson can be chosen for preview.
  */
 export function LivePreview({ profile }: { profile: Profile }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -117,12 +117,12 @@ export function LivePreview({ profile }: { profile: Profile }) {
           </select>
         </label>
         <div class="spread" style={{ marginTop: '0.6rem', gap: '0.5rem' }}>
-          <span class="card-note">Exactly what plays — smaller.</span>
+          <span class="card-note">Exactly what plays, smaller.</span>
           <button class="btn btn-small" aria-pressed={sounding} onClick={() => void toggleSound()}>
             {sounding ? 'Stop sound' : 'Hear a moment'}
           </button>
         </div>
-        {spec.hearingFirst && <p class="card-note" style={{ marginTop: '0.5rem' }}>This one is mostly sound — the screen stays nearly dark on purpose.</p>}
+        {spec.hearingFirst && <p class="card-note" style={{ marginTop: '0.5rem' }}>This one is mostly sound. The screen stays nearly dark on purpose.</p>}
       </div>
     </aside>
   );

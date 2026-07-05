@@ -13,7 +13,7 @@ export interface PhotoCache {
 
 /**
  * Fit a canvas backing store to its CSS size. One definition so the Settings
- * preview renders at exactly the player's resolution — the dpr cap of 2 keeps
+ * preview renders at exactly the player's resolution, the dpr cap of 2 keeps
  * low-end tablets fluid and is part of the "preview is what plays" guarantee.
  */
 export function fitCanvasToDisplay(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D): void {
@@ -61,7 +61,7 @@ export function createPhotoCache(): PhotoCache {
 }
 
 /**
- * One shape rendered alone on a transparent ground — the printable
+ * One shape rendered alone on a transparent ground, the printable
  * off-screen kit (CR-4) uses these as full-page images in the child's
  * colour. Returns '' where canvas is unavailable (tests, odd embeds).
  */
@@ -186,7 +186,7 @@ function hexA(hex: string, a: number): string {
 }
 
 /**
- * Matte scenery — the peekaboo hill. Deliberately no specular highlight (the
+ * Matte scenery, the peekaboo hill. Deliberately no specular highlight (the
  * orb gradient would make the occluder glow from within, competing with the
  * target and inviting light-gazing). The body stays dark and flat; only a
  * thin, slightly lighter rim marks the crest, because on ordinary screens a
@@ -231,7 +231,7 @@ function drawStar(ctx: CanvasRenderingContext2D, it: SceneItem, x: number, y: nu
   grad.addColorStop(0, mixHex(it.color, '#ffffff', 0.45));
   grad.addColorStop(1, it.color);
   ctx.fillStyle = grad;
-  // Rounded joins soften the points — nothing sharp or harsh on screen.
+  // Rounded joins soften the points, nothing sharp or harsh on screen.
   ctx.lineJoin = 'round';
   ctx.strokeStyle = it.color;
   ctx.lineWidth = r * 0.22;
@@ -272,7 +272,7 @@ function drawDuck(ctx: CanvasRenderingContext2D, it: SceneItem, x: number, y: nu
   ctx.beginPath();
   ctx.arc(r * 0.62, -r * 0.5, r * 0.48, 0, Math.PI * 2);
   ctx.fill();
-  // Beak — slightly darker, same hue family (keeps internal contrast low).
+  // Beak, slightly darker, same hue family (keeps internal contrast low).
   ctx.fillStyle = mixHex(c, '#000000', 0.25);
   ctx.beginPath();
   ctx.moveTo(r * 1.04, -r * 0.56);
@@ -298,7 +298,7 @@ function drawBoat(ctx: CanvasRenderingContext2D, it: SceneItem, x: number, y: nu
   ctx.quadraticCurveTo(r * 0.75, -r * 0.55, r * 0.85, -r * 0.18);
   ctx.closePath();
   ctx.fill();
-  // Hull — slightly darker, same hue family (low internal contrast)
+  // Hull, slightly darker, same hue family (low internal contrast)
   ctx.fillStyle = mixHex(it.color, '#000000', 0.28);
   ctx.beginPath();
   ctx.moveTo(-r * 1.0, -r * 0.05);

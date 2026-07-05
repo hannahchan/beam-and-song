@@ -1,13 +1,13 @@
 import { clamp } from '../engine/kernel';
 
 /**
- * AR-2 / AR-8 — built-in switch scanning, for caregivers (and later children)
+ * AR-2 / AR-8, built-in switch scanning, for caregivers (and later children)
  * who operate the device with one or two switches instead of touch.
  *
  * Two modes:
- *   auto — the highlight advances by itself; any switch press (Space/Enter)
+ *   auto, the highlight advances by itself; any switch press (Space/Enter)
  *          activates the highlighted control.
- *   step — one switch (Space) moves the highlight; a second (Enter) activates.
+ *   step, one switch (Space) moves the highlight; a second (Enter) activates.
  *
  * Design constraints honoured here:
  *   - Dwell time follows the child's pace/latency setting, never under 1.5 s (AR-8).

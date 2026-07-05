@@ -61,7 +61,7 @@ describe('field-pattern observation (PT-13 / SR-7)', () => {
     expect(regionInsight(makeProfile(skewedSessions(12, 20), false))).toBeNull();
   });
 
-  it('silent below the session threshold — single sessions never speak (SR-7)', () => {
+  it('silent below the session threshold, single sessions never speak (SR-7)', () => {
     expect(regionInsight(makeProfile(skewedSessions(MIN_SESSIONS - 1, 20)))).toBeNull();
   });
 
@@ -95,7 +95,7 @@ describe('field-pattern observation (PT-13 / SR-7)', () => {
     }
   });
 
-  it('ignores stale data — nothing older than three months is interpreted', () => {
+  it('ignores stale data, nothing older than three months is interpreted', () => {
     const old = skewedSessions(12, 21).map((s) => ({
       ...s,
       at: new Date(Date.parse(s.at) - 200 * 86400000).toISOString(),

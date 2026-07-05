@@ -10,7 +10,7 @@ export const tokens = {
   line: '#2c3247',
   ink: '#eef1f7', // primary text
   inkSoft: '#aeb7c9', // secondary text
-  accent: '#ffd27d', // warm amber — primary action background
+  accent: '#ffd27d', // warm amber, primary action background
   accentInk: '#241703', // text on accent
   focus: '#9ec1ff',
   danger: '#ffa3a3',
@@ -19,7 +19,7 @@ export const tokens = {
 
 export type TokenName = keyof typeof tokens;
 
-/** Pairs that must meet WCAG 2.1 AA contrast (4.5:1) — verified in tests. */
+/** Pairs that must meet WCAG 2.1 AA contrast (4.5:1), verified in tests. */
 export const CONTRAST_PAIRS: Array<[fg: TokenName, bg: TokenName]> = [
   ['ink', 'bg0'],
   ['ink', 'bg1'],

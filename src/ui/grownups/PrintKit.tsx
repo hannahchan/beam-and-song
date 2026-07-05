@@ -5,10 +5,10 @@ import { shapeSprite } from '../../engine/render';
 import { bandNoun } from '../../lessons/bands';
 
 /**
- * CR-4 — the off-screen kit: the same shapes the lessons use, one per page,
+ * CR-4, the off-screen kit: the same shapes the lessons use, one per page,
  * big and bold in the child's own colour, ready to print. Screens are the
  * doorway; these sheets are the step between the screen and the real thing.
- * Zero assets — every image is drawn on the fly by the same code that draws
+ * Zero assets, every image is drawn on the fly by the same code that draws
  * the lessons, so the printed ball matches the on-screen ball exactly.
  */
 
@@ -24,7 +24,7 @@ const KIT: readonly KitEntry[] = [
   {
     shape: 'orb',
     name: 'The circle of light',
-    tip: 'The very first friend from the screen. Rest it on the dark cloth and let it simply be found — no pointing, no asking.',
+    tip: 'The very first friend from the screen. Rest it on the dark cloth and let it simply be found, no pointing, no asking.',
   },
   {
     shape: 'star',
@@ -34,7 +34,7 @@ const KIT: readonly KitEntry[] = [
   {
     shape: 'ball',
     name: 'The ball',
-    tip: 'Show this sheet, then the real ball in the same colour — sheet first, real thing next; that link is the whole point.',
+    tip: 'Show this sheet, then the real ball in the same colour, sheet first, real thing next; that link is the whole point.',
   },
   {
     shape: 'duck',
@@ -100,9 +100,9 @@ function PrintKitInner({ profile }: { profile: Profile }) {
         </a>
       </div>
 
-      <h1>Light & Sound — an off-screen kit for “{profile.nickname}”</h1>
+      <h1>Light & Sound: an off-screen kit for “{profile.nickname}”</h1>
       <p>
-        One page per shape, in {profile.nickname}'s colour — the same shapes, drawn by the same code, as the
+        One page per shape, in {profile.nickname}'s colour, the same shapes, drawn by the same code, as the
         lessons on screen. Screens are the doorway, not the destination: these sheets are the step in
         between, before the real ball, the real light, the real world.
       </p>
@@ -110,7 +110,7 @@ function PrintKitInner({ profile }: { profile: Profile }) {
       <ul>
         <li>Print in colour if you can, on matte paper (less glare). One sheet at a time.</li>
         <li>
-          Rest the sheet on a plain dark background — a dark cloth, a black card — so the shape is the only
+          Rest the sheet on a plain dark background, a dark cloth, a black card, so the shape is the only
           interesting thing there, just like on screen.
         </li>
         <li>Dim the room a little, offer the sheet slowly, and wait longer than feels natural.</li>
@@ -118,7 +118,7 @@ function PrintKitInner({ profile }: { profile: Profile }) {
           Everything from the lessons still applies: one thing at a time, {noun === 'they' ? 'their' : `${noun}'s`}{' '}
           better side first, quiet while looking, and stop while it is still going well.
         </li>
-        <li>Follow each sheet with the real thing whenever one exists — sheet first, real thing next.</li>
+        <li>Follow each sheet with the real thing whenever one exists, sheet first, real thing next.</li>
       </ul>
       <p class="print-muted">
         A companion alongside {profile.nickname}'s vision professional, never a programme or an assessment.

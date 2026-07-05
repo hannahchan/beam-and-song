@@ -5,7 +5,7 @@ import { audio } from '../src/engine/audio';
 import type { CustomPhoto } from '../src/lib/types';
 
 /**
- * CR-3 — per-photo caregiver voice labels: the parent's own "the red ball!"
+ * CR-3, per-photo caregiver voice labels: the parent's own "the red ball!"
  * as the answer in photo lessons. These cover the pure decision logic; the
  * recording UI itself needs a microphone and real ears.
  */

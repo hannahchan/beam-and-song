@@ -39,13 +39,13 @@ export const SAFETY = {
   MAX_FLASH_PAIRS_PER_SEC: 1,
 
   /**
-   * SR-5 — saturated-red area flashing. We require zero opposing transitions of
+   * SR-5, saturated-red area flashing. We require zero opposing transitions of
    * saturated-red screen coverage at or above this fraction.
    */
   RED_AREA_DELTA: 0.2,
 
   /**
-   * SR-5/SR-6 — reward blooms are always pulled at least this far toward
+   * SR-5/SR-6, reward blooms are always pulled at least this far toward
    * white, so no call site can ever produce a saturated-red burst.
    */
   MIN_BLOOM_WHITENESS: 0.5,

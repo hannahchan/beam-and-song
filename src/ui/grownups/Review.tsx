@@ -13,7 +13,7 @@ import { Card } from './bits';
 const AUTO_ADVANCE_MS = 18_000;
 
 /**
- * The walk-through: every lesson, one after another, on a single page —
+ * The walk-through: every lesson, one after another, on a single page,
  * rendered by the real engine with the active child's settings, band, and
  * photos, so what reviewers and families see here is exactly what plays.
  * Built for the clinical-review pass ("look at all the content quickly"),
@@ -25,7 +25,7 @@ export function Review({ profile }: { profile: Profile | null }) {
       <div>
         <h1 tabindex={-1}>Walk through the lessons</h1>
         <p>
-          First, add a child on the <a href="#/grown-ups/profiles">Children page</a> — the walk-through uses
+          First, add a child on the <a href="#/grown-ups/profiles">Children page</a>. The walk-through uses
           their settings.
         </p>
       </div>
@@ -188,7 +188,7 @@ function ReviewInner({ profile }: { profile: Profile }) {
       <p class="card-note">
         Every lesson, one after another, played by the real engine with {profile.nickname}'s current
         settings, age band, and photos. Tap the picture to try a touch response. This is the quickest way to
-        see the whole library — for you, or for a vision professional reviewing it.
+        see the whole library, for you, or for a vision professional reviewing it.
       </p>
       <Card title={`${idx + 1} of ${LESSONS.length} · ${groupLabel}`}>
         <canvas
@@ -205,7 +205,7 @@ function ReviewInner({ profile }: { profile: Profile }) {
         <p class="card-note">{spec.goal}</p>
         {missingPhoto && (
           <p class="card-note">
-            This one uses the family's own photos — <a href="#/grown-ups/settings">add one in Settings</a> to
+            This one uses the family's own photos, <a href="#/grown-ups/settings">add one in Settings</a> to
             see it properly. A soft placeholder stands in meanwhile.
           </p>
         )}
@@ -231,7 +231,7 @@ function ReviewInner({ profile }: { profile: Profile }) {
           </a>
         </div>
         <p class="hint" style={{ marginTop: '0.6rem' }}>
-          Arrow keys page through. The slideshow moves on every {Math.round(AUTO_ADVANCE_MS / 1000)} seconds —
+          Arrow keys page through. The slideshow moves on every {Math.round(AUTO_ADVANCE_MS / 1000)} seconds,
           slower than any real session would.
         </p>
       </Card>

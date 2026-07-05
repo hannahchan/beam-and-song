@@ -81,7 +81,7 @@ describe('lesson guidance metadata (PT-10 / CR-4)', () => {
   });
 });
 
-describe('peekaboo (hideReveal) — anticipation with a kept promise', () => {
+describe('peekaboo (hideReveal), anticipation with a kept promise', () => {
   const moving = buildParams({ ...DEFAULT_SETTINGS, movement: true });
   const light = (s: Scene) => s.items.find((i) => i.r < 0.4 && i.alpha > 0.02);
   const hill = (s: Scene) => s.items.find((i) => i.r >= 0.4);
@@ -96,7 +96,7 @@ describe('peekaboo (hideReveal) — anticipation with a kept promise', () => {
       const it = light(s);
       if (it) {
         if (hiddenAt >= 0 && lastSeen !== null) {
-          // Reappearance: the promise is kept — same place it melted away.
+          // Reappearance: the promise is kept, same place it melted away.
           expect(Math.hypot(it.x - lastSeen.x, it.y - lastSeen.y)).toBeLessThan(0.1);
           returned = true;
           hiddenAt = -1;
@@ -114,7 +114,7 @@ describe('peekaboo (hideReveal) — anticipation with a kept promise', () => {
 
   it('the vanish point sits inside the hill on tall, square, and wide screens alike', () => {
     // Scene x/y are width/height fractions while radii follow the smaller
-    // dimension — so occlusion must be proven per aspect ratio, not assumed.
+    // dimension, so occlusion must be proven per aspect ratio, not assumed.
     const scenes = sample(spec('peekaboo-light'), moving, quiet, 65);
     let lastSeen: { x: number; y: number } | null = null;
     const vanishPoints: { x: number; y: number }[] = [];
@@ -174,7 +174,7 @@ describe('peekaboo (hideReveal) — anticipation with a kept promise', () => {
   });
 });
 
-describe('reach for the light (reachTouch) — look, then touch', () => {
+describe('reach for the light (reachTouch), look, then touch', () => {
   const t0 = 6000;
 
   it('a touch on the light answers with a chime and a bloom', () => {
@@ -193,7 +193,7 @@ describe('reach for the light (reachTouch) — look, then touch', () => {
     expect(later.items.some((i) => i.shape === 'bloom')).toBe(true);
   });
 
-  it('a far miss draws no bloom — only the gentle guiding lift', () => {
+  it('a far miss draws no bloom, only the gentle guiding lift', () => {
     const before = computeScene(spec('reach-for-the-light'), params, t0, quiet, t0 - 100);
     const target = before.items[0];
     const far = { x: target.x > 0.5 ? 0.02 : 0.98, y: target.y > 0.5 ? 0.02 : 0.98 };
@@ -204,7 +204,7 @@ describe('reach for the light (reachTouch) — look, then touch', () => {
   });
 });
 
-describe('song, then star (soundThenLight) — the senses take turns', () => {
+describe('song, then star (soundThenLight), the senses take turns', () => {
   it('the call sounds first, from the side where the star later appears', () => {
     const scenes = sample(spec('song-then-star'), params, quiet, 24);
     let callAt = -1;
@@ -238,7 +238,7 @@ describe('song, then star (soundThenLight) — the senses take turns', () => {
   });
 });
 
-describe('star by star (sweepRow) — an ordered sweep', () => {
+describe('star by star (sweepRow), an ordered sweep', () => {
   it('stars take their glowing turn strictly left to right', () => {
     const scenes = sample(spec('star-by-star'), params, quiet, 40);
     const firstLit = new Map<number, number>(); // x (rounded) -> first index clearly lit
@@ -267,7 +267,7 @@ describe('star by star (sweepRow) — an ordered sweep', () => {
   });
 });
 
-describe('a quiet scene (restingScene) — small, still company', () => {
+describe('a quiet scene (restingScene), small, still company', () => {
   it('complexity decides how much of the cast appears', () => {
     const two = computeScene(spec('quiet-scene'), buildParams({ ...DEFAULT_SETTINGS, complexity: 1 }), 20_000, quiet, 19_900);
     const three = computeScene(spec('quiet-scene'), buildParams({ ...DEFAULT_SETTINGS, complexity: 2 }), 20_000, quiet, 19_900);
@@ -275,7 +275,7 @@ describe('a quiet scene (restingScene) — small, still company', () => {
     expect(three.items).toHaveLength(3);
   });
 
-  it('the teen harbour swaps the whole cast — no duck, no ball', () => {
+  it('the teen harbour swaps the whole cast, no duck, no ball', () => {
     const teen = resolveLesson(spec('quiet-scene'), 'teen');
     const scene = computeScene(teen, buildParams({ ...DEFAULT_SETTINGS, complexity: 3 }), 20_000, quiet, 19_900);
     const shapes = scene.items.map((i) => i.shape);
@@ -286,7 +286,7 @@ describe('a quiet scene (restingScene) — small, still company', () => {
   });
 });
 
-describe('find your colour (findColor) — hue is the anchor', () => {
+describe('find your colour (findColor), hue is the anchor', () => {
   const p = buildParams({ ...DEFAULT_SETTINGS, complexity: 2 });
   const withPhotos: SimInput = { seed: 42, taps: [], photos: [{ dataUrl: 'x' }] };
 

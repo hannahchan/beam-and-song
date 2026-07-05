@@ -5,7 +5,7 @@ import { clamp } from './kernel';
 import { getBlob } from '../lib/media';
 
 /**
- * FR-10 — where the sound sits in space. Pure and unit-tested: pan (-1..1)
+ * FR-10, where the sound sits in space. Pure and unit-tested: pan (-1..1)
  * maps to left/right position, and the target's screen height becomes both
  * a vertical position and a timbre cue (higher on screen = brighter), which
  * carries even on tablets whose speakers can't render true elevation.
@@ -22,7 +22,7 @@ export function spatialParams(pan: number, elevation = 0.5): { x: number; y: num
 }
 
 /**
- * All sound is synthesized with the Web Audio API — no audio files, nothing
+ * All sound is synthesized with the Web Audio API, no audio files, nothing
  * to download or stutter (CR-2, TR-3). Envelopes always have gentle attacks
  * and releases (no clicks or startles), and a soft compressor keeps peaks
  * polite regardless of settings.
@@ -66,7 +66,7 @@ class AudioEngine {
   /**
    * Build the melody's output: lowpass (elevation-as-brightness) into an
    * HRTF panner where the browser has one, a plain stereo panner otherwise.
-   * All movement is smoothed — sound glides, it never jumps (SR-2 spirit).
+   * All movement is smoothed, sound glides, it never jumps (SR-2 spirit).
    */
   private createSpatialChain(): SpatialChain | null {
     if (!this.ctx || !this.master) return null;
@@ -153,7 +153,7 @@ class AudioEngine {
     }
   }
 
-  /** FR-12 — soften everything immediately but smoothly. */
+  /** FR-12, soften everything immediately but smoothly. */
   duck(mult: number, sec = 0.35): void {
     if (this.duckGain && this.ctx) {
       this.duckGain.gain.setTargetAtTime(Math.max(0, mult), this.ctx.currentTime, sec / 3);
@@ -248,7 +248,7 @@ class AudioEngine {
         this.startMelody(fallback, { pan: opts.pan, loop: opts.loop ?? true });
         return;
       }
-      // loop:false means "after a look" — only playPhrase() snippets sound.
+      // loop:false means "after a look", only playPhrase() snippets sound.
       if (opts.loop === false) return;
       const src = ctx.createBufferSource();
       src.buffer = buffer;
@@ -307,9 +307,9 @@ class AudioEngine {
   }
 
   /**
-   * CR-3 — a caregiver's short voice label ("the red ball!") as the answer in
+   * CR-3, a caregiver's short voice label ("the red ball!") as the answer in
    * photo lessons. Same gentle rules as every other sound: soft attack,
-   * gentle release, normalized gain — and it shares the phrase guard, so a
+   * gentle release, normalized gain, and it shares the phrase guard, so a
    * voice label and a melody phrase can never stack on top of each other.
    */
   playVoiceLabel(blobId: string, gain: number): void {
@@ -414,11 +414,11 @@ class AudioEngine {
         break;
       }
       case 'beat':
-        // Three soft, steady taps — rhythm as a character.
+        // Three soft, steady taps, rhythm as a character.
         for (let i = 0; i < 3; i++) this.note(48, t + i * 0.6, 0.5, 'warm', null, false, -0.4, 0.8);
         break;
       case 'phrase': {
-        // A short flowing line — melody as the other character.
+        // A short flowing line, melody as the other character.
         const line = [64, 67, 69, 72];
         line.forEach((m, i) => this.note(m, t + i * 0.5, 0.65, 'musicbox', null, false, 0.4));
         break;
@@ -434,7 +434,7 @@ class AudioEngine {
 
   /**
    * Synthesize one note. Attack always >= SAFETY.MIN_AUDIO_ATTACK_S; release
-   * is long and smooth — nothing clicks, nothing startles.
+   * is long and smooth, nothing clicks, nothing startles.
    */
   private note(
     midi: number,

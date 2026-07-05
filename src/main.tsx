@@ -8,7 +8,7 @@ applyTheme(document.documentElement);
 applyLocale(document.documentElement);
 render(<App />, document.getElementById('app')!);
 
-// Ask the browser to treat this site's storage as persistent — profiles,
+// Ask the browser to treat this site's storage as persistent, profiles,
 // notes, and the family's own media should survive storage pressure and
 // idle-eviction policies (PV-2 durability). Best-effort; browsers decide.
 try {
@@ -22,7 +22,7 @@ if ('serviceWorker' in navigator && import.meta.env.PROD) {
   window.addEventListener('load', async () => {
     try {
       const reg = await navigator.serviceWorker.register('./sw.js');
-      // A quiet heads-up when a new version is installed — never an
+      // A quiet heads-up when a new version is installed, never an
       // automatic reload, which could interrupt a lesson (FR-12 spirit).
       reg.addEventListener('updatefound', () => {
         const fresh = reg.installing;

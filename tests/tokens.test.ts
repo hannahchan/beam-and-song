@@ -3,7 +3,7 @@ import { CONTRAST_PAIRS, tokens } from '../src/lib/tokens';
 import { contrastRatio } from '../src/safety/luminance';
 
 /**
- * AR-4 / AR-6 / TR-10 — contrast is verified from the single source of truth.
+ * AR-4 / AR-6 / TR-10, contrast is verified from the single source of truth.
  * (axe's contrast rule cannot run in jsdom, so we check the palette directly.)
  */
 describe('grown-up palette meets WCAG 2.1 AA contrast', () => {

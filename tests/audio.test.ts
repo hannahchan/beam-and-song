@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { spatialParams } from '../src/engine/audio';
 
-/** FR-10 — the pure half of sound-follows-target. */
+/** FR-10, the pure half of sound-follows-target. */
 describe('spatial audio mapping', () => {
   it('pan maps monotonically left to right and clamps', () => {
     expect(spatialParams(-1).x).toBeLessThan(spatialParams(0).x);

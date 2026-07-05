@@ -9,11 +9,11 @@ import type { ChildSettings } from '../src/lib/types';
 import type { HoldSpan } from '../src/engine/kernel';
 
 /**
- * SR-8 / TR-8 — the safety constraints are *verified*, not just designed.
+ * SR-8 / TR-8, the safety constraints are *verified*, not just designed.
  *
  * Every lesson is simulated headlessly at 60 fps and its whole-screen
  * luminance timeline is measured against the hard limits (SR-1 flashing,
- * SR-3 brightness/deltas, SR-5 saturated red) — at default settings, at the
+ * SR-3 brightness/deltas, SR-5 saturated red), at default settings, at the
  * most extreme settings a caregiver can reach (maximum size, brightness,
  * glow, speed, fastest pace, white and saturated-red targets), and under
  * input mashing on interactive lessons (SR-6).
@@ -32,7 +32,7 @@ function simulate(
   const params = buildParams(settings);
   const taps: Array<{ t: number; x: number; y: number }> = [];
   if (tapsPerSec > 0) {
-    // Switch presses (x = -1) always count as hits — the worst case for
+    // Switch presses (x = -1) always count as hits, the worst case for
     // reward-luminance, since every effective press blooms (SR-6).
     for (let t = 250; t < seconds * 1000; t += 1000 / tapsPerSec) taps.push({ t, x: -1, y: -1 });
   }
@@ -62,7 +62,7 @@ function check(
   assertTimelineSafe(result, `${lessonId} ${label}`);
 }
 
-/** Press patterns for hold-to-sustain lessons — including the adversarial one. */
+/** Press patterns for hold-to-sustain lessons, including the adversarial one. */
 function holdPattern(onMs: number, offMs: number, seconds: number): HoldSpan[] {
   const holds: HoldSpan[] = [];
   for (let t = 0; t < seconds * 1000; t += onMs + offMs) holds.push({ start: t, end: t + onMs });
@@ -83,30 +83,30 @@ const EXTREME_BASE: ChildSettings = {
 
 describe('every lesson stays inside the hard safety limits (SR-1, SR-3, SR-5, SR-6)', () => {
   for (const lesson of LESSONS) {
-    it(`${lesson.id} — default settings`, () => {
+    it(`${lesson.id}, default settings`, () => {
       check(lesson.id, DEFAULT_SETTINGS, 40, 0, 'defaults');
     });
 
-    it(`${lesson.id} — extreme settings, white target (worst luminance)`, () => {
+    it(`${lesson.id}, extreme settings, white target (worst luminance)`, () => {
       check(lesson.id, { ...EXTREME_BASE, targetColor: 'white' }, 40, 0, 'extreme-white');
     });
 
-    it(`${lesson.id} — extreme settings, saturated red target (SR-5)`, () => {
+    it(`${lesson.id}, extreme settings, saturated red target (SR-5)`, () => {
       check(lesson.id, { ...EXTREME_BASE, targetColor: 'red' }, 40, 0, 'extreme-red');
     });
 
     if (lesson.interactive) {
-      it(`${lesson.id} — input mashing cannot create a flash (SR-6)`, () => {
+      it(`${lesson.id}, input mashing cannot create a flash (SR-6)`, () => {
         check(lesson.id, { ...EXTREME_BASE, targetColor: 'white' }, 30, 8, 'tap-spam');
       });
     }
 
     if (HOLD_DRIVEN_BEHAVIORS.has(lesson.behavior)) {
-      it(`${lesson.id} — rapid hold mashing cannot flicker (SR-6)`, () => {
+      it(`${lesson.id}, rapid hold mashing cannot flicker (SR-6)`, () => {
         check(lesson.id, { ...EXTREME_BASE, targetColor: 'white' }, 30, 0, 'hold-mash', holdPattern(240, 260, 30));
       });
 
-      it(`${lesson.id} — resonant press/release at exactly the slew rates (worst case)`, () => {
+      it(`${lesson.id}, resonant press/release at exactly the slew rates (worst case)`, () => {
         // On for the full rise, off for the full fall: the largest oscillation
         // the slew limiter permits. Must still sit inside every limit.
         check(
@@ -119,7 +119,7 @@ describe('every lesson stays inside the hard safety limits (SR-1, SR-3, SR-5, SR
         );
       });
 
-      it(`${lesson.id} — resonant cycling in saturated red (SR-5)`, () => {
+      it(`${lesson.id}, resonant cycling in saturated red (SR-5)`, () => {
         check(
           lesson.id,
           { ...EXTREME_BASE, targetColor: 'red' },
@@ -130,14 +130,14 @@ describe('every lesson stays inside the hard safety limits (SR-1, SR-3, SR-5, SR
         );
       });
 
-      it(`${lesson.id} — held from the very first frame stacks safely with the entry fade`, () => {
+      it(`${lesson.id}, held from the very first frame stacks safely with the entry fade`, () => {
         check(lesson.id, { ...EXTREME_BASE, targetColor: 'white' }, 20, 0, 'held-throughout', [
           { start: 0, end: Number.POSITIVE_INFINITY },
         ]);
       });
     }
 
-    it(`${lesson.id} — movement off stays safe and static-friendly`, () => {
+    it(`${lesson.id}, movement off stays safe and static-friendly`, () => {
       check(lesson.id, { ...EXTREME_BASE, targetColor: 'white', movement: false }, 15, 0, 'no-movement');
     });
   }

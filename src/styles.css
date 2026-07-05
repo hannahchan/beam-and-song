@@ -1,4 +1,4 @@
-/* Light & Sound — calm, dark, high-contrast (AR-4), big forgiving targets (AR-1). */
+/* Light & Sound, calm, dark, high-contrast (AR-4), big forgiving targets (AR-1). */
 
 * {
   box-sizing: border-box;
@@ -162,7 +162,7 @@ a { color: var(--focus); }
 }
 
 /* Grows to fill whatever space is left between the pinned title and footer,
-   and centers the orb within it — so on short/wide viewports the orb shrinks
+   and centers the orb within it, so on short/wide viewports the orb shrinks
    into that space instead of the old absolutely-positioned title/footer
    overlapping it (they weren't part of the flex flow, so nothing accounted
    for their height). */
@@ -193,7 +193,7 @@ a { color: var(--focus); }
 .start-orb:active { transform: scale(0.98); }
 
 @keyframes orb-breathe {
-  /* 4 s period = 0.25 Hz, tiny amplitude — far inside the safety bounds (SR-1).
+  /* 4 s period = 0.25 Hz, tiny amplitude, far inside the safety bounds (SR-1).
      Halo-only (no transform): the button's geometry stays stable for
      imprecise pointers and automation alike. */
   0%, 100% { box-shadow: 0 0 80px 14px rgba(255, 210, 125, 0.24); }
@@ -204,7 +204,7 @@ a { color: var(--focus); }
 }
 
 /* Bottom cluster: footnote stacks above the profile/grown-ups row in normal
-   flow, so a long nickname or a wrapped footnote can never overlap it —
+   flow, so a long nickname or a wrapped footnote can never overlap it,
    no matter the viewport width or font scale (was 3 independently
    absolutely-positioned siblings sharing one `bottom`, which collided on
    narrow phones). */
@@ -224,7 +224,7 @@ a { color: var(--focus); }
   width: 100%;
 }
 
-/* Quiet who-is-up label for multi-child devices — parent-facing, never loud. */
+/* Quiet who-is-up label for multi-child devices, parent-facing, never loud. */
 .landing-profile {
   color: #6b7387;
   font-size: 0.95rem;
@@ -250,7 +250,7 @@ a { color: var(--focus); }
   margin: 0;
 }
 
-/* Child lesson chooser — few, huge, calm tiles (FR-3). */
+/* Child lesson chooser, few, huge, calm tiles (FR-3). */
 .chooser {
   display: grid;
   /* Tiles stay huge but always fit: ~2 across on portrait tablets, a single
@@ -556,7 +556,7 @@ legend { font-weight: 650; padding: 0 0.4rem; }
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
-/* PT-10 — the one thing a lesson practises, as a quiet tag. */
+/* PT-10, the one thing a lesson practises, as a quiet tag. */
 .lesson-skill {
   align-self: flex-start;
   background: var(--bg2);
@@ -571,7 +571,7 @@ legend { font-weight: 650; padding: 0 0.4rem; }
 .lesson-card .lesson-skill {
   align-self: stretch;
 }
-/* The walk-through canvas — big enough to judge, framed like the preview. */
+/* The walk-through canvas, big enough to judge, framed like the preview. */
 .review-canvas {
   width: 100%;
   aspect-ratio: 16 / 10;
@@ -580,7 +580,7 @@ legend { font-weight: 650; padding: 0 0.4rem; }
   touch-action: manipulation;
   display: block;
 }
-/* PT-10 — "feels early / feels easy" neighbours, as in-page text buttons. */
+/* PT-10, "feels early / feels easy" neighbours, as in-page text buttons. */
 .lesson-step {
   background: none;
   border: none;
@@ -598,7 +598,7 @@ legend { font-weight: 650; padding: 0 0.4rem; }
   margin-bottom: 1.6rem;
 }
 /* display:flex removes the native disclosure triangle, so draw our own
-   chevron — the "this opens" affordance must be visible, not implied. */
+   chevron, the "this opens" affordance must be visible, not implied. */
 details summary {
   cursor: pointer;
   color: var(--inkSoft);
@@ -695,7 +695,7 @@ details summary:hover {
 .photo-entry:last-of-type { border-bottom: none; }
 .photo-row { display: flex; align-items: center; gap: 1rem; padding: 0.6rem 0; }
 .photo-thumb { width: 74px; height: 74px; border-radius: 14px; object-fit: cover; border: 1px solid var(--line); }
-/* CR-3 — the voice-label controls sit under their photo, indented past the thumbnail. */
+/* CR-3, the voice-label controls sit under their photo, indented past the thumbnail. */
 .voice-row {
   display: flex;
   align-items: center;
@@ -740,7 +740,7 @@ details summary:hover {
   .preview-canvas { aspect-ratio: 16 / 6; }
 }
 
-/* Switch-scanning highlight (AR-2/AR-8): one steady ring that glides — never blinks. */
+/* Switch-scanning highlight (AR-2/AR-8): one steady ring that glides, never blinks. */
 #bs-scan-ring {
   position: fixed;
   border: 4px solid var(--focus);

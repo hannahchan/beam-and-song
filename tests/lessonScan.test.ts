@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { CHOICE_BEHAVIORS, LessonScanController, LESSON_SCAN } from '../src/ui/lessonScan';
 import type { SceneItem } from '../src/lib/types';
 
-/** AR-8 — the in-lesson choice ring: calm by construction, honest stepping. */
+/** AR-8, the in-lesson choice ring: calm by construction, honest stepping. */
 
 const item = (x: number, y: number, over: Partial<SceneItem> = {}): SceneItem => ({
   shape: 'orb',

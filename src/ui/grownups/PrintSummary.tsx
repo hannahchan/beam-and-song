@@ -15,7 +15,7 @@ import {
 } from '../../lib/labels';
 
 /**
- * PT-7 — a one-page, clinic-friendly version of the share summary.
+ * PT-7, a one-page, clinic-friendly version of the share summary.
  * On screen it keeps the app theme; on paper it prints clean black-on-white
  * (see the @media print rules). Same non-diagnostic framing as everywhere.
  */
@@ -52,7 +52,7 @@ export function PrintSummary({ profile }: { profile: Profile | null }) {
         </a>
       </div>
 
-      <h1>Light & Sound — family observations for “{profile.nickname}”</h1>
+      <h1>Light & Sound, family observations for “{profile.nickname}”</h1>
       <p class="print-muted">
         Last 28 days · prepared {formatDate(Date.now())} · These are informal observations made by
         family during short at-home sessions. They are not measurements, clinical results, or any kind of
@@ -122,7 +122,7 @@ export function PrintSummary({ profile }: { profile: Profile | null }) {
                       ? 'none noticed'
                       : r.response === 'unsure'
                         ? 'hard to say'
-                        : '—'}
+                        : ', '}
               </td>
               <td>
                 {r.tags.map((t) => TAG_LABELS[t]).join(', ')}
@@ -139,7 +139,7 @@ export function PrintSummary({ profile }: { profile: Profile | null }) {
       </table>
 
       <p class="print-muted">
-        Light & Sound is a companion tool used alongside the child's vision professional — not a programme,
+        Light & Sound is a companion tool used alongside the child's vision professional, not a programme,
         curriculum, or assessment. All data lives only on the family's device; this page was printed by the
         caregiver.
       </p>

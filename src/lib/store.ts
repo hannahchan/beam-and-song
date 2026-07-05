@@ -158,7 +158,7 @@ export function deleteProfile(id: string): void {
   s.profiles = s.profiles.filter((p) => p.id !== id);
   if (s.activeProfileId === id) s.activeProfileId = s.profiles[0]?.id ?? null;
   persist();
-  // Remove the child's audio blobs too (PV-5 — clean deletion means clean).
+  // Remove the child's audio blobs too (PV-5, clean deletion means clean).
   for (const a of gone?.audio ?? []) void deleteBlob(a.id);
 }
 
@@ -224,7 +224,7 @@ export interface BackupExport {
   profiles: Profile[];
 }
 
-/** Whole-device backup — every child on this device (therapist workflows, PT-3). */
+/** Whole-device backup, every child on this device (therapist workflows, PT-3). */
 export function exportAll(): BackupExport {
   markBackedUp();
   return {
@@ -255,7 +255,7 @@ function markBackedUp(): void {
   persist();
 }
 
-/** PT-3 hygiene — a gentle nudge once there is real data and no recent backup. */
+/** PT-3 hygiene, a gentle nudge once there is real data and no recent backup. */
 export function backupIsDue(state: AppState, now = Date.now()): boolean {
   const worthIt = state.profiles.some(
     (p) => p.sessions.length >= 12 || p.photos.length > 0 || p.audio.length > 0,
@@ -298,7 +298,7 @@ export function importProfile(json: unknown): { ok: true; profile: Profile } | {
   const p = normalizeProfile(data.profile as Profile);
   if (!p.nickname || typeof p.nickname !== 'string') return { ok: false, error: 'The profile in that file looks incomplete.' };
   // Audio blobs live in the exporting device's IndexedDB and never travel
-  // with the file (PV-5) — drop their orphaned metadata on arrival.
+  // with the file (PV-5), drop their orphaned metadata on arrival.
   p.audio = [];
   if (p.settings.melodySource !== 'builtin') p.settings.melodySource = 'builtin';
   const s = getState();

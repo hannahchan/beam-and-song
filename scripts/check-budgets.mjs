@@ -1,5 +1,5 @@
 /**
- * TR-9 — measured performance budgets, the CI-enforceable half.
+ * TR-9, measured performance budgets, the CI-enforceable half.
  * Fails the build when the shipped payload outgrows what low-end tablets
  * comfortably parse. The on-device half (frame drops, audio) is scripted
  * in docs/perf-budgets.md with the in-player diagnostics overlay (?diag=1).
@@ -47,7 +47,7 @@ check('HTML (gzip)', gzipKB(files.filter((f) => f.endsWith('.html'))), BUDGETS.h
 check('Total payload (raw)', rawKB, BUDGETS.totalRawKB);
 
 if (failed) {
-  console.error('\nBudget exceeded (TR-9). Trim before shipping — lessons must never stutter on low-end tablets.');
+  console.error('\nBudget exceeded (TR-9). Trim before shipping, lessons must never stutter on low-end tablets.');
   process.exit(1);
 }
 console.log('\nAll performance budgets met.');

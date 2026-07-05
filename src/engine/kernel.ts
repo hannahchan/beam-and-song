@@ -2,12 +2,12 @@ import { SAFETY } from '../safety/constants';
 
 /**
  * The animation kernel. Every lesson behavior builds its motion from these
- * primitives, and the primitives themselves clamp to the safety ceilings —
+ * primitives, and the primitives themselves clamp to the safety ceilings,
  * so a scene cannot express a hazardous flash even if a spec or setting is
  * wrong (SR-1, SR-2, SR-8 "enforced, not just intended").
  */
 
-/** Smooth ease for movement — no hard starts or stops. */
+/** Smooth ease for movement, no hard starts or stops. */
 export function easeInOutSine(u: number): number {
   const t = clamp01(u);
   return 0.5 - 0.5 * Math.cos(Math.PI * t);
@@ -84,7 +84,7 @@ export function effectiveTaps(tapTimesMs: readonly number[], cooldownMs?: number
   return out;
 }
 
-/** Positional variant for find/search lessons — same cooldown guarantee. */
+/** Positional variant for find/search lessons, same cooldown guarantee. */
 export function effectiveTapEvents<T extends { t: number }>(taps: readonly T[], cooldownMs?: number): T[] {
   const cd = Math.max(cooldownMs ?? 0, SAFETY.MIN_REWARD_COOLDOWN_MS);
   const out: T[] = [];
@@ -122,7 +122,7 @@ export function effectiveHolds(holds: readonly HoldSpan[], nowMs: number): HoldS
 /**
  * Slew-limited sustain envelope for hold-to-keep-it-going lessons (SR-1/SR-3
  * by construction): the value can only climb at 1/riseMs and settle at
- * 1/fallMs — both floored at the minimum fade — no matter how fast presses
+ * 1/fallMs, both floored at the minimum fade, no matter how fast presses
  * arrive. Mashing therefore wiggles it gently around a level; it can never
  * flicker. Pure function of the full hold history, so the safety suite can
  * measure any press pattern it likes.

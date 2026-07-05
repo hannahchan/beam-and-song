@@ -9,7 +9,7 @@ import type { LessonSpec } from '../lib/types';
 /**
  * The child-side chooser: at most six huge, calm tiles (FR-3, AR-1).
  * Starred lessons come first; sensible Level-1 defaults fill the rest.
- * In practice a grown-up taps here with the baby — so tiles carry a
+ * In practice a grown-up taps here with the baby, so tiles carry a
  * quiet label they can read.
  */
 export function Chooser() {

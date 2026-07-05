@@ -10,7 +10,7 @@ import {
 import { SAFETY } from '../src/safety/constants';
 
 /**
- * AR-2/AR-8 — the scanning system itself must obey the calm rules:
+ * AR-2/AR-8, the scanning system itself must obey the calm rules:
  * latency-respecting dwell, and a highlight that glides rather than blinks.
  */
 
@@ -44,7 +44,7 @@ describe('switch scanning', () => {
     expect(SCAN_MIN_DWELL_MS).toBeGreaterThanOrEqual(1500);
   });
 
-  it('the highlight ring glides — transition no faster than the fade floor (FR-8)', () => {
+  it('the highlight ring glides, transition no faster than the fade floor (FR-8)', () => {
     expect(SCAN_RING_TRANSITION_MS).toBeGreaterThanOrEqual(SAFETY.MIN_FADE_MS);
   });
 
@@ -74,7 +74,7 @@ describe('switch scanning', () => {
     vi.useRealTimers();
   });
 
-  it('suspends completely while a lesson is live — the switch is the child’s (FR-9)', () => {
+  it('suspends completely while a lesson is live, the switch is the child’s (FR-9)', () => {
     const btns = setupDom();
     const clicks: string[] = [];
     for (const el of btns) el.addEventListener('click', () => clicks.push(el.textContent!));

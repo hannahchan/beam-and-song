@@ -1,11 +1,11 @@
 import { expect, test, type Page } from '@playwright/test';
 
 /**
- * End-to-end smoke: the flows jsdom can't exercise — real canvas rendering,
+ * End-to-end smoke: the flows jsdom can't exercise, real canvas rendering,
  * the gate, session end-to-observation, persistence, downloads, scanning.
  */
 
-/** Sum a sparse sample of canvas pixels — enough to detect animation. */
+/** Sum a sparse sample of canvas pixels, enough to detect animation. */
 async function canvasSignature(page: Page): Promise<number> {
   return page.evaluate(() => {
     const c = document.querySelector('.player canvas') as HTMLCanvasElement;
@@ -20,7 +20,7 @@ async function canvasSignature(page: Page): Promise<number> {
 test('child flow: start → tile → animating lesson → pause → observe → save', async ({ page }) => {
   await page.goto('/');
   // Keyboard activation: the orb breathes forever by design (0.25 Hz), so
-  // pointer "stability" never settles — and this exercises the keyboard path too.
+  // pointer "stability" never settles, and this exercises the keyboard path too.
   await page.getByRole('button', { name: /^Start/ }).press('Enter');
   await page.getByRole('button', { name: /Play Gentle Glow/ }).click();
 
@@ -148,6 +148,6 @@ test('switch scanning: ring appears and step-scan moves and activates', async ({
   expect(p1).not.toBe(p2); // the ring glided to the next control
 
   // Turning scanning back off via the scanner itself: walk shouldn't be
-  // needed — verify Enter activates the currently highlighted control.
+  // needed, verify Enter activates the currently highlighted control.
   await page.keyboard.press('Enter');
 });

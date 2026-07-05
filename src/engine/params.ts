@@ -34,7 +34,7 @@ export interface EngineParams {
   tempoScale: number;
 }
 
-/** pace 1 (slowest) .. 5 — multiplies durations; even the "fastest" stays gentle. */
+/** pace 1 (slowest) .. 5, multiplies durations; even the "fastest" stays gentle. */
 export function paceMultiplier(pace: number): number {
   return [2.4, 1.9, 1.5, 1.2, 1.0][clamp(pace, 1, 5) - 1];
 }
@@ -62,7 +62,7 @@ export function buildParams(s: ChildSettings): EngineParams {
 }
 
 /**
- * PR-4 — visual-field bias. Maps a unit point into the biased region of the
+ * PR-4, visual-field bias. Maps a unit point into the biased region of the
  * screen: "gentle" favours the region but still visits the rest; "strong"
  * keeps targets there almost always. Pure and testable.
  */

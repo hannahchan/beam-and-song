@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'preact/hooks';
 
 /**
- * Tiny hash router — hash routing means GitHub Pages needs no rewrite rules
+ * Tiny hash router, hash routing means GitHub Pages needs no rewrite rules
  * and deep links always work (TR-1).
  */
 export interface Route {

@@ -13,7 +13,7 @@ export type BackgroundId = 'black' | 'midnight' | 'charcoal';
 
 export type FieldBias = 'none' | 'lower' | 'upper' | 'left' | 'right';
 
-/** FR-6 / PR-11 — how sound relates to the visual target. */
+/** FR-6 / PR-11, how sound relates to the visual target. */
 export type AudioMode = 'with' | 'after' | 'off';
 
 export interface ChildSettings {
@@ -23,16 +23,16 @@ export interface ChildSettings {
   /** PR-2 */
   movement: boolean;
   speed: 1 | 2 | 3 | 4 | 5;
-  /** PR-3 — 1: single element on plain field · 2: allow a second element · 3: allow subtle texture */
+  /** PR-3, 1: single element on plain field · 2: allow a second element · 3: allow subtle texture */
   complexity: 1 | 2 | 3;
   /** PR-4 */
   fieldBias: FieldBias;
   biasStrength: 'gentle' | 'strong';
-  /** PR-5 — 1 is slowest. Higher never exceeds safety floors. */
+  /** PR-5, 1 is slowest. Higher never exceeds safety floors. */
   pace: 1 | 2 | 3 | 4 | 5;
   /** PR-6 */
   size: 1 | 2 | 3 | 4 | 5;
-  /** PR-7 / PR-13 — 0 means no glow at all */
+  /** PR-7 / PR-13, 0 means no glow at all */
   glow: 0 | 1 | 2 | 3;
   brightness: 1 | 2 | 3;
   /** PR-8 / PR-11 */
@@ -41,15 +41,15 @@ export interface ChildSettings {
   audioStyle: 'single' | 'layered';
   /** FR-10 */
   soundFollowsTarget: boolean;
-  /** AR-7 — non-auditory feedback where the device supports it */
+  /** AR-7, non-auditory feedback where the device supports it */
   haptics: boolean;
   /** PT-6 */
   sessionMinutes: number;
-  /** PR-9 / CR-3 — 'builtin' or the id of one of the profile's own recordings. */
+  /** PR-9 / CR-3, 'builtin' or the id of one of the profile's own recordings. */
   melodySource: 'builtin' | string;
-  /** AR-2/AR-8 — built-in switch scanning for menus and overlays. */
+  /** AR-2/AR-8, built-in switch scanning for menus and overlays. */
   scanning: 'off' | 'auto' | 'step';
-  /** PT-13 — optional, off by default; descriptive tuning aid only (SR-7). */
+  /** PT-13, optional, off by default; descriptive tuning aid only (SR-7). */
   fieldObservation: boolean;
 }
 
@@ -63,7 +63,7 @@ export interface CustomPhoto {
   /** Absent = shown. Lets a caregiver rest a photo without deleting it. */
   enabled?: boolean;
   /**
-   * CR-3 — a short caregiver voice label ("the red ball!"), played as the
+   * CR-3, a short caregiver voice label ("the red ball!"), played as the
    * answer in photo lessons. The clip itself lives in IndexedDB under
    * voiceBlobId(photo.id) and never leaves the device (PV-5); only this
    * passport travels with the profile.
@@ -73,7 +73,7 @@ export interface CustomPhoto {
 }
 
 /**
- * CR-3 — a favourite song or familiar voice. The blob lives in IndexedDB
+ * CR-3, a favourite song or familiar voice. The blob lives in IndexedDB
  * (see lib/media.ts); this is just its passport. Audio never leaves the
  * device and is not included in profile exports.
  */
@@ -87,7 +87,7 @@ export interface CustomAudio {
 
 export type ResponseLevel = 'clear' | 'some' | 'none' | 'unsure';
 
-/** PT-8 — light day-context tags so a quiet day is not misread as decline. */
+/** PT-8, light day-context tags so a quiet day is not misread as decline. */
 export const SESSION_TAGS = ['good day', 'tired', 'unwell', 'post-seizure', 'new medicine'] as const;
 export type SessionTag = (typeof SESSION_TAGS)[number];
 
@@ -101,18 +101,18 @@ export interface SessionRecord {
   response: ResponseLevel | null; // null = not recorded
   tags: SessionTag[];
   note?: string;
-  /** PT-13 — per-quadrant seconds-shown / marked-responses, only when enabled. */
+  /** PT-13, per-quadrant seconds-shown / marked-responses, only when enabled. */
   regions?: Record<'ul' | 'ur' | 'll' | 'lr', { s: number; r: number }>;
 }
 
 /**
- * CR-9 / PR-14 — developmental age band, independent of visual phase.
- * It changes how lessons look, sound, and speak — never how simple they
+ * CR-9 / PR-14, developmental age band, independent of visual phase.
+ * It changes how lessons look, sound, and speak, never how simple they
  * are allowed to be.
  */
 export type AgeBand = 'infant' | 'child' | 'teen';
 
-/** PT-9 — a named, ordered sequence of lessons composed by a parent or vision professional. */
+/** PT-9, a named, ordered sequence of lessons composed by a parent or vision professional. */
 export interface Program {
   id: string;
   name: string;
@@ -121,10 +121,10 @@ export interface Program {
 
 export interface Profile {
   id: string;
-  /** PV-1 — a nickname is enough; we never ask for legal names or birthdays. */
+  /** PV-1, a nickname is enough; we never ask for legal names or birthdays. */
   nickname: string;
   createdAt: string;
-  /** CR-9/CR-10 — drives themes, music, and tone; changeable any time. */
+  /** CR-9/CR-10, drives themes, music, and tone; changeable any time. */
   ageBand: AgeBand;
   settings: ChildSettings;
   favorites: string[]; // lesson ids, in order
@@ -132,7 +132,7 @@ export interface Profile {
   photos: CustomPhoto[];
   audio: CustomAudio[];
   sessions: SessionRecord[];
-  /** PT-5 — when settings were last deliberately reviewed. */
+  /** PT-5, when settings were last deliberately reviewed. */
   lastReviewAt: string;
   presetId?: string;
 }
@@ -141,15 +141,15 @@ export interface AppState {
   version: 1;
   activeProfileId: string | null;
   profiles: Profile[];
-  /** PV-3 — optional courtesy lock for the grown-up area (not encryption). */
+  /** PV-3, optional courtesy lock for the grown-up area (not encryption). */
   pinHash: string | null;
-  /** When any export/backup was last saved — drives the backup nudge. */
+  /** When any export/backup was last saved, drives the backup nudge. */
   lastBackupAt: string | null;
 }
 
 /* ---------------------------------- Lessons ---------------------------------- */
 
-/** Single source of truth — the Behavior type and the validator both derive from this. */
+/** Single source of truth, the Behavior type and the validator both derive from this. */
 export const BEHAVIOR_IDS = [
   'pulse',
   'twinkle',
@@ -195,7 +195,7 @@ export type ShapeKind =
   | 'photo'
   | 'bloom'
   | 'moon'
-  /** Matte scenery (the peekaboo occluder) — flat, near-dark, no highlight, never a stimulus. */
+  /** Matte scenery (the peekaboo occluder), flat, near-dark, no highlight, never a stimulus. */
   | 'hill';
 
 export type MelodyId =
@@ -215,7 +215,7 @@ export type MelodyId =
   | 'lanternWaltz'
   | 'meadow';
 
-/** CR-10 — how a lesson re-presents itself for an older band. */
+/** CR-10, how a lesson re-presents itself for an older band. */
 export interface BandVariant {
   title?: string;
   theme?: string;
@@ -237,13 +237,13 @@ export interface LessonSpec {
   id: string;
   title: string;
   level: 1 | 2 | 3 | 4;
-  theme: string; // CR-1 — themes recur across levels
-  /** CR-5 — listening is the goal; visuals stay minimal. */
+  theme: string; // CR-1, themes recur across levels
+  /** CR-5, listening is the goal; visuals stay minimal. */
   hearingFirst?: boolean;
   behavior: Behavior;
   shape: ShapeKind;
   melody: MelodyId;
-  /** FR-9 — a tap anywhere (or a switch press) draws a gentle response. */
+  /** FR-9, a tap anywhere (or a switch press) draws a gentle response. */
   interactive: boolean;
   requiresPhoto?: boolean;
   /**
@@ -252,20 +252,20 @@ export interface LessonSpec {
    * never the child (SR-7); shown as a chip in the library (PT-10).
    */
   skill: string;
-  /** PT-10 — ids of a gentler / bolder neighbour lesson, when one exists. */
+  /** PT-10, ids of a gentler / bolder neighbour lesson, when one exists. */
   stepBack?: string;
   stepUp?: string;
   /**
    * Lessons where the looking itself is the work (find/search): concurrent
    * music competes with it for many children, so the library suggests the
-   * "after a look" or "off" sound modes here (FR-6/PR-11). Guidance only —
+   * "after a look" or "off" sound modes here (FR-6/PR-11). Guidance only,
    * the caregiver's sound-mode setting always wins.
    */
   quietPreferred?: boolean;
   /** Grown-up copy */
   goal: string;
   watchFor: string;
-  /** CR-4 — every lesson carries a real-world bridge prompt. */
+  /** CR-4, every lesson carries a real-world bridge prompt. */
   bridge: string;
 }
 
@@ -289,7 +289,7 @@ export interface SceneItem {
 export interface Scene {
   bg: string;
   items: SceneItem[];
-  /** -1..1 — where the sound should sit when sound-follows-target is on (FR-10). */
+  /** -1..1, where the sound should sit when sound-follows-target is on (FR-10). */
   pan: number;
   /** Audio cues that fired between prevT and t (deterministic). */
   cues: string[];

@@ -1,7 +1,7 @@
 import type { Behavior, SceneItem } from '../lib/types';
 
 /**
- * AR-8 — in-lesson choice scanning. With scanning off, a switch press in the
+ * AR-8, in-lesson choice scanning. With scanning off, a switch press in the
  * find/search lessons counts as a hit (attending + pressing is the
  * achievement). With scanning on, those lessons become *real choices*: a
  * gentle ring steps across the on-screen lights, and choosing submits the
@@ -23,11 +23,11 @@ export const CHOICE_BEHAVIORS: ReadonlySet<Behavior> = new Set<Behavior>([
 ]);
 
 export const LESSON_SCAN = {
-  /** Ring position/opacity smoothing time-constant — glides, never jumps (FR-8). */
+  /** Ring position/opacity smoothing time-constant, glides, never jumps (FR-8). */
   GLIDE_MS: 450,
-  /** Constant ring opacity — no blinking, ever. */
+  /** Constant ring opacity, no blinking, ever. */
   RING_ALPHA: 0.75,
-  /** Stroke width as a fraction of the smaller screen dimension — a thin annulus. */
+  /** Stroke width as a fraction of the smaller screen dimension, a thin annulus. */
   STROKE_FRAC: 0.01,
 } as const;
 
@@ -52,7 +52,7 @@ export class LessonScanController {
     this.ring = { x: 0.5, y: 0.5, r: 0.1, alpha: 0, visible: false };
   }
 
-  /** The things worth stepping between: real, visible items — never blooms, scenery, or dust. */
+  /** The things worth stepping between: real, visible items, never blooms, scenery, or dust. */
   candidates(items: readonly SceneItem[]): SceneItem[] {
     return items.filter((i) => i.shape !== 'bloom' && i.shape !== 'hill' && i.r > 0.035 && i.alpha > 0.08);
   }
@@ -101,7 +101,7 @@ export class LessonScanController {
     this.lastAdvanceAt = lessonT;
   }
 
-  /** The position to submit as a tap — null when nothing is highlighted. */
+  /** The position to submit as a tap, null when nothing is highlighted. */
   selection(): { x: number; y: number } | null {
     return this.current ? { x: this.current.x, y: this.current.y } : null;
   }

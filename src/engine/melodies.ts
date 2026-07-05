@@ -1,7 +1,7 @@
 import type { MelodyId } from '../lib/types';
 
 /**
- * All music is synthesized from note data — no audio files (CR-2, TR-3).
+ * All music is synthesized from note data, no audio files (CR-2, TR-3).
  * Songs are public-domain lullabies and nursery tunes.
  * Note tuple: [midi, beats]; midi 0 is a rest.
  */
@@ -20,7 +20,7 @@ export interface Melody {
 const N = (midi: number, beats: number): Note => [midi, beats];
 
 export const MELODIES: Record<MelodyId, Melody> = {
-  /** Brahms — Wiegenlied (simplified). */
+  /** Brahms, Wiegenlied (simplified). */
   brahms: {
     id: 'brahms',
     bpm: 60,
@@ -113,7 +113,7 @@ export const MELODIES: Record<MelodyId, Melody> = {
     ],
   },
 
-  /** Reward motif for cause-and-effect (FR-9) — gentle rising arpeggio, soft attacks. */
+  /** Reward motif for cause-and-effect (FR-9), gentle rising arpeggio, soft attacks. */
   chime: {
     id: 'chime',
     bpm: 76,
@@ -153,11 +153,11 @@ export const MELODIES: Record<MelodyId, Melody> = {
   },
 
   /*
-   * CR-10 — ambient, dignified lines for older children and teens.
+   * CR-10, ambient, dignified lines for older children and teens.
    * Composed as note data (no licensing risk), same gentle tempo rules.
    */
 
-  /** Slow warm minor arpeggio — embers. */
+  /** Slow warm minor arpeggio, embers. */
   ember: {
     id: 'ember',
     bpm: 56,
@@ -169,7 +169,7 @@ export const MELODIES: Record<MelodyId, Melody> = {
     ],
   },
 
-  /** Long, low tones — a night sky breathing. */
+  /** Long, low tones, a night sky breathing. */
   nightSky: {
     id: 'nightSky',
     bpm: 50,
@@ -193,7 +193,7 @@ export const MELODIES: Record<MelodyId, Melody> = {
   },
 
   /*
-   * CR-10 — the middle band (roughly 2–9): brighter than lullabies,
+   * CR-10, the middle band (roughly 2–9): brighter than lullabies,
    * warmer than the teen ambience. Original tunes as note data.
    */
 
@@ -211,7 +211,7 @@ export const MELODIES: Record<MelodyId, Melody> = {
     ],
   },
 
-  /** A skipping pentatonic line — a walk through long grass. */
+  /** A skipping pentatonic line, a walk through long grass. */
   meadow: {
     id: 'meadow',
     bpm: 78,

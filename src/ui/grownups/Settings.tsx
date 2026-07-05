@@ -20,7 +20,7 @@ import { LivePreview } from './LivePreview';
 import { Card, RadioGroup, RangeField, Toggle } from './bits';
 
 /**
- * Section 5 — every personalization axis, in plain words, presets first
+ * Section 5, every personalization axis, in plain words, presets first
  * (PR-10). Changes save instantly.
  */
 export function Settings({ profile }: { profile: Profile | null }) {
@@ -43,7 +43,7 @@ export function Settings({ profile }: { profile: Profile | null }) {
       <div class="stack settings-main">
       <h1 tabindex={-1}>Settings for {profile.nickname}</h1>
       <p class="card-note">
-        There is no single right setup — the right one is {profile.nickname}'s. Start from a preset, change one
+        There is no single right setup. The right one is {profile.nickname}'s. Start from a preset, change one
         thing at a time, and let your vision professional guide the bigger choices. The preview follows every
         change as you make it.
       </p>
@@ -54,17 +54,17 @@ export function Settings({ profile }: { profile: Profile | null }) {
           value={profile.ageBand}
           onChange={(ageBand) => updateProfile(profile.id, (p) => (p.ageBand = ageBand))}
           options={[
-            { value: 'infant', label: 'A baby', detail: 'Up to around 18 months — lullabies, stars, ducks.' },
-            { value: 'child', label: 'A child', detail: 'Roughly 2–9 — the same warm lessons, wording adjusted.' },
+            { value: 'infant', label: 'A baby', detail: 'Up to around 18 months, lullabies, stars, ducks.' },
+            { value: 'child', label: 'A child', detail: 'Roughly 2–9, the same warm lessons, wording adjusted.' },
             {
               value: 'teen',
               label: 'An older child or teen',
-              detail: 'Roughly 10 and up — embers, orbits, and ambient music instead of nursery content.',
+              detail: 'Roughly 10 and up, embers, orbits, and ambient music instead of nursery content.',
             },
           ]}
         />
         <p class="hint">
-          Age changes how lessons look, sound, and speak — never how simple they are allowed to be. Someone
+          Age changes how lessons look, sound, and speak, never how simple they are allowed to be. Someone
           older working on the earliest looking skills gets the same calm, high-salience targets, presented with
           respect (no cartoon ducks, no nursery rhymes).
         </p>
@@ -104,7 +104,7 @@ export function Settings({ profile }: { profile: Profile | null }) {
           <span class="field-label" id="color-label">
             Target colour
           </span>
-          <p class="hint">Many children with CVI are drawn to one colour — often red or yellow, but not always.</p>
+          <p class="hint">Many children with CVI are drawn to one colour, often red or yellow, but not always.</p>
           <div class="swatches" role="group" aria-labelledby="color-label">
             {Object.entries(TARGET_COLORS).map(([id, hex]) => (
               <button
@@ -124,7 +124,7 @@ export function Settings({ profile }: { profile: Profile | null }) {
           value={s.background}
           onChange={(background) => set({ background })}
           options={[
-            { value: 'black', label: 'Pure black', detail: 'Highest contrast — the usual choice.' },
+            { value: 'black', label: 'Pure black', detail: 'Highest contrast, the usual choice.' },
             { value: 'midnight', label: 'Midnight blue', detail: 'A whisper softer than black.' },
             { value: 'charcoal', label: 'Charcoal', detail: 'For screens that look harsh at full black.' },
           ]}
@@ -146,7 +146,7 @@ export function Settings({ profile }: { profile: Profile | null }) {
           min={1}
           max={4}
           words={['No glow', 'A hint', 'Soft halo', 'Strong halo']}
-          hint="Glow helps many children find the target — but for some it feeds staring at light itself rather than looking at things. If your child is drawn into the light rather than the shape, turn glow down or off, and mention it to your vision professional."
+          hint="Glow helps many children find the target, but for some it feeds staring at light itself rather than looking at things. If your child is drawn into the light rather than the shape, turn glow down or off, and mention it to your vision professional."
           onChange={(v) => set({ glow: (v - 1) as typeof s.glow })}
         />
 
@@ -163,7 +163,7 @@ export function Settings({ profile }: { profile: Profile | null }) {
         <Toggle
           label="Movement"
           checked={s.movement}
-          hint="Movement is a powerful attention magnet in CVI — and also more work. Off means targets rest still."
+          hint="Movement is a powerful attention magnet in CVI, and also more work. Off means targets rest still."
           onChange={(movement) => set({ movement })}
         />
         {s.movement && (
@@ -194,7 +194,7 @@ export function Settings({ profile }: { profile: Profile | null }) {
           min={1}
           max={5}
           words={['Slowest', 'Very slow', 'Slow', 'Relaxed', 'Flowing']}
-          hint="How long things linger and how slowly they change. CVI often means a long pause before a look — slower paces wait longer."
+          hint="How long things linger and how slowly they change. CVI often means a long pause before a look. Slower paces wait longer."
           onChange={(pace) => set({ pace: pace as typeof s.pace })}
         />
 
@@ -229,7 +229,7 @@ export function Settings({ profile }: { profile: Profile | null }) {
           value={s.audioMode}
           onChange={(audioMode) => set({ audioMode })}
           options={[
-            { value: 'with', label: 'With the visual', detail: 'Song and light together — the usual pairing.' },
+            { value: 'with', label: 'With the visual', detail: 'Song and light together, the usual pairing.' },
             {
               value: 'after',
               label: 'After a look',
@@ -252,21 +252,21 @@ export function Settings({ profile }: { profile: Profile | null }) {
           value={s.audioStyle}
           onChange={(audioStyle) => set({ audioStyle })}
           options={[
-            { value: 'single', label: 'Single instrument', detail: 'One clear voice — easiest to listen to.' },
+            { value: 'single', label: 'Single instrument', detail: 'One clear voice, easiest to listen to.' },
             { value: 'layered', label: 'Softly layered', detail: 'Adds a quiet second voice underneath.' },
           ]}
         />
         <Toggle
           label="Sound follows the target"
           checked={s.soundFollowsTarget}
-          hint="The song sits where the target is and travels with it — joining looking and listening. Needs stereo speakers to be felt."
+          hint="The song sits where the target is and travels with it, joining looking and listening. Needs stereo speakers to be felt."
           onChange={(soundFollowsTarget) => set({ soundFollowsTarget })}
         />
         <AudioManager profile={profile} />
         <Toggle
           label="A tiny vibration on touch rewards"
           checked={s.haptics}
-          hint="Where the device supports it — a quiet extra channel for babies who don't hear the chime."
+          hint="Where the device supports it, a quiet extra channel for babies who don't hear the chime."
           onChange={(haptics) => set({ haptics })}
         />
       </Card>
@@ -292,15 +292,15 @@ export function Settings({ profile }: { profile: Profile | null }) {
         />
         <p class="hint">
           The ring's timing follows the pace setting above and never hurries. During most lessons the switch
-          belongs to {profile.nickname} — any press is the lesson's touch. In the find-and-seek lessons, the
-          ring steps gently between the lights on screen, and choosing answers the one it rests on — a real
+          belongs to {profile.nickname}. Any press is the lesson's touch. In the find-and-seek lessons, the
+          ring steps gently between the lights on screen, and choosing answers the one it rests on, a real
           choice, made with a switch. The ring returns for menus and the pause screen.
         </p>
 
         <Toggle
           label="Notice where on the screen responses happen (optional)"
           checked={s.fieldObservation}
-          hint="Quietly counts which part of the screen the target was in when you (or they) marked a response. After a couple of weeks of sessions, the Notes page may offer a gentle observation — purely as tuning help and something to discuss with their vision professional. It never tests, measures, or diagnoses anything, and single sessions are never interpreted."
+          hint="Quietly counts which part of the screen the target was in when you (or they) marked a response. After a couple of weeks of sessions, the Notes page may offer a gentle observation, purely as tuning help and something to discuss with their vision professional. It never tests, measures, or diagnoses anything, and single sessions are never interpreted."
           onChange={(fieldObservation) => set({ fieldObservation })}
         />
       </Card>
@@ -312,7 +312,7 @@ export function Settings({ profile }: { profile: Profile | null }) {
           min={2}
           max={8}
           words={['2 minutes', '3 minutes', '4 minutes', '5 minutes', '6 minutes', '7 minutes', '8 minutes']}
-          hint="Looking is genuinely tiring work with CVI. The lesson fades to a resting moon when time is up — never an abrupt stop."
+          hint="Looking is genuinely tiring work with CVI. The lesson fades to a resting moon when time is up, never an abrupt stop."
           onChange={(sessionMinutes) => set({ sessionMinutes })}
         />
       </Card>
@@ -321,7 +321,7 @@ export function Settings({ profile }: { profile: Profile | null }) {
 
       <Card title="Reviewed together?">
         <p class="card-note">
-          When you've looked over these settings — ideally with {profile.nickname}'s vision professional — mark it
+          When you've looked over these settings, ideally with {profile.nickname}'s vision professional, mark it
           here, and we'll remind you again in a month or two.
         </p>
         <button
@@ -337,7 +337,7 @@ export function Settings({ profile }: { profile: Profile | null }) {
 }
 
 /**
- * CR-3 — a favourite song or a familiar voice as the session music.
+ * CR-3, a favourite song or a familiar voice as the session music.
  * Files stay in this browser's storage; they are not part of profile exports.
  */
 function AudioManager({ profile }: { profile: Profile }) {
@@ -389,7 +389,7 @@ function AudioManager({ profile }: { profile: Profile }) {
       <p class="hint">
         A song {profile.nickname} already loves, or a recording of a familiar voice singing, can be more
         motivating than anything built in. Playback is softened and volume-matched automatically. Files stay in
-        this browser only — they are never uploaded, and they don't travel with profile exports.
+        this browser only. They are never uploaded, and they don't travel with profile exports.
       </p>
       <fieldset>
         <legend>Which music plays during lessons?</legend>
@@ -452,7 +452,7 @@ function AudioManager({ profile }: { profile: Profile }) {
   );
 }
 
-/** CR-3 / PV-5 — the child's own motivating things, kept on this device only. */
+/** CR-3 / PV-5, the child's own motivating things, kept on this device only. */
 function PhotoManager({ profile }: { profile: Profile }) {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null);
@@ -466,7 +466,7 @@ function PhotoManager({ profile }: { profile: Profile }) {
       updateProfile(profile.id, (p) => {
         p.photos.push({ id: uid(), label: file.name.replace(/\.[a-z0-9]+$/i, ''), dataUrl, lum, addedAt: new Date().toISOString() });
       });
-      setMsg({ kind: 'ok', text: 'Added. It stays on this device — nothing is uploaded.' });
+      setMsg({ kind: 'ok', text: 'Added. It stays on this device. Nothing is uploaded.' });
     } catch (e) {
       setMsg({ kind: 'err', text: e instanceof Error ? e.message : 'That photo could not be added.' });
     } finally {
@@ -475,11 +475,11 @@ function PhotoManager({ profile }: { profile: Profile }) {
   };
 
   return (
-    <Card title="Familiar things — your own photos">
+    <Card title="Familiar things, your own photos">
       <p class="card-note">
         A favourite toy, or a familiar, loved face: often the most motivating targets of all. Photos are shrunk
-        and stored <b>on this device only</b> — never uploaded, never sent anywhere. They unlock the “A Familiar
-        Face or Toy” lesson. You can also record <b>your own voice</b> naming each photo — “the red ball!” —
+        and stored <b>on this device only</b>, never uploaded, never sent anywhere. They unlock the “A Familiar
+        Face or Toy” lesson. You can also record <b>your own voice</b> naming each photo, “the red ball!”,
         and in the photo lessons that voice becomes the answer: after a find, or when you mark a look in the
         “after a look” sound mode. Recordings stay on this device too.
       </p>
@@ -540,7 +540,7 @@ function PhotoManager({ profile }: { profile: Profile }) {
 }
 
 /**
- * CR-3 — a short caregiver voice label per photo ("the red ball!"), recorded
+ * CR-3, a short caregiver voice label per photo ("the red ball!"), recorded
  * right here or added as a small audio file. It becomes the answer in the
  * photo lessons. The clip lives in this browser's storage only (PV-5) and is
  * removed with the photo. Recording needs the microphone once, with your
@@ -576,7 +576,7 @@ function VoiceLabelControl({ profile, photo }: { profile: Profile; photo: Custom
     try {
       const { duration, gain } = await analyzeAudio(blob);
       if (duration > MAX_VOICE_SECONDS) {
-        throw new Error('Keep it under ten seconds — just the name, said warmly.');
+        throw new Error('Keep it under ten seconds, just the name, said warmly.');
       }
       await putBlob(voiceBlobId(photo.id), blob);
       updateProfile(profile.id, (p) => {
@@ -612,7 +612,7 @@ function VoiceLabelControl({ profile, photo }: { profile: Profile; photo: Custom
       rec.start();
       setState('recording');
     } catch {
-      setErr('The microphone is not available here — you can add a small audio file instead.');
+      setErr('The microphone is not available here. You can add a small audio file instead.');
     }
   };
 
@@ -652,7 +652,7 @@ function VoiceLabelControl({ profile, photo }: { profile: Profile; photo: Custom
       {photo.voice ? (
         <>
           <span class="hint" style={{ margin: 0 }}>
-            Voice label ({Math.max(1, Math.round(photo.voice.duration))} s) — plays as the answer in photo
+            Voice label ({Math.max(1, Math.round(photo.voice.duration))} s), plays as the answer in photo
             lessons.
           </span>
           <button class="btn btn-small" aria-label={`Play the voice label for ${photo.label}`} onClick={play}>
@@ -668,7 +668,7 @@ function VoiceLabelControl({ profile, photo }: { profile: Profile; photo: Custom
         </>
       ) : state === 'recording' ? (
         <button class="btn btn-small" aria-label={`Finish recording for ${photo.label}`} onClick={stopRecording}>
-          ● Recording — tap to finish (stops by itself after 8 s)
+          ● Recording, tap to finish (stops by itself after 8 s)
         </button>
       ) : (
         <>

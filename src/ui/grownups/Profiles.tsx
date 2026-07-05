@@ -13,7 +13,7 @@ import {
 import { formatDate, plural } from '../../lib/fmt';
 import { Card, downloadFile } from './bits';
 
-/** PT-1 / PT-3 / PV-3 / PV-4 — children on this device, moving profiles, the courtesy lock. */
+/** PT-1 / PT-3 / PV-3 / PV-4, children on this device, moving profiles, the courtesy lock. */
 export function Profiles({ state }: { state: AppState }) {
   const [newName, setNewName] = useState('');
   const [importMsg, setImportMsg] = useState<{ kind: 'ok' | 'err'; text: string } | null>(null);
@@ -23,7 +23,7 @@ export function Profiles({ state }: { state: AppState }) {
     <div class="stack">
       <h1 tabindex={-1}>Children on this device</h1>
       <p class="card-note">
-        Each child has their own settings, starred lessons, notes, and photos — all stored only in this browser.
+        Each child has their own settings, starred lessons, notes, and photos, all stored only in this browser.
         A nickname is all that's needed; please avoid full names and birthdays.
       </p>
 
@@ -54,7 +54,7 @@ export function Profiles({ state }: { state: AppState }) {
 
       <Card title="Bring a profile from another device">
         <p class="card-note">
-          Choose a <code>.json</code> file exported from Light & Sound — settings, notes, and photos come with it.
+          Choose a <code>.json</code> file exported from Light & Sound, settings, notes, and photos come with it.
         </p>
         <input
           ref={fileRef}
@@ -72,7 +72,7 @@ export function Profiles({ state }: { state: AppState }) {
                       kind: 'ok',
                       text:
                         result.count === 1
-                          ? `Welcome, ${result.firstNickname} — profile imported.`
+                          ? `Welcome, ${result.firstNickname}, profile imported.`
                           : `${result.count} profiles imported.`,
                     }
                   : { kind: 'err', text: result.error },
@@ -93,7 +93,7 @@ export function Profiles({ state }: { state: AppState }) {
       {state.profiles.length > 1 && (
         <Card title="Back up this whole device">
           <p class="card-note">
-            One file with every child's profile — settings, notes, and photos (recordings stay on this device).
+            One file with every child's profile, settings, notes, and photos (recordings stay on this device).
             It contains personal information about children; keep it somewhere you trust.
           </p>
           <button
@@ -157,7 +157,7 @@ function ProfileCard({ profile, isActive, multiple }: { profile: Profile; isActi
         ) : (
           <div class="card" style={{ background: 'var(--bg2)' }}>
             <p class="card-note">
-              The file will include {profile.nickname}'s settings, your notes, and any photos — personal
+              The file will include {profile.nickname}'s settings, your notes, and any photos, personal
               information about your child. It saves to this device; share it only with people you trust, such as
               their vision teacher.
             </p>
@@ -187,7 +187,7 @@ function ProfileCard({ profile, isActive, multiple }: { profile: Profile; isActi
         ) : (
           <div>
             <p class="msg-err">
-              This deletes {profile.nickname}'s settings, notes, and photos from this device. There is no undo —
+              This deletes {profile.nickname}'s settings, notes, and photos from this device. There is no undo,
               consider exporting first.
             </p>
             <div class="row">
@@ -212,11 +212,11 @@ function PinCard({ hasPin }: { hasPin: boolean }) {
   return (
     <Card title="A light lock for this area">
       <p class="card-note">
-        On a shared tablet — a family device, or a therapist's — a PIN keeps notes and photos away from casual
+        On a shared tablet, a family device, or a therapist's, a PIN keeps notes and photos away from casual
         eyes. It asks again every time you come back from the child screen. It's a courtesy lock, not
         encryption; anyone with real access to the device could still reach browser data. And if it's ever
         forgotten, there's no recovery by design: clearing this site's data in the browser removes the lock
-        <b> and everything else on this device</b> — which is one more reason to keep a backup file.
+        <b> and everything else on this device</b>, which is one more reason to keep a backup file.
       </p>
       {hasPin ? (
         <div class="row">

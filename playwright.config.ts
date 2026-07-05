@@ -1,7 +1,7 @@
 import { defineConfig } from '@playwright/test';
 
 /**
- * E2E smoke suite (tests/e2e) — covers what jsdom cannot: the real canvas
+ * E2E smoke suite (tests/e2e), covers what jsdom cannot: the real canvas
  * animating, fullscreen/audio unlock paths, gate flows, downloads, and
  * switch scanning against a production build.
  */

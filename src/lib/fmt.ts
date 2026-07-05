@@ -2,7 +2,7 @@ import { LOCALE } from './locale';
 
 /**
  * Locale-aware formatting. The single funnel for dates, durations, and plurals
- * so there is one place to adjust when the app gains languages — no inline
+ * so there is one place to adjust when the app gains languages, no inline
  * `toLocaleDateString()`, `${n} min`, or `${n === 1 ? '' : 's'}` anywhere else.
  */
 
@@ -25,7 +25,7 @@ export function formatDuration(seconds: number): string {
 
 /**
  * A minutes-and-seconds length ("1 min 35 s"), for short audio-clip labels.
- * Rounds to whole seconds first, then splits — so the seconds part is always
+ * Rounds to whole seconds first, then splits, so the seconds part is always
  * 0–59 and a rounded-up 60 rolls into the minute (never "1 min 60 s"), and the
  * minute is floored (a 35 s clip is "0 min 35 s", not "1 min 35 s").
  */
@@ -43,7 +43,7 @@ const PLURAL_RULES = new Intl.PluralRules(LOCALE);
 /**
  * Pick a noun form for a count. English callers pass `{ one, other }`; other
  * languages add `few`/`many`/etc. later without touching call sites. Returns
- * the word only — callers place the number: `${n} ${plural(n, { … })}`.
+ * the word only, callers place the number: `${n} ${plural(n, { … })}`.
  */
 export function plural(n: number, forms: PluralForms): string {
   return forms[PLURAL_RULES.select(n) as PluralCategory] ?? forms.other;

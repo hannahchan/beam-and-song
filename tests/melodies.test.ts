@@ -4,7 +4,7 @@ import { SAFETY } from '../src/safety/constants';
 
 describe('music stays slow and gentle (FR-7, PR-8)', () => {
   for (const melody of Object.values(MELODIES)) {
-    it(`${melody.id} — tempo, range, and note shapes`, () => {
+    it(`${melody.id}, tempo, range, and note shapes`, () => {
       expect(melody.bpm).toBeLessThanOrEqual(SAFETY.MAX_TEMPO_BPM);
       expect(melody.notes.length).toBeGreaterThan(0);
       for (const [midi, beats] of melody.notes) {

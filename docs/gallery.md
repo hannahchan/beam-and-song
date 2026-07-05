@@ -1,7 +1,7 @@
 # Lesson gallery (screenshot flip-book)
 
 `tests/e2e/gallery.spec.ts` captures every lesson in `src/lessons/specs.ts` as a
-full-viewport PNG — a flip-book of the whole library for a human eye to review.
+full-viewport PNG, a flip-book of the whole library for a human eye to review.
 It is opt-in: the default `npx playwright test` run (the CI deploy gate) skips it.
 
 - **Run:** `GALLERY=1 npx playwright test tests/e2e/gallery.spec.ts`

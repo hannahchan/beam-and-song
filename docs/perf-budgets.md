@@ -8,13 +8,13 @@ Runs on every build in CI; the deploy fails if exceeded.
 
 | Budget | Limit | Rationale |
 |---|---|---|
-| JS, gzipped | 70 KB | Whole app incl. all lessons and synthesized music — parses fast on old tablets. |
+| JS, gzipped | 70 KB | Whole app incl. all lessons and synthesized music, parses fast on old tablets. |
 | CSS, gzipped | 10 KB | |
 | HTML, gzipped | 3 KB | |
 | Total payload, raw | 400 KB | Everything a device ever downloads (incl. icons). No per-lesson fetches exist at all. |
 
 The app renders visuals procedurally and synthesizes audio from note data, so lessons
-perform **zero asset fetches** — the classic stutter sources (image decode, audio
+perform **zero asset fetches**: the classic stutter sources (image decode, audio
 buffering) are designed out rather than optimized.
 
 ## 2. On-device soak (human, with real hardware)

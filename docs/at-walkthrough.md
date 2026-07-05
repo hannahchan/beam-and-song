@@ -1,14 +1,14 @@
-# Assistive-technology walkthrough (TR-10) — scripts & results
+# Assistive-technology walkthrough (TR-10): scripts & results
 
 Automated checks (axe on every page, contrast tests, keyboard-operable controls, scanning
 unit/E2E tests) run in CI. **This document is the human half**: scripted passes on real
-devices with real assistive tech. Update the results tables as you run them — findings go
+devices with real assistive tech. Update the results tables as you run them, findings go
 to `clinical-feedback.md` or issues.
 
 Suggested hardware: an iPad (Safari/VoiceOver/Switch Control), any Android tablet
 (TalkBack/Switch Access), and a laptop (NVDA on Windows or VoiceOver on macOS).
 
-## Script A — keyboard only (any laptop)
+## Script A: keyboard only (any laptop)
 
 1. Load the site. Tab: first stop should be the skip link, then Start, then "For grown-ups".
 2. Enter on Start → chooser tiles reachable in order; Enter plays a lesson.
@@ -25,9 +25,9 @@ Suggested hardware: an iPad (Safari/VoiceOver/Switch Control), any Android table
 |---|---|---|
 | A1–A6 | ☐ | |
 
-## Script B — VoiceOver (iPad Safari)
+## Script B: VoiceOver (iPad Safari)
 
-1. Landing: elements announce sensibly ("Start — gentle lessons for your baby, button").
+1. Landing: elements announce sensibly ("Start, gentle lessons for your baby, button").
 2. Chooser tiles announce "Play <lesson>, button".
 3. Grown-up pages: headings navigable by rotor; sliders announce plain-word values
    ("Pace, Very slow"); groups/legends read before options; the weekly bars announce the
@@ -39,7 +39,7 @@ Suggested hardware: an iPad (Safari/VoiceOver/Switch Control), any Android table
 |---|---|---|
 | B1–B5 | ☐ | |
 
-## Script C — NVDA (Windows, Chrome or Firefox)
+## Script C: NVDA (Windows, Chrome or Firefox)
 
 Same route as Script B; additionally check that the update toast (when present) is
 announced politely (role=status) and the observation card reads as one coherent form.
@@ -48,7 +48,7 @@ announced politely (role=status) and the observation card reads as one coherent 
 |---|---|---|
 | C | ☐ | |
 
-## Script D — iOS Switch Control (external or screen switch)
+## Script D: iOS Switch Control (external or screen switch)
 
 1. With app scanning **off**: Switch Control's own scanner reaches every control on
    landing, chooser, gate, and grown-up pages (they are all native buttons/links).
@@ -62,7 +62,7 @@ announced politely (role=status) and the observation card reads as one coherent 
 |---|---|---|
 | D1–D4 | ☐ | |
 
-## Script E — Android Switch Access + TalkBack spot-check
+## Script E: Android Switch Access + TalkBack spot-check
 
 Mirror of D plus a TalkBack pass over Settings and the Guide.
 
@@ -70,7 +70,7 @@ Mirror of D plus a TalkBack pass over Settings and the Guide.
 |---|---|---|
 | E | ☐ | |
 
-## Script F — surfaces added after the original scripts (July 2026)
+## Script F: surfaces added after the original scripts (July 2026)
 
 1. **Hold lesson** (Keep the Light Singing / Sustain): holding Space or Enter swells the
    light and hums; releasing settles it; Escape during a hold opens the pause dialog *and*
@@ -90,9 +90,9 @@ Mirror of D plus a TalkBack pass over Settings and the Guide.
 
 ## Known limitations (by design or deferred)
 
-- Built-in scanning skips free-text fields (names, notes, PIN) — those need the platform's
+- Built-in scanning skips free-text fields (names, notes, PIN), those need the platform's
   own tools. Sliders are fully scannable via their −/+ stepper buttons.
 - The child lesson screen is deliberately non-standard (FR-2): no focusable elements
   besides the corner pause button; the whole surface is the interactive target.
-- Haptic rewards are unavailable on iPads (no web vibration API) — the visual response
+- Haptic rewards are unavailable on iPads (no web vibration API), the visual response
   carries the moment; noted in Settings copy.

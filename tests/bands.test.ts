@@ -10,7 +10,7 @@ import { DEFAULT_SETTINGS } from '../src/lib/store';
 import { MELODIES } from '../src/engine/melodies';
 
 /**
- * CR-9 / CR-10 — phase and age are independent axes, and the older bands
+ * CR-9 / CR-10, phase and age are independent axes, and the older bands
  * must never be served babyish content. These tests make "serve every age
  * with dignity" a build-breaking guarantee, not a style hope.
  */
@@ -66,7 +66,7 @@ describe('age bands', () => {
     expect(glow.melody).not.toBe('brahms');
   });
 
-  it('resolution preserves behavior, level, and interactivity — age never changes the practice', () => {
+  it('resolution preserves behavior, level, and interactivity, age never changes the practice', () => {
     for (const base of LESSONS) {
       for (const band of ['child', 'teen'] as const) {
         const r = resolveLesson(base, band);

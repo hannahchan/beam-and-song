@@ -1,43 +1,43 @@
-# Light & Sound — clinical review packet
+# Light & Sound: clinical review packet
 
 *For vision professionals, CVI specialists, low-vision therapists, and early-intervention professionals.*
-*Prepared July 2026 · covers the full current build — Levels 1–4 across three age bands,
-listening lessons, and per-lesson guidance — plus what remains planned (see ROADMAP.md).*
+*Prepared July 2026 · covers the full current build, Levels 1–4 across three age bands,
+listening lessons, and per-lesson guidance, plus what remains planned (see ROADMAP.md).*
 
 Thank you for looking at this. Light & Sound is a free, static web app offering short,
 highly tuneable light-and-sound lessons for children with CVI, built as a **companion to
 professional care, never a programme or assessment**. Before we recommend it to any
 family, we want professional eyes on the content, the copy, and the safety reasoning.
-Nothing in this packet assumes you'll be gentle — critical findings are the valuable ones.
+Nothing in this packet assumes you'll be gentle, critical findings are the valuable ones.
 
 ## 1. What to review (in priority order)
 
-1. **Safety reasoning** (§3 below) — are the assumptions sound for a seizure-prone population?
-2. **Lesson content & progression** — do the activities match CVI practice at each level
+1. **Safety reasoning** (§3 below), are the assumptions sound for a seizure-prone population?
+2. **Lesson content & progression**: do the activities match CVI practice at each level
    (attention → anticipation and reach → finding among company → search, sweep, faces)?
    Are any counterproductive for some children?
-3. **Readiness cues** — each lesson's "what to watch for" and the Guide's
+3. **Readiness cues**: each lesson's "what to watch for" and the Guide's
    "moving up, stepping back" section. Are these observations the right ones to teach a parent?
-4. **The guided setup** — five questions recommending a starting preset. Would a newly
+4. **The guided setup**: five questions recommending a starting preset. Would a newly
    diagnosed family be steered somewhere sensible? Somewhere harmful?
-5. **Copy and framing** — the app claims "companion, not curriculum" everywhere.
+5. **Copy and framing**: the app claims "companion, not curriculum" everywhere.
    Does any wording drift into instruction, assessment, or false reassurance?
-6. **The glow question** — glow defaults on (level 2 of 3) with copy noting light-gazing
+6. **The glow question**: glow defaults on (level 2 of 3) with copy noting light-gazing
    concerns and a fully-off setting. Is that the right default and the right framing?
 
 ## 2. How to review
 
-- Live site: (deploy URL here) — works on any tablet/laptop; nothing installs, no data leaves the device.
+- Live site: (deploy URL here), works on any tablet/laptop; nothing installs, no data leaves the device.
 - The child flow: tap **Start** → a lesson tile → watch a full session end in the "rest" screen.
 - The grown-up area: **For grown-ups** → hold the button (or tap "two") → explore
   Lessons, Settings, Notes, and the Guide. Try the guided setup with an imagined child.
 - **The quickest full pass:** Lessons → "Walk through every lesson, one after another" plays the
   whole library on a single page (buttons or arrow keys, optional slideshow and sound), using the
-  active child's settings and age band — switch the band in Settings to review all three renderings.
+  active child's settings and age band, switch the band in Settings to review all three renderings.
 - Please record findings in `clinical-feedback.md` format (one finding per row) or
-  however is easiest for you — email/voice notes welcome.
+  however is easiest for you, email/voice notes welcome.
 
-## 3. Safety approach — the part we most want challenged
+## 3. Safety approach: the part we most want challenged
 
 Seizure disorders are common alongside CVI, so the app enforces, in code, on every
 lesson at every setting:
@@ -45,20 +45,20 @@ lesson at every setting:
 | Constraint | Value we enforce | Reference point |
 |---|---|---|
 | Periodic modulation (pulse/twinkle/bob) | ≤ 0.5 Hz | risk band starts ≈ 3 Hz (WCAG 2.3.1 / ISO 9241-391) |
-| Any appearance/disappearance/change | eased fade ≥ 500 ms — no cuts | — |
+| Any appearance/disappearance/change | eased fade ≥ 500 ms, no cuts |, |
 | Luminance swing in any 0.5 s window | ≤ 0.18 (relative luminance, whole screen) | WCAG "general flash" = opposing swings ≥ 0.10 |
 | Opposing luminance swings ("flash pairs") | ≤ 1 per second | WCAG allows 3/s |
 | Saturated-red area transitions | zero | WCAG red-flash |
 | Whole-screen relative luminance | ≤ 0.8 | dark-first design |
-| Reward re-trigger (tap spam) | ≥ 1.5 s cooldown | — |
+| Reward re-trigger (tap spam) | ≥ 1.5 s cooldown |, |
 | Patterns (stripes/checks/gratings) | none exist anywhere | pattern-sensitivity literature |
 | Music tempo | ≤ 84 BPM, soft attacks ≥ 30 ms | comfort, not seizure-driven |
 
 These are verified by an automated suite that simulates every lesson frame-by-frame
 (60 fps) at the most extreme settings a caregiver can reach, including button-mashing on
 interactive lessons, and measures the resulting luminance timeline. The suite has
-rejected designs repeatedly during development — most recently five over-bright reward
-blooms in a single content round — which we take as evidence it has teeth.
+rejected designs repeatedly during development, most recently five over-bright reward
+blooms in a single content round, which we take as evidence it has teeth.
 
 **Assumptions we'd like challenged:**
 - Whole-screen average luminance is our metric; we don't model localized retinal area
@@ -109,7 +109,7 @@ real-object bridge (screen first, real thing next).
 Personalization axes: colour, background, movement+speed, complexity (1 object → subtle
 texture), visual-field bias (direction + strength), pace/latency, size, glow (off→strong),
 brightness, sound mode (**with** / **after a look** / **off**), volume, single/layered,
-sound-follows-target, haptics, session length (2–8 min) — plus the family's own photos and
+sound-follows-target, haptics, session length (2–8 min), plus the family's own photos and
 music, and a recorded caregiver voice label per photo that plays as the answer in the
 photo lessons (all media on-device only).
 
@@ -127,13 +127,13 @@ photo lessons (all media on-device only).
 7. Is there anything here that could *reinforce* light-gazing, beyond the glow control
    we already expose and caveat?
 8. Age bands and Levels 3–4 are now built (visual search, colour-anchored finding, an
-   ordered sweep, crowding, faces via family photos — all inside the unchanged safety
+   ordered sweep, crowding, faces via family photos, all inside the unchanged safety
    limits). Any red flags in how they landed, and what should the *next* expansion be?
 9. What's missing that you'd actually use with a client family?
 10. **Sound during searching.** The find/search lessons now carry a card note suggesting
     the "after a look" or "off" sound modes (sensory-competition reasoning: Roman-Lantzy's
     distance-learning guidance, CVI Scotland's "eyes or ears", Pilling 2022). Should quiet
-    go further and become the *default* for those lessons — or for the earliest preset —
+    go further and become the *default* for those lessons, or for the earliest preset,
     in an app whose identity is light *and* song? We deliberately left defaults unchanged
     pending your view.
 11. **Peekaboo timing.** Peekaboo Light hides the target for ~1.2× the child's hold
@@ -147,7 +147,7 @@ photo lessons (all media on-device only).
     company, cool target → clay company). Is that a fair first colour-discrimination step?
 14. **The shunt note.** The Guide's setup section now cautions families of children with
     programmable shunt valves to ask their medical team about tablet magnets. Is the wording
-    right — informative without alarm?
+    right, informative without alarm?
 15. **The hold lesson.** Keep the Light Singing asks for a *sustained* press (any touch, or a
     held switch): the light swells over ~1.4 s while held and settles over ~1.9 s on release,
     humming a soft note every ~1.25 s while held. Is sustained-press demand appropriate this
@@ -155,7 +155,7 @@ photo lessons (all media on-device only).
     part of the game, never a failure.)
 16. **Voice labels.** A caregiver can record their own voice naming each photo (≤10 s,
     on-device only, removable), and that voice replaces the chime as the answer in photo
-    lessons — including "after a look" mode, where it replaces the melody phrase. Perkins'
+    lessons, including "after a look" mode, where it replaces the melody phrase. Perkins'
     "meaningful pictures and sounds" pattern suggests this is the most meaningful reward we
     can offer; is there any concern about pairing the caregiver's voice with screen rewards,
     or about the recording moment itself (a parent narrating at the child)?

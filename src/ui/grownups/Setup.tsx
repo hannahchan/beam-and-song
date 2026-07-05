@@ -6,7 +6,7 @@ import { updateProfile } from '../../lib/store';
 import { Card, RadioGroup } from './bits';
 
 /**
- * PR-12 — five plain questions instead of a wall of sliders. Ends in a
+ * PR-12, five plain questions instead of a wall of sliders. Ends in a
  * recommendation the caregiver applies with one tap, and can change any time.
  */
 export function Setup({ profile }: { profile: Profile | null }) {
@@ -48,7 +48,7 @@ export function Setup({ profile }: { profile: Profile | null }) {
             </p>
           ))}
           <p class="card-note">
-            Nothing is fixed — adjust anything in Settings as you learn what {profile.nickname} enjoys, and bring
+            Nothing is fixed, adjust anything in Settings as you learn what {profile.nickname} enjoys, and bring
             your vision professional into the tuning whenever you can.
           </p>
           <div class="row">
@@ -68,7 +68,7 @@ export function Setup({ profile }: { profile: Profile | null }) {
     <div class="stack">
       <h1 tabindex={-1}>Guided setup for {profile.nickname}</h1>
       <p class="card-note">
-        Five questions, best guesses welcome — “not sure” is a perfectly good answer. This only chooses a starting
+        Five questions, best guesses welcome, “not sure” is a perfectly good answer. This only chooses a starting
         point.
       </p>
 
@@ -90,7 +90,7 @@ export function Setup({ profile }: { profile: Profile | null }) {
           options={[
             { value: 'red', label: 'Red (or reddish things)' },
             { value: 'yellow', label: 'Yellow (or golden things)' },
-            { value: 'unsure', label: 'Not sure yet', detail: 'We’ll start with red — a common first door.' },
+            { value: 'unsure', label: 'Not sure yet', detail: 'We’ll start with red, a common first door.' },
           ]}
         />
         <RadioGroup
@@ -98,8 +98,8 @@ export function Setup({ profile }: { profile: Profile | null }) {
           value={a.movementHelps}
           onChange={(movementHelps) => setA({ ...a, movementHelps })}
           options={[
-            { value: 'yes', label: 'Yes — movement catches them' },
-            { value: 'no', label: 'No — movement seems to lose them' },
+            { value: 'yes', label: 'Yes, movement catches them' },
+            { value: 'no', label: 'No, movement seems to lose them' },
             { value: 'unsure', label: 'Not sure' },
           ]}
         />
@@ -130,8 +130,8 @@ export function Setup({ profile }: { profile: Profile | null }) {
           onChange={(looksYet) => setA({ ...a, looksYet })}
           options={[
             { value: 'rarely', label: 'Rarely or I’m not sure yet', detail: 'We’ll begin with one still light at a time.' },
-            { value: 'sometimes', label: 'Sometimes — brief moments' },
-            { value: 'often', label: 'Fairly often — and sometimes follows' },
+            { value: 'sometimes', label: 'Sometimes, brief moments' },
+            { value: 'often', label: 'Fairly often, and sometimes follows' },
           ]}
         />
       </Card>

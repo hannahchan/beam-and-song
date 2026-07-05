@@ -7,7 +7,7 @@ import { HOLD_DRIVEN_BEHAVIORS, LESSONS } from '../src/lessons/specs';
 
 /**
  * Hold-to-sustain (Keep the Light Singing): the kernel's slew-limited
- * envelope is the safety argument — no press pattern can flicker, because
+ * envelope is the safety argument, no press pattern can flicker, because
  * the value physically cannot move faster than its ramps.
  */
 
@@ -15,7 +15,7 @@ const lesson = LESSONS.find((l) => HOLD_DRIVEN_BEHAVIORS.has(l.behavior))!;
 const params = buildParams(DEFAULT_SETTINGS);
 const sim = (holds: { start: number; end: number }[]): SimInput => ({ seed: 1, taps: [], holds });
 
-describe('holdEnvelope — slew-limited by construction', () => {
+describe('holdEnvelope, slew-limited by construction', () => {
   it('rises only while held, at the bounded rate, and saturates', () => {
     const holds = [{ start: 1000, end: 10_000 }];
     expect(holdEnvelope(1000, holds, 1000, 1500)).toBe(0);

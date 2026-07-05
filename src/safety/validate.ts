@@ -11,7 +11,7 @@ import { SAFETY } from './constants';
 const BEHAVIORS = new Set<string>(BEHAVIOR_IDS);
 
 /**
- * SR-7 — language that must never appear in anything family-facing:
+ * SR-7, language that must never appear in anything family-facing:
  * no clinical deficit vocabulary, no scoring/grading, no diagnosis.
  * Lesson copy is validated against this, and the PT-13 observation
  * templates are tested against it too.
@@ -37,9 +37,9 @@ export function validateSpec(spec: LessonSpec): string[] {
 
   if (!spec.goal || spec.goal.length < 20) err('goal copy missing or too short to be useful');
   if (!spec.watchFor) err('watchFor copy missing (needed for PT-10 guidance)');
-  if (!spec.bridge) err('bridge copy missing (CR-4 — every lesson carries a real-world bridge)');
+  if (!spec.bridge) err('bridge copy missing (CR-4, every lesson carries a real-world bridge)');
   if (!spec.skill || spec.skill.length < 4) err('skill phrase missing (PT-10 library chip)');
-  if (spec.skill && spec.skill.length > 40) err('skill phrase too long for a chip — keep it under 40 chars');
+  if (spec.skill && spec.skill.length > 40) err('skill phrase too long for a chip, keep it under 40 chars');
   if (spec.requiresPhoto && spec.shape !== 'photo') err('requiresPhoto only makes sense for photo lessons');
 
   for (const field of [spec.goal, spec.watchFor, spec.bridge ?? '', spec.skill ?? '']) {
@@ -56,7 +56,7 @@ export function validateAll(specs: readonly LessonSpec[]): string[] {
     if (ids.has(s.id)) errors.push(`duplicate lesson id "${s.id}"`);
     ids.add(s.id);
   }
-  // PT-10 — step links must point at real, different lessons.
+  // PT-10, step links must point at real, different lessons.
   for (const s of specs) {
     for (const [label, ref] of [
       ['stepBack', s.stepBack],

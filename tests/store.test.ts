@@ -35,14 +35,14 @@ describe('profiles persist locally (TR-2, PT-1, PT-2)', () => {
     expect(JSON.parse(mem.get('light-and-sound:v1')!).profiles).toHaveLength(1);
   });
 
-  it('nickname only — no other identifying fields exist on a fresh profile (PV-1)', () => {
+  it('nickname only, no other identifying fields exist on a fresh profile (PV-1)', () => {
     const p = store.createProfile('Bean');
     expect(Object.keys(p).sort()).toEqual(
       ['ageBand', 'audio', 'createdAt', 'favorites', 'id', 'lastReviewAt', 'nickname', 'photos', 'programs', 'sessions', 'settings'].sort(),
     );
   });
 
-  it('imports strip audio metadata — blobs never travel with exports (PV-5)', () => {
+  it('imports strip audio metadata, blobs never travel with exports (PV-5)', () => {
     const p = store.createProfile('Bean');
     store.updateProfile(p.id, (prof) => {
       prof.audio.push({ id: 'song1', label: 'lullaby', duration: 60, gain: 1, addedAt: 'now' });
