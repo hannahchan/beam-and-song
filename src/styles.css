@@ -508,7 +508,6 @@ a { color: var(--focus); }
 }
 .about-lede { color: var(--inkSoft); font-size: 1.12rem; max-width: 60ch; }
 .about-doors { margin-block-start: 0.4rem; }
-.about-share { display: inline-flex; align-items: center; gap: 0.5rem; }
 .about-copied { color: var(--good); font-size: 0.95rem; }
 .about-top {
   display: flex;
