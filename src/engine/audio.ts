@@ -30,7 +30,99 @@ export function spatialParams(pan: number, elevation = 0.5): { x: number; y: num
  * The context is created on the first user gesture (TR-6) via unlock().
  */
 
-type VoiceStyle = 'soft' | 'musicbox' | 'warm';
+type VoiceStyle = 'soft' | 'musicbox' | 'warm' | 'glass';
+
+/**
+ * Per-voice attack times. Every entry must sit at or above
+ * SAFETY.MIN_AUDIO_ATTACK_S (no clicks, no startles; SR-2's audio analogue),
+ * and note() re-floors them at runtime. Exported so tests enforce the floor.
+ */
+export const VOICE_ATTACK_S: Record<VoiceStyle, number> = {
+  soft: 0.09,
+  musicbox: 0.03,
+  warm: 0.09,
+  glass: 0.05,
+};
+
+/** One scheduled note of a cue: offset and duration in seconds. */
+export interface CueNote {
+  midi: number;
+  at: number;
+  dur: number;
+  /** Scales the voice's usual peak (only ever downward or to 1). */
+  peak?: number;
+}
+
+export interface CueSpec {
+  voice: VoiceStyle;
+  notes: readonly CueNote[];
+  /** Fixed stage position (the two-character listening lessons); otherwise the caller's pan is used. */
+  pan?: number;
+}
+
+/**
+ * Every one-off sound a scene can cue, as plain data: deterministic, so the
+ * same moment always carries the same sound (a landing with a stable sonic
+ * identity is learnable; a coin-flip pitch is not), and testable without a
+ * Web Audio context.
+ *
+ * The answer-and-attention cues (chime, note, invite, plink) speak in the
+ * reserved 'glass' voice that no melody is allowed to use, so feedback reads
+ * as its own instrument rather than three more notes of the bed. The
+ * remaining cues are the listening lessons' own characters (CR-5); they keep
+ * their contrasting voices and never share the stage with a bed.
+ */
+export const CUES: Record<string, CueSpec> = {
+  chime: {
+    voice: 'glass',
+    notes: [
+      { midi: 72, at: 0, dur: 0.5 },
+      { midi: 76, at: 0.42, dur: 0.5 },
+      { midi: 79, at: 0.84, dur: 1.4 },
+    ],
+  },
+  plink: { voice: 'glass', notes: [{ midi: 76, at: 0, dur: 1.1 }] },
+  note: { voice: 'glass', notes: [{ midi: 67, at: 0, dur: 0.9 }] },
+  invite: { voice: 'glass', notes: [{ midi: 72, at: 0, dur: 0.8 }] },
+  // The held light "singing": one low warm note, soft and unhurried.
+  hum: { voice: 'warm', notes: [{ midi: 60, at: 0, dur: 1.5, peak: 0.55 }] },
+  bell: { voice: 'musicbox', pan: -0.5, notes: [{ midi: 76, at: 0, dur: 1.6 }] },
+  drum: { voice: 'warm', pan: 0.5, notes: [{ midi: 48, at: 0, dur: 1.4 }] },
+  // A little five-note call for the localization game (CR-5).
+  call: {
+    voice: 'musicbox',
+    notes: [
+      { midi: 60, at: 0, dur: 0.7 },
+      { midi: 64, at: 0.55, dur: 0.7 },
+      { midi: 67, at: 1.1, dur: 0.7 },
+      { midi: 64, at: 1.65, dur: 0.7 },
+      { midi: 60, at: 2.2, dur: 0.7 },
+    ],
+  },
+  // Three soft, steady taps, rhythm as a character.
+  beat: {
+    voice: 'warm',
+    pan: -0.4,
+    notes: [
+      { midi: 48, at: 0, dur: 0.5, peak: 0.8 },
+      { midi: 48, at: 0.6, dur: 0.5, peak: 0.8 },
+      { midi: 48, at: 1.2, dur: 0.5, peak: 0.8 },
+    ],
+  },
+  // A short flowing line, melody as the other character.
+  phrase: {
+    voice: 'musicbox',
+    pan: 0.4,
+    notes: [
+      { midi: 64, at: 0, dur: 0.65 },
+      { midi: 67, at: 0.5, dur: 0.65 },
+      { midi: 69, at: 1.0, dur: 0.65 },
+      { midi: 72, at: 1.5, dur: 0.65 },
+    ],
+  },
+  toneSoft: { voice: 'warm', notes: [{ midi: 57, at: 0, dur: 1.8, peak: 0.35 }] },
+  toneFull: { voice: 'warm', notes: [{ midi: 57, at: 0, dur: 2.0, peak: 1.0 }] },
+};
 
 export interface MelodyHandle {
   stop(fadeSec?: number): void;
@@ -50,6 +142,9 @@ class AudioEngine {
   private ctx: AudioContext | null = null;
   private master: GainNode | null = null;
   private duckGain: GainNode | null = null;
+  /** The bed's own throttle: melodies and family songs pass through here, cues never do. */
+  private bedGain: GainNode | null = null;
+  private bedDuckedUntil = 0;
   private volume = 0.7;
   private timer: ReturnType<typeof setInterval> | null = null;
   private active: {
@@ -67,10 +162,12 @@ class AudioEngine {
    * Build the melody's output: lowpass (elevation-as-brightness) into an
    * HRTF panner where the browser has one, a plain stereo panner otherwise.
    * All movement is smoothed, sound glides, it never jumps (SR-2 spirit).
+   * Spatial chains carry beds only, so they hang off the bed bus.
    */
   private createSpatialChain(): SpatialChain | null {
-    if (!this.ctx || !this.master) return null;
+    if (!this.ctx || !this.bedGain) return null;
     const ctx = this.ctx;
+    const bedGain = this.bedGain;
     const filter = ctx.createBiquadFilter();
     filter.type = 'lowpass';
     filter.frequency.value = spatialParams(0).filterHz;
@@ -82,7 +179,7 @@ class AudioEngine {
       panner.refDistance = 1;
       panner.maxDistance = 10;
       panner.rolloffFactor = 0.4;
-      filter.connect(panner).connect(this.master);
+      filter.connect(panner).connect(bedGain);
       return {
         input: filter,
         set: (pan, elevation) => {
@@ -101,8 +198,8 @@ class AudioEngine {
     }
 
     const stereo = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
-    if (stereo) filter.connect(stereo).connect(this.master);
-    else filter.connect(this.master);
+    if (stereo) filter.connect(stereo).connect(bedGain);
+    else filter.connect(bedGain);
     return {
       input: filter,
       set: (pan, elevation) => {
@@ -134,8 +231,12 @@ class AudioEngine {
       this.duckGain = this.ctx.createGain();
       this.duckGain.connect(comp);
       this.master = this.ctx.createGain();
-      this.master.gain.value = this.volume;
+      this.master.gain.value = this.gain();
       this.master.connect(this.duckGain);
+      // Beds (melodies, family songs) pass through their own gain so they can
+      // step back under event sounds; cues and voice labels bypass it.
+      this.bedGain = this.ctx.createGain();
+      this.bedGain.connect(this.master);
     }
     if (this.ctx.state !== 'running') {
       try {
@@ -146,10 +247,20 @@ class AudioEngine {
     }
   }
 
+  /**
+   * The volume setting is perceptual: loudness sense is roughly logarithmic,
+   * so a linear gain spends most of its audible travel in the bottom third
+   * of the slider. A squared taper spreads the steps evenly, and for any
+   * given setting it only ever lowers the gain, never raises it.
+   */
+  private gain(): number {
+    return this.volume * this.volume;
+  }
+
   setVolume(v: number): void {
     this.volume = Math.max(0, Math.min(1, v));
     if (this.master && this.ctx) {
-      this.master.gain.setTargetAtTime(this.volume, this.ctx.currentTime, 0.1);
+      this.master.gain.setTargetAtTime(this.gain(), this.ctx.currentTime, 0.1);
     }
   }
 
@@ -160,6 +271,33 @@ class AudioEngine {
     }
   }
 
+  /**
+   * FR-12's little sibling, applied automatically: while an event sound
+   * speaks, the bed steps back (roughly -10 dB) and then breathes back in,
+   * so feedback is never three more notes inside the tune it lands on
+   * (looking and listening compete, PR-11; the answer must win). Both moves
+   * are smoothed gain ramps on the bed bus only. Overlapping cues extend
+   * the dip rather than fighting it.
+   */
+  private duckBedFor(sec: number): void {
+    if (!this.ctx || !this.bedGain) return;
+    const t = this.ctx.currentTime;
+    this.bedDuckedUntil = Math.max(this.bedDuckedUntil, t + sec);
+    const g = this.bedGain.gain;
+    g.cancelScheduledValues(t);
+    g.setTargetAtTime(0.32, t, 0.07);
+    g.setTargetAtTime(1, this.bedDuckedUntil, 0.25);
+  }
+
+  /** A fresh bed starts at full strength with no stale duck recovery pending. */
+  private resetBed(): void {
+    if (!this.ctx || !this.bedGain) return;
+    this.bedDuckedUntil = 0;
+    const g = this.bedGain.gain;
+    g.cancelScheduledValues(this.ctx.currentTime);
+    g.setTargetAtTime(1, this.ctx.currentTime, 0.1);
+  }
+
   startMelody(
     id: MelodyId,
     opts: { tempoScale?: number; pan?: boolean; layered?: boolean; loop?: boolean } = {},
@@ -167,6 +305,7 @@ class AudioEngine {
     const melody = MELODIES[id];
     this.stopMelody(0.25);
     if (!this.ctx || !this.master) return this.nullHandle();
+    this.resetBed();
 
     const spatial = opts.pan ? this.createSpatialChain() : null;
 
@@ -236,9 +375,10 @@ class AudioEngine {
     opts: { pan?: boolean; loop?: boolean } = {},
   ): MelodyHandle {
     this.stopMelody(0.25);
-    if (!this.ctx || !this.master) return this.nullHandle();
+    if (!this.ctx || !this.master || !this.bedGain) return this.nullHandle();
+    this.resetBed();
     const ctx = this.ctx;
-    const master = this.master;
+    const bedGain = this.bedGain;
     let stopped = false;
     const spatial = opts.pan ? this.createSpatialChain() : null;
 
@@ -257,7 +397,7 @@ class AudioEngine {
       gain.gain.setValueAtTime(0.0001, ctx.currentTime);
       gain.gain.setTargetAtTime(0.5 * meta.gain, ctx.currentTime, 0.5); // ≥ soft attack (SR-2 analogue)
       src.connect(gain);
-      gain.connect(spatial?.input ?? master);
+      gain.connect(spatial?.input ?? bedGain); // the family's song is a bed too: it ducks under cues
       src.start();
       this.custom = { src, gain };
     });
@@ -332,6 +472,7 @@ class AudioEngine {
     g.gain.setTargetAtTime(0.0001, t + Math.max(dur - 0.4, 0.1), 0.2);
     src.connect(g).connect(this.master);
     src.start(t, 0, dur + 0.8);
+    this.duckBedFor(dur + 0.3); // the voice is the answer; any bed steps back for it
     setTimeout(() => (this.phraseBusy = false), dur * 1000 + 300);
   }
 
@@ -349,7 +490,7 @@ class AudioEngine {
     this.phraseBusy = true;
     for (let i = 0; i < count; i++) {
       const [midi, beats] = melody.notes[(start + i) % melody.notes.length];
-      if (midi > 0) this.note(midi, t, beats * secPerBeat, melody.voice, a?.spatial?.input ?? null, a?.layered ?? false);
+      if (midi > 0) this.note(midi, t, beats * secPerBeat, melody.voice, a?.spatial?.input ?? this.bedGain, a?.layered ?? false);
       t += beats * secPerBeat;
     }
     if (a) a.noteIdx = (start + count) % melody.notes.length;
@@ -360,6 +501,9 @@ class AudioEngine {
   private pump(): void {
     const a = this.active;
     if (!a || !a.playing || !this.ctx) return;
+    // If the timer stalled (a throttled background tab), skip the missed
+    // stretch rather than burst-scheduling the backlog into the past.
+    if (a.nextTime < this.ctx.currentTime - 0.05) a.nextTime = this.ctx.currentTime + 0.1;
     const secPerBeat = 60 / Math.min(a.melody.bpm * a.tempoScale, SAFETY.MAX_TEMPO_BPM);
     while (a.nextTime < this.ctx.currentTime + 0.4) {
       if (a.noteIdx >= a.melody.notes.length) {
@@ -372,83 +516,52 @@ class AudioEngine {
         continue;
       }
       const [midi, beats] = a.melody.notes[a.noteIdx];
-      if (midi > 0) this.note(midi, a.nextTime, beats * secPerBeat, a.melody.voice, a.spatial?.input ?? null, a.layered);
+      if (midi > 0) this.note(midi, a.nextTime, beats * secPerBeat, a.melody.voice, a.spatial?.input ?? this.bedGain, a.layered);
       a.nextTime += beats * secPerBeat;
       a.noteIdx++;
     }
   }
 
-  /** One-off sounds cued by scenes (plink, chime notes, bell, drum). */
+  /**
+   * One-off sounds cued by scenes, straight from the CUES table. Any bed
+   * steps back for the cue's whole length and then breathes back in.
+   */
   playCue(name: string, pan = 0): void {
     if (!this.ctx || !this.master) return;
+    const cue = CUES[name];
+    if (!cue) return;
     const t = this.ctx.currentTime + 0.03;
-    switch (name) {
-      case 'chime':
-        this.note(72, t, 0.5, 'musicbox', null, false, pan);
-        this.note(76, t + 0.42, 0.5, 'musicbox', null, false, pan);
-        this.note(79, t + 0.84, 1.4, 'musicbox', null, false, pan);
-        break;
-      case 'plink':
-        this.note(76 + (Math.random() < 0.5 ? 0 : 3), t, 1.1, 'musicbox', null, false, pan);
-        break;
-      case 'note':
-        this.note(67, t, 0.9, 'soft', null, false, pan);
-        break;
-      case 'invite':
-        this.note(72, t, 0.8, 'musicbox', null, false, pan);
-        break;
-      case 'hum':
-        // The held light "singing": one low warm note, soft and unhurried.
-        this.note(60, t, 1.5, 'warm', null, false, pan, 0.55);
-        break;
-      case 'bell':
-        this.note(76, t, 1.6, 'musicbox', null, false, -0.5);
-        break;
-      case 'drum':
-        this.note(48, t, 1.4, 'warm', null, false, 0.5);
-        break;
-      case 'call': {
-        // A little five-note call for the localization game (CR-5).
-        const motif = [60, 64, 67, 64, 60];
-        motif.forEach((m, i) => this.note(m, t + i * 0.55, 0.7, 'musicbox', null, false, pan));
-        break;
-      }
-      case 'beat':
-        // Three soft, steady taps, rhythm as a character.
-        for (let i = 0; i < 3; i++) this.note(48, t + i * 0.6, 0.5, 'warm', null, false, -0.4, 0.8);
-        break;
-      case 'phrase': {
-        // A short flowing line, melody as the other character.
-        const line = [64, 67, 69, 72];
-        line.forEach((m, i) => this.note(m, t + i * 0.5, 0.65, 'musicbox', null, false, 0.4));
-        break;
-      }
-      case 'toneSoft':
-        this.note(57, t, 1.8, 'warm', null, false, 0, 0.35);
-        break;
-      case 'toneFull':
-        this.note(57, t, 2.0, 'warm', null, false, 0, 1.0);
-        break;
+    const at = cue.pan ?? pan;
+    let end = 0;
+    for (const n of cue.notes) {
+      this.note(n.midi, t + n.at, n.dur, cue.voice, null, false, at, n.peak ?? 1);
+      end = Math.max(end, n.at + n.dur);
     }
+    this.duckBedFor(end + 0.15);
   }
 
   /**
    * Synthesize one note. Attack always >= SAFETY.MIN_AUDIO_ATTACK_S; release
-   * is long and smooth, nothing clicks, nothing startles.
+   * is long and smooth, nothing clicks, nothing startles. Beds pass their
+   * own destination (the bed bus or its spatial chain); cues pass null and
+   * land on the master via a fixed pan, outside the bed's duck.
    */
   private note(
     midi: number,
     at: number,
     durSec: number,
     style: VoiceStyle,
-    panner: AudioNode | null,
+    destNode: AudioNode | null,
     layered: boolean,
     fixedPan = 0,
     peakScale = 1,
   ): void {
     if (!this.ctx || !this.master) return;
     const freq = 440 * Math.pow(2, (midi - 69) / 12);
-    const dest = panner ?? this.panFor(fixedPan);
+    const dest = destNode ?? this.panFor(fixedPan);
+    // 'glass' rings a little past its written length: a touch of air in
+    // place of a reverb, so the one-off stings never feel clipped or abrupt.
+    const releaseScale = style === 'glass' ? 1.2 : 0.9;
 
     const mkVoice = (f: number, type: OscillatorType, basePeak: number, filterHz: number) => {
       const peak = basePeak * peakScale;
@@ -459,8 +572,8 @@ class AudioEngine {
       lp.type = 'lowpass';
       lp.frequency.value = filterHz;
       const g = this.ctx!.createGain();
-      const attack = Math.max(style === 'musicbox' ? 0.03 : 0.09, SAFETY.MIN_AUDIO_ATTACK_S);
-      const release = Math.max(durSec * 0.9, 0.35);
+      const attack = Math.max(VOICE_ATTACK_S[style], SAFETY.MIN_AUDIO_ATTACK_S);
+      const release = Math.max(durSec * releaseScale, 0.35);
       g.gain.setValueAtTime(0.0001, at);
       g.gain.linearRampToValueAtTime(peak, at + attack);
       g.gain.setTargetAtTime(0.0001, at + Math.max(durSec * 0.55, attack + 0.05), release / 3);
@@ -474,6 +587,14 @@ class AudioEngine {
       mkVoice(freq * 2, 'sine', 0.05, 5200); // faint sparkle partial
     } else if (style === 'warm') {
       mkVoice(freq, 'triangle', 0.24, 900);
+    } else if (style === 'glass') {
+      // The reserved answer voice (see CUES): a clean fundamental with two
+      // faint upper partials, brighter and simpler than 'musicbox', so
+      // feedback reads as its own instrument even beside a bed in the same
+      // register. Total peak stays at the other voices' headroom (~0.27).
+      mkVoice(freq, 'sine', 0.2, 5200);
+      mkVoice(freq * 2, 'sine', 0.05, 6200);
+      mkVoice(freq * 3, 'sine', 0.018, 6800);
     } else {
       mkVoice(freq, 'sine', 0.24, 1900);
       if (layered) mkVoice(freq / 2, 'triangle', 0.08, 700); // soft octave pad (PR-8 layered)
