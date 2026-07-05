@@ -18,8 +18,18 @@ export interface PhotoCache {
  */
 export function fitCanvasToDisplay(canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D): void {
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
-  canvas.width = Math.round(canvas.clientWidth * dpr);
-  canvas.height = Math.round(canvas.clientHeight * dpr);
+  const w = Math.round(canvas.clientWidth * dpr);
+  const h = Math.round(canvas.clientHeight * dpr);
+  // Resizing a canvas clears it, so only touch the backing store when the size
+  // truly changed. That keeps this cheap enough to call every animation frame,
+  // which is how the draw loops stay glued to the CSS box even when the resize
+  // event is unreliable: iOS reports the *old* size at orientation-change time
+  // and reflows a beat later, which used to leave the backing store sized for
+  // the old orientation while the loop drew the new one (the "split screen").
+  if (canvas.width !== w || canvas.height !== h) {
+    canvas.width = w;
+    canvas.height = h;
+  }
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
 

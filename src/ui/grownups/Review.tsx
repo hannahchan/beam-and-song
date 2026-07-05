@@ -103,6 +103,7 @@ function ReviewInner({ profile }: { profile: Profile }) {
     window.addEventListener('resize', resize);
 
     const frame = (now: number) => {
+      fitCanvasToDisplay(canvas, ctx); // stay glued to the CSS box (see engine/render)
       const t = now - t0Ref.current;
       const params = buildParams(settingsRef.current);
       const scene = computeScene(specRef.current, params, t, simRef.current, prevTRef.current);

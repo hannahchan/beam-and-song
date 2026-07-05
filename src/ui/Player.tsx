@@ -202,6 +202,9 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
     const frame = (now: number) => {
       const dt = Math.min(now - lastFrame, 100);
       lastFrame = now;
+      // Keep the backing store glued to the CSS box every frame; the resize
+      // event alone misses iOS orientation changes (see fitCanvasToDisplay).
+      fitCanvasToDisplay(canvas, ctx);
       const w = canvas.clientWidth;
       const h = canvas.clientHeight;
 
