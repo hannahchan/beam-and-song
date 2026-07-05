@@ -54,6 +54,18 @@ Rules that connect them:
    of at the geometric endpoint over a second later.
 5. **The volume slider is perceptual.** Loudness sense is roughly logarithmic, so the gain
    follows a squared taper; for any setting this only ever lowers the output.
+6. **Left and right are plain stereo, staged wide where the side is the content.** All
+   panning is level panning (`StereoPanner`); the HRTF 3D path was removed on purpose.
+   HRTF is a headphone technique, and the lessons' stated hardware is the device's own
+   speakers (or one a caregiver can place): over speakers its binaural cues wash out in
+   crosstalk, while level panning moves energy between two real points in the room, which
+   is the localization the lessons actually teach. It was weak even on earphones here,
+   because the melodies sit low (110 to 1050 Hz) where a simulated head casts almost no
+   shadow at the old ±47° cap. The two-character listening cues stage at ±0.9 (half-pans
+   are only ~8 dB apart and washed out), hearing-first lessons pass their scene pan to
+   cues unscaled (`cuePan` in `src/lessons/specs.ts`), and other lessons keep answers
+   leaning gently toward the target at 0.6×. Settings offers a "left, then right" speaker
+   check so a caregiver can hear whether their device separates the sides at all.
 
 ## Where the rules are enforced
 
@@ -65,6 +77,8 @@ Rules that connect them:
 | No reward-motif beds; beds carry a real melodic line (3+ pitches, every band) | `tests/audio-cues.test.ts` |
 | Contingency lessons stay bedless; quiet binding honours "after"/"off" | `tests/audio-cues.test.ts` |
 | Raindrop plink at apparent touchdown, ripple in step | `tests/scene.test.ts` |
+| Listening characters staged fully to the sides; hearing-first calls unscaled | `tests/audio-cues.test.ts` |
+| Pan is plain stereo and passes through at full strength | `tests/audio.test.ts` |
 | Tempos ≤ 84 BPM, melody pitches in range | `tests/melodies.test.ts` |
 
 Safety posture: nothing here raised a ceiling. Ducking is a smoothed gain move on the bed

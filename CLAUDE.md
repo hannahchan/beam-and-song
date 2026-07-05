@@ -24,8 +24,9 @@ parentheses instead.
 - Sound model (docs/sound-design.md): event sounds are data in `CUES` (engine/audio.ts), and the
   feedback cues speak the reserved `glass` voice no melody may use; beds are flowing tunes only,
   never reward motifs or sparse percussive patterns; contingency lessons stay bedless
-  (`CUE_DRIVEN_BEHAVIORS`) and find/search lessons bind quiet (`effectiveAudioMode`).
-  tests/audio-cues.test.ts breaks the build otherwise.
+  (`CUE_DRIVEN_BEHAVIORS`) and find/search lessons bind quiet (`effectiveAudioMode`). Panning is
+  plain stereo, never HRTF (speakers are the target hardware), staged at ±0.9 where the side is
+  the content. tests/audio-cues.test.ts breaks the build otherwise.
 - Copy rules: companion-not-curriculum framing (SR-4); never diagnostic/clinical language,
   `NON_DIAGNOSTIC_BANNED` in `src/safety/validate.ts` gates lesson copy AND all PT-13 output templates;
   child data is nickname-only, local-only.
