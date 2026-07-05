@@ -4,7 +4,7 @@ import { buildParams } from '../../engine/params';
 import { computeScene, type SimInput } from '../../engine/scenes';
 import { createPhotoCache, drawScene, fitCanvasToDisplay } from '../../engine/render';
 import { audio, isTapCue } from '../../engine/audio';
-import { CUE_DRIVEN_BEHAVIORS, HOLD_DRIVEN_BEHAVIORS, LESSONS } from '../../lessons/specs';
+import { CUE_DRIVEN_BEHAVIORS, HOLD_DRIVEN_BEHAVIORS, cuePan, LESSONS } from '../../lessons/specs';
 import { resolveLesson } from '../../lessons/bands';
 import { enabledPhotos } from '../../lib/photos';
 import type { HoldSpan } from '../../engine/kernel';
@@ -113,7 +113,7 @@ function ReviewInner({ profile }: { profile: Profile }) {
           // Quiet-bound lessons keep only their answer sounds, as in a real
           // session, so a reviewer hears what the child would.
           if (specRef.current.quietPreferred && !isTapCue(cue)) continue;
-          audio.playCue(cue, scene.pan * 0.6);
+          audio.playCue(cue, cuePan(specRef.current, scene.pan));
         }
       }
       drawScene(ctx, scene, canvas.clientWidth, canvas.clientHeight, photoCache);

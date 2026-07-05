@@ -5,18 +5,23 @@ import { clamp } from './kernel';
 import { getBlob } from '../lib/media';
 
 /**
- * FR-10, where the sound sits in space. Pure and unit-tested: pan (-1..1)
- * maps to left/right position, and the target's screen height becomes both
- * a vertical position and a timbre cue (higher on screen = brighter), which
- * carries even on tablets whose speakers can't render true elevation.
+ * FR-10, where the sound sits. Pure and unit-tested: pan (-1..1) is a plain
+ * left/right balance, and the target's screen height becomes a timbre cue
+ * (higher on screen = brighter), which carries even on tablets whose
+ * speakers can't render true elevation.
+ *
+ * Deliberately plain stereo, not HRTF 3D. HRTF is a headphone technique,
+ * and the lessons' stated hardware is the device's own speakers (or one a
+ * caregiver can place): over speakers its binaural cues wash out in room
+ * crosstalk, while level panning moves energy between two real points in
+ * the room, the strongest and most honest left/right cue a browser can
+ * give. On headphones it trades "out in space" for an unmistakable side,
+ * which is the lesson's actual point.
  */
-export function spatialParams(pan: number, elevation = 0.5): { x: number; y: number; z: number; filterHz: number } {
-  const p = clamp(pan, -1, 1);
+export function spatialParams(pan: number, elevation = 0.5): { pan: number; filterHz: number } {
   const e = clamp(elevation, 0, 1); // 0 = top of screen
   return {
-    x: p * 2.5,
-    y: (0.5 - e) * 1.6,
-    z: -2,
+    pan: clamp(pan, -1, 1),
     filterHz: 1400 + 2600 * (1 - e),
   };
 }
@@ -86,8 +91,12 @@ export const CUES: Record<string, CueSpec> = {
   invite: { voice: 'glass', notes: [{ midi: 72, at: 0, dur: 0.8 }] },
   // The held light "singing": one low warm note, soft and unhurried.
   hum: { voice: 'warm', notes: [{ midi: 60, at: 0, dur: 1.5, peak: 0.55 }] },
-  bell: { voice: 'musicbox', pan: -0.5, notes: [{ midi: 76, at: 0, dur: 1.6 }] },
-  drum: { voice: 'warm', pan: 0.5, notes: [{ midi: 48, at: 0, dur: 1.4 }] },
+  // The two-character listening lessons stage their voices fully to the
+  // sides: half-pans (±0.5 is only ~8 dB between channels) washed out on
+  // real speakers, and the side IS the content. ±0.9 leaves a whisper in
+  // the far channel, unmistakable without being stark.
+  bell: { voice: 'musicbox', pan: -0.9, notes: [{ midi: 76, at: 0, dur: 1.6 }] },
+  drum: { voice: 'warm', pan: 0.9, notes: [{ midi: 48, at: 0, dur: 1.4 }] },
   // A little five-note call for the localization game (CR-5).
   call: {
     voice: 'musicbox',
@@ -102,7 +111,7 @@ export const CUES: Record<string, CueSpec> = {
   // Three soft, steady taps, rhythm as a character.
   beat: {
     voice: 'warm',
-    pan: -0.4,
+    pan: -0.9,
     notes: [
       { midi: 48, at: 0, dur: 0.5, peak: 0.8 },
       { midi: 48, at: 0.6, dur: 0.5, peak: 0.8 },
@@ -112,7 +121,7 @@ export const CUES: Record<string, CueSpec> = {
   // A short flowing line, melody as the other character.
   phrase: {
     voice: 'musicbox',
-    pan: 0.4,
+    pan: 0.9,
     notes: [
       { midi: 64, at: 0, dur: 0.65 },
       { midi: 67, at: 0.5, dur: 0.65 },
@@ -167,9 +176,9 @@ class AudioEngine {
   } | null = null;
 
   /**
-   * Build the melody's output: lowpass (elevation-as-brightness) into an
-   * HRTF panner where the browser has one, a plain stereo panner otherwise.
-   * All movement is smoothed, sound glides, it never jumps (SR-2 spirit).
+   * Build the melody's output: lowpass (elevation-as-brightness) into a
+   * plain stereo panner (see spatialParams for why not HRTF). All movement
+   * is smoothed, sound glides, it never jumps (SR-2 spirit).
    * Spatial chains carry beds only, so they hang off the bed bus.
    */
   private createSpatialChain(): SpatialChain | null {
@@ -180,31 +189,6 @@ class AudioEngine {
     filter.type = 'lowpass';
     filter.frequency.value = spatialParams(0).filterHz;
 
-    if (typeof ctx.createPanner === 'function') {
-      const panner = ctx.createPanner();
-      panner.panningModel = 'HRTF';
-      panner.distanceModel = 'linear';
-      panner.refDistance = 1;
-      panner.maxDistance = 10;
-      panner.rolloffFactor = 0.4;
-      filter.connect(panner).connect(bedGain);
-      return {
-        input: filter,
-        set: (pan, elevation) => {
-          const s = spatialParams(pan, elevation);
-          const t = ctx.currentTime;
-          if (panner.positionX) {
-            panner.positionX.setTargetAtTime(s.x, t, 0.25);
-            panner.positionY.setTargetAtTime(s.y, t, 0.25);
-            panner.positionZ.setTargetAtTime(s.z, t, 0.25);
-          } else {
-            panner.setPosition(s.x, s.y, s.z);
-          }
-          filter.frequency.setTargetAtTime(s.filterHz, t, 0.3);
-        },
-      };
-    }
-
     const stereo = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
     if (stereo) filter.connect(stereo).connect(bedGain);
     else filter.connect(bedGain);
@@ -212,7 +196,7 @@ class AudioEngine {
       input: filter,
       set: (pan, elevation) => {
         const s = spatialParams(pan, elevation);
-        stereo?.pan.setTargetAtTime(clamp(pan, -1, 1), ctx.currentTime, 0.25);
+        stereo?.pan.setTargetAtTime(s.pan, ctx.currentTime, 0.25);
         filter.frequency.setTargetAtTime(s.filterHz, ctx.currentTime, 0.3);
       },
     };
@@ -612,7 +596,9 @@ class AudioEngine {
   private panCache = new Map<number, StereoPannerNode | GainNode>();
   private panFor(p: number): AudioNode {
     if (!this.ctx || !this.master) throw new Error('audio not unlocked');
-    const key = Math.round(p * 4) / 4;
+    // Eighth steps: coarse enough to reuse nodes, fine enough that a ±0.9
+    // stage position stays strongly lateral instead of rounding down to 0.75.
+    const key = Math.round(p * 8) / 8;
     let node = this.panCache.get(key);
     if (!node) {
       if (this.ctx.createStereoPanner) {

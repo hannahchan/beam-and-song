@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { CUES, VOICE_ATTACK_S } from '../src/engine/audio';
 import { MELODIES, MELODY_NOTE_RANGE } from '../src/engine/melodies';
-import { CUE_DRIVEN_BEHAVIORS, effectiveAudioMode, LESSONS } from '../src/lessons/specs';
+import { CUE_DRIVEN_BEHAVIORS, cuePan, effectiveAudioMode, LESSONS } from '../src/lessons/specs';
 import { resolveLesson } from '../src/lessons/bands';
 import { SAFETY } from '../src/safety/constants';
 
@@ -43,6 +43,29 @@ describe('cues are gentle, deterministic data', () => {
     for (const [voice, attack] of Object.entries(VOICE_ATTACK_S)) {
       expect(attack, voice).toBeGreaterThanOrEqual(SAFETY.MIN_AUDIO_ATTACK_S);
     }
+  });
+});
+
+describe('left and right are unmistakable where the side is the content (FR-10/CR-5)', () => {
+  it('the two-character listening cues are staged fully to the sides', () => {
+    // Half-pans (~8 dB between channels at ±0.5) washed out on real speakers.
+    for (const name of ['bell', 'drum', 'beat', 'phrase'] as const) {
+      expect(Math.abs(CUES[name].pan!), name).toBeGreaterThanOrEqual(0.8);
+    }
+    expect(Math.sign(CUES.bell.pan!)).not.toBe(Math.sign(CUES.drum.pan!));
+    expect(Math.sign(CUES.beat.pan!)).not.toBe(Math.sign(CUES.phrase.pan!));
+  });
+
+  it('hearing-first lessons send their calls out at full strength', () => {
+    const hear = LESSONS.find((l) => l.id === 'wheres-the-song')!;
+    expect(cuePan(hear, 0.85)).toBeCloseTo(0.85);
+    expect(cuePan(hear, -0.85)).toBeCloseTo(-0.85);
+  });
+
+  it('looking lessons keep answers gently toward the target instead', () => {
+    const look = LESSONS.find((l) => l.id === 'rolling-ball')!;
+    expect(Math.abs(cuePan(look, 0.85))).toBeLessThan(0.6);
+    expect(Math.sign(cuePan(look, -0.85))).toBe(-1); // still agrees with the picture
   });
 });
 

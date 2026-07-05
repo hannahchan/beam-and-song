@@ -700,7 +700,8 @@ function alternatingVoices(
       glow: Math.min(p.glow, 0.6),
     });
   scene.items.push(mk(0.28, firstActive), mk(0.72, !firstActive));
-  scene.pan = firstActive ? -0.5 : 0.5;
+  // Matches the fixed stage positions of the two characters (CUES in audio.ts).
+  scene.pan = firstActive ? -0.9 : 0.9;
 }
 
 function audioAlternate(

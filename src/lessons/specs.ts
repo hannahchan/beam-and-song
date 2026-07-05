@@ -610,6 +610,17 @@ export function effectiveAudioMode(mode: AudioMode, spec: LessonSpec): AudioMode
 }
 
 /**
+ * How much of a scene's pan reaches the cue that plays it (FR-10/CR-5).
+ * The hearing-first lessons ARE localization, so their calls go out at full
+ * strength: the side is the content, and softened pans wash out on real
+ * speakers. Everywhere else the answer leans only gently toward the target;
+ * feedback should agree with the picture, not shout from the edge of the room.
+ */
+export function cuePan(spec: LessonSpec, scenePan: number): number {
+  return scenePan * (spec.hearingFirst ? 1 : 0.6);
+}
+
+/**
  * Behaviors driven by pressed *intervals* rather than discrete taps: the
  * player feeds them touch-down→up spans (and held switches), and the kernel's
  * slew-limited holdEnvelope turns any press pattern into a calm swell.
