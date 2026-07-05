@@ -27,7 +27,7 @@ export function Landing() {
   const active = profiles.find((p) => p.id === getState().activeProfileId) ?? profiles[0];
 
   return (
-    <main class="child-screen landing-screen">
+    <main class="child-screen pinned-screen">
       <p class="landing-title">light & sound</p>
       <div class="landing-orb-wrap">
         <button class="start-orb" onClick={start} aria-label="Start, gentle lessons">

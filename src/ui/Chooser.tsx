@@ -28,7 +28,7 @@ export function Chooser() {
   const color = TARGET_COLORS[profile.settings.targetColor] ?? TARGET_COLORS.red;
 
   return (
-    <main class="child-screen chooser-screen">
+    <main class="child-screen pinned-screen chooser-screen">
       <h1 class="sr-only">Choose a lesson</h1>
       {getState().profiles.length > 1 && <p class="chooser-for">{profile.nickname}'s lessons</p>}
       <div class="chooser-wrap">

@@ -165,7 +165,7 @@ function Gate({ hasPin, onPassed }: { hasPin: boolean; onPassed: () => void }) {
 
   if (hasPin) {
     return (
-      <main class="child-screen" style={{ background: 'var(--bg0)' }}>
+      <main class="child-screen pinned-screen gate-screen" style={{ background: 'var(--bg0)' }}>
         <form
           class="overlay-card"
           onSubmit={async (e) => {
@@ -208,7 +208,7 @@ function Gate({ hasPin, onPassed }: { hasPin: boolean; onPassed: () => void }) {
   }
 
   return (
-    <main class="child-screen" style={{ background: 'var(--bg0)' }}>
+    <main class="child-screen pinned-screen gate-screen" style={{ background: 'var(--bg0)' }}>
       <div class="hold-wrap">
         <h1 tabindex={-1} style={{ color: 'var(--inkSoft)' }}>
           For grown-ups
