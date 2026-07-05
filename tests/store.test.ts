@@ -182,6 +182,33 @@ describe('photo visibility toggle (CR-3)', () => {
   });
 });
 
+describe('full device reset (PV-4/PV-5)', () => {
+  beforeEach(reset);
+
+  it('removes every profile, the PIN, and the stored key, and stays usable after', async () => {
+    store.createProfile('Bean');
+    store.createProfile('Pip');
+    await store.setPin('2468');
+    expect(store.getState().profiles).toHaveLength(2);
+    expect(mem.get('light-and-sound:v1')).toBeDefined();
+
+    await store.resetAllData();
+
+    const s = store.getState();
+    expect(s.profiles).toEqual([]);
+    expect(s.activeProfileId).toBeNull();
+    expect(s.pinHash).toBeNull();
+    expect(s.lastBackupAt).toBeNull();
+    expect(mem.get('light-and-sound:v1')).toBeUndefined();
+    expect(await store.checkPin('2468')).toBe(true); // no PIN means the gate opens
+
+    // The store is reset, not broken: a fresh profile writes and activates.
+    const fresh = store.createProfile('New');
+    expect(store.activeProfile()?.id).toBe(fresh.id);
+    expect(JSON.parse(mem.get('light-and-sound:v1')!).profiles).toHaveLength(1);
+  });
+});
+
 describe('PIN courtesy lock (PV-3)', () => {
   beforeEach(reset);
 

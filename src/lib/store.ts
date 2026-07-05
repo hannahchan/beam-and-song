@@ -1,5 +1,5 @@
 import type { AppState, ChildSettings, Profile, SessionRecord } from './types';
-import { deleteBlob } from './media';
+import { clearAllBlobs, deleteBlob } from './media';
 
 /**
  * Local-only persistence (TR-2, PV-2). Everything lives in this browser's
@@ -307,6 +307,27 @@ export function importProfile(json: unknown): { ok: true; profile: Profile } | {
   s.activeProfileId = p.id;
   persist();
   return { ok: true, profile: p };
+}
+
+/* ------------------------------- full reset (PV-4) ------------------------------- */
+
+/**
+ * The in-app equivalent of the browser's "delete all site data": remove every
+ * profile, note, photo, the courtesy PIN, and all on-device recordings, then
+ * leave the app as if freshly installed. There is no undo, so the Children page
+ * guards this and points to a backup first (PT-3). Nothing was ever transmitted
+ * (PV-2), so there is nothing to revoke elsewhere.
+ */
+export async function resetAllData(): Promise<void> {
+  state = blankState();
+  try {
+    localStorage.removeItem(KEY);
+  } catch {
+    // Some private modes throw on storage access; the in-memory reset still holds.
+  }
+  emit();
+  // Metadata is gone; drop the audio/voice blobs it pointed at (PV-5).
+  await clearAllBlobs();
 }
 
 /* --------------------------------- PIN (PV-3) --------------------------------- */

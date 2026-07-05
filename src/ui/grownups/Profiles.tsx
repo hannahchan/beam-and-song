@@ -1,4 +1,4 @@
-import { useRef, useState } from 'preact/hooks';
+import { useEffect, useRef, useState } from 'preact/hooks';
 import type { AppState, Profile } from '../../lib/types';
 import {
   createProfile,
@@ -6,12 +6,13 @@ import {
   exportAll,
   exportProfile,
   importAny,
+  resetAllData,
   setActiveProfile,
   setPin,
   updateProfile,
 } from '../../lib/store';
 import { formatDate, plural } from '../../lib/fmt';
-import { Card, downloadFile } from './bits';
+import { Card, HoldButton, downloadFile } from './bits';
 
 /** PT-1 / PT-3 / PV-3 / PV-4, children on this device, moving profiles, the courtesy lock. */
 export function Profiles({ state }: { state: AppState }) {
@@ -107,6 +108,8 @@ export function Profiles({ state }: { state: AppState }) {
         </Card>
       )}
 
+      <EraseAllCard hasProfiles={state.profiles.length > 0} hasData={state.profiles.length > 0 || !!state.pinHash} />
+
       <PinCard hasPin={!!state.pinHash} />
     </div>
   );
@@ -201,6 +204,88 @@ function ProfileCard({ profile, isActive, multiple }: { profile: Profile; isActi
           </div>
         )}
       </details>
+    </Card>
+  );
+}
+
+/**
+ * PV-4, a full on-device reset without leaving the app, the friendly
+ * equivalent of the browser's "delete all site data". Guarded so it is never a
+ * single stray tap: it reveals a warning, offers a backup first, and asks for a
+ * deliberate press-and-hold to finish (the same gesture that guards this area).
+ */
+function EraseAllCard({ hasProfiles, hasData }: { hasProfiles: boolean; hasData: boolean }) {
+  const [armed, setArmed] = useState(false);
+  const [done, setDone] = useState(false);
+
+  // If data comes back (a child added again after a wipe), restore the control.
+  useEffect(() => {
+    if (hasData) {
+      setDone(false);
+      setArmed(false);
+    }
+  }, [hasData]);
+
+  if (done) {
+    return (
+      <Card title="Everything on this device was cleared">
+        <p class="msg-ok" role="status">
+          All children, their settings, your notes, photos, recordings, and any PIN have been removed from this
+          browser. The app is back to how it was the very first time you opened it.
+        </p>
+      </Card>
+    );
+  }
+  if (!hasData) return null;
+
+  return (
+    <Card title="Erase everything on this device">
+      <p class="card-note">
+        This clears everything Light & Sound keeps in this browser at once: every child, their settings, your
+        notes, photos, voice recordings, and any PIN. It does the same thing as clearing this site's data in your
+        browser, without leaving the app. There is no undo, so if you might want any of it back, save a backup
+        first.
+      </p>
+      {!armed ? (
+        <button class="btn btn-danger" onClick={() => setArmed(true)}>
+          Erase all data on this device…
+        </button>
+      ) : (
+        <div class="card" style={{ background: 'var(--bg2)' }}>
+          <p class="msg-err">
+            This removes everything on this device for good, with no undo. If you are not certain, keep it and
+            save a backup instead. To go ahead, press and hold.
+          </p>
+          <div class="row" style={{ gap: '1.2rem' }}>
+            <HoldButton
+              label="Hold to erase"
+              onComplete={() => {
+                setDone(true);
+                void resetAllData();
+              }}
+            />
+            <div class="stack" style={{ gap: '0.6rem' }}>
+              {hasProfiles && (
+                <button
+                  class="btn btn-small"
+                  onClick={() =>
+                    downloadFile(
+                      'light-and-sound-backup.json',
+                      JSON.stringify(exportAll(), null, 2),
+                      'application/json',
+                    )
+                  }
+                >
+                  Save a backup first
+                </button>
+              )}
+              <button class="btn btn-small btn-ghost" onClick={() => setArmed(false)}>
+                Keep everything
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </Card>
   );
 }
