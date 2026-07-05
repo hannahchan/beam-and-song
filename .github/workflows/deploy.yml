@@ -3,6 +3,9 @@ name: Test & deploy to GitHub Pages
 on:
   push:
     branches: [main]
+  # Build and test on PRs from any branch. The deploy job below stays gated to
+  # pushes on main (the github.ref check), so branches get CI without deploying.
+  pull_request:
   workflow_dispatch:
 
 permissions:
