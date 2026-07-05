@@ -48,7 +48,7 @@ export function Setup({ profile }: { profile: Profile | null }) {
             </p>
           ))}
           <p class="card-note">
-            Nothing is fixed, adjust anything in Settings as you learn what {profile.nickname} enjoys, and bring
+            Nothing is fixed. Adjust anything in Settings as you learn what {profile.nickname} enjoys, and bring
             your vision professional into the tuning whenever you can.
           </p>
           <div class="row">
@@ -68,7 +68,7 @@ export function Setup({ profile }: { profile: Profile | null }) {
     <div class="stack">
       <h1 tabindex={-1}>Guided setup for {profile.nickname}</h1>
       <p class="card-note">
-        Five questions, best guesses welcome, “not sure” is a perfectly good answer. This only chooses a starting
+        Five questions, best guesses welcome; “not sure” is a perfectly good answer. This only chooses a starting
         point.
       </p>
 

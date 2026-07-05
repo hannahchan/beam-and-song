@@ -46,7 +46,7 @@ export const LESSONS: readonly LessonSpec[] = [
     watchFor:
       'Going still or quiet, eyes widening, blinking, or slowly turning toward the screen. A look can arrive many seconds after the light appears. That pause is normal.',
     bridge:
-      'In a dim room, let one soft glow, a night light, a gentle lamp, be the only interesting thing for a little while, and keep it company together.',
+      'In a dim room, let one soft glow (a night light, a gentle lamp) be the only interesting thing for a little while, and keep it company together.',
   },
   {
     id: 'little-star',
@@ -63,7 +63,7 @@ export const LESSONS: readonly LessonSpec[] = [
     goal: 'A single star shimmering very gently to its own song. A slightly livelier target than Gentle Glow, still on a plain dark field.',
     watchFor: 'Eyes settling on the star and staying a little longer each week.',
     bridge:
-      'In a dark room, hold one small light very still and let it be found, a single soft spot of light on the wall works beautifully.',
+      'In a dark room, hold one small light very still and let it be found. A single soft spot of light on the wall works beautifully.',
   },
   {
     id: 'drifting-light',
@@ -96,7 +96,7 @@ export const LESSONS: readonly LessonSpec[] = [
     stepUp: 'keep-the-light-singing',
     goal: 'Cause and effect: a touch anywhere on the screen, or a switch press, makes the light bloom softly and sing. Any touch counts; nothing needs aiming.',
     watchFor:
-      'Any arm movement toward the screen, a swipe or bat, then a pause to look at what happened. Hand-over-hand help is a lovely way to start.',
+      'Any arm movement toward the screen (a swipe or bat), then a pause to look at what happened. Hand-over-hand help is a lovely way to start.',
     bridge:
       'Off screen, offer the same game with a real object: a gentle shake of a soft rattle each time your baby reaches.',
   },
@@ -116,7 +116,7 @@ export const LESSONS: readonly LessonSpec[] = [
     watchFor:
       'The dawning of "I am doing this": holding on purpose, letting go to check, holding again. Even a few seconds of steady touch is a triumph.',
     bridge:
-      'The skin-to-skin twin: hum while their hand rests on yours, and pause gently when it lifts, the same promise, warmer.',
+      'The skin-to-skin twin: hum while their hand rests on yours, and pause gently when it lifts. The same promise, warmer.',
   },
   {
     id: 'firefly',
@@ -287,7 +287,7 @@ export const LESSONS: readonly LessonSpec[] = [
     skill: 'warming to a familiar thing',
     stepBack: 'gentle-glow',
     stepUp: 'find-your-photo',
-    goal: 'Your own photo, a favourite toy or a familiar, loved face, fading gently in on a plain background. Familiar things are often the most motivating targets of all. Add a photo in Settings to unlock this lesson. Photos stay on this device only.',
+    goal: 'Your own photo (a favourite toy, or a familiar, loved face) fading gently in on a plain background. Familiar things are often the most motivating targets of all. Add a photo in Settings to unlock this lesson. Photos stay on this device only.',
     watchFor: 'A different quality of attention than for shapes: longer, warmer, more searching.',
     bridge: 'Show the real toy (or the real person!) right after the screen version.',
   },
@@ -345,7 +345,7 @@ export const LESSONS: readonly LessonSpec[] = [
     stepBack: 'familiar-photo',
     stepUp: 'familiar-faces',
     quietPreferred: true,
-    goal: 'Their own familiar thing, a favourite toy, a loved face, resting among a few dim shapes. Familiarity does the finding for them at first; that is the point. Add a photo in Settings to unlock.',
+    goal: 'Their own familiar thing (a favourite toy, a loved face) resting among a few dim shapes. Familiarity does the finding for them at first; that is the point. Add a photo in Settings to unlock.',
     watchFor: 'A quicker, warmer settle on the photo than on the shapes around it.',
     bridge: 'Play the same game in the room: the real toy among two other objects, offered slowly.',
   },
@@ -361,7 +361,7 @@ export const LESSONS: readonly LessonSpec[] = [
     skill: 'resting with a small scene',
     stepBack: 'little-duck',
     stepUp: 'hidden-among-many',
-    goal: 'Two or three familiar friends resting together, the duck on its water, a ball beside it, a star above, with nothing asked at all. A first, unhurried taste of more-than-one-thing staying quietly where it is. The complexity setting decides how much company appears.',
+    goal: 'Two or three familiar friends resting together (the duck on its water, a ball beside it, a star above), with nothing asked at all. A first, unhurried taste of more-than-one-thing staying quietly where it is. The complexity setting decides how much company appears.',
     watchFor:
       'Eyes travelling from one thing to another and coming back, visiting the scene rather than holding one point.',
     bridge:
@@ -380,7 +380,7 @@ export const LESSONS: readonly LessonSpec[] = [
     stepBack: 'little-star',
     goal: 'The light returns big, then smaller, then small, like something seen from across the room. Smaller sizes gently practise the beginnings of distance viewing.',
     watchFor:
-      'Whether the small appearances still earn a look, or only the big ones, a useful thing to notice, and only ever that.',
+      'Whether the small appearances still earn a look, or only the big ones. A useful thing to notice, and only ever that.',
     bridge: 'Try the real-world version: show a favourite object close, then from across the room, unhurried.',
   },
 
@@ -402,7 +402,7 @@ export const LESSONS: readonly LessonSpec[] = [
     watchFor:
       'Systematic searching, eyes working across the screen, and the little pause of triumph on the find.',
     bridge:
-      'The room version: a favourite thing resting among a small crowd of others on the floor, finding it slowly is the whole game.',
+      'The room version: a favourite thing resting among a small crowd of others on the floor. Finding it slowly is the whole game.',
   },
   {
     id: 'follow-the-star',
@@ -419,7 +419,7 @@ export const LESSONS: readonly LessonSpec[] = [
     goal: 'The star travels its slow curve while dim company drifts around it, holding on to one moving thing among others. A touch near the star makes it sing.',
     watchFor: 'Following that survives the distractions, or re-finding the star after losing it to one.',
     bridge:
-      'Out in the world, keep company with one slow-moving thing together, a person crossing the room, a cat on its rounds, and re-find it whenever it slips away.',
+      'Out in the world, keep company with one slow-moving thing together (a person crossing the room, a cat on its rounds), and re-find it whenever it slips away.',
   },
   {
     id: 'star-by-star',
@@ -453,7 +453,7 @@ export const LESSONS: readonly LessonSpec[] = [
     stepBack: 'find-your-photo',
     goal: 'The people they love, one at a time, held long enough to really look. Faces are one of the hardest and most rewarding things to see with CVI, and only your own photos are ever used. Add face photos in Settings to unlock.',
     watchFor:
-      'A change when a face appears versus a shape: stilling, brightening, vocalising, recognition wears many coats.',
+      'A change when a face appears versus a shape: stilling, brightening, vocalising. Recognition wears many coats.',
     bridge: 'Best right before time with the real person: photo first, then the face itself, close and unhurried.',
   },
 
@@ -470,7 +470,7 @@ export const LESSONS: readonly LessonSpec[] = [
     interactive: false,
     skill: 'listening to where sound goes',
     stepUp: 'wheres-the-song',
-    goal: 'A listening lesson: the screen rests almost dark while a song drifts slowly from one side to the other. Listening is the goal here, looking is not required. Works best with the device propped up and its own speakers, not headphones.',
+    goal: 'A listening lesson: the screen rests almost dark while a song drifts slowly from one side to the other. Listening is the goal here; looking is not required. Works best with the device propped up and its own speakers, not headphones.',
     watchFor: 'Going still to listen, eyes shifting, or the head turning toward the side the song has moved to.',
     bridge:
       'Walk slowly around them while humming the same soft tune, and let the song travel the room the way it travels the speakers.',

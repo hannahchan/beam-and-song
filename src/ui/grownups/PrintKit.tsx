@@ -110,7 +110,7 @@ function PrintKitInner({ profile }: { profile: Profile }) {
       <ul>
         <li>Print in colour if you can, on matte paper (less glare). One sheet at a time.</li>
         <li>
-          Rest the sheet on a plain dark background, a dark cloth, a black card, so the shape is the only
+          Rest the sheet on a plain dark background (a dark cloth, a black card) so the shape is the only
           interesting thing there, just like on screen.
         </li>
         <li>Dim the room a little, offer the sheet slowly, and wait longer than feels natural.</li>

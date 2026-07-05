@@ -8,7 +8,7 @@ Thank you for looking at this. Light & Sound is a free, static web app offering 
 highly tuneable light-and-sound lessons for children with CVI, built as a **companion to
 professional care, never a programme or assessment**. Before we recommend it to any
 family, we want professional eyes on the content, the copy, and the safety reasoning.
-Nothing in this packet assumes you'll be gentle, critical findings are the valuable ones.
+Nothing in this packet assumes you'll be gentle; critical findings are the valuable ones.
 
 ## 1. What to review (in priority order)
 
@@ -33,7 +33,7 @@ Nothing in this packet assumes you'll be gentle, critical findings are the valua
   Lessons, Settings, Notes, and the Guide. Try the guided setup with an imagined child.
 - **The quickest full pass:** Lessons → "Walk through every lesson, one after another" plays the
   whole library on a single page (buttons or arrow keys, optional slideshow and sound), using the
-  active child's settings and age band, switch the band in Settings to review all three renderings.
+  active child's settings and age band. Switch the band in Settings to review all three renderings.
 - Please record findings in `clinical-feedback.md` format (one finding per row) or
   however is easiest for you, email/voice notes welcome.
 
