@@ -35,7 +35,7 @@ export function Landing() {
         </button>
       </div>
       <div class="landing-footer">
-        <p class="landing-footnote">A companion to your child's vision team, gentle light and song, tuned to your child.</p>
+        <p class="landing-footnote">A companion to your child's vision team, gentle light and sound, tuned to your child.</p>
         <div class="landing-footer-row">
           {profiles.length > 1 && active && <p class="landing-profile">ready for {active.nickname}</p>}
           <a class="btn btn-quiet landing-grownups" href="#/grown-ups">
