@@ -11,7 +11,8 @@ current status per ID is in `requirements-coverage.md`.
 > apps and the intervention literature: six new lessons (anticipation/peekaboo, a first
 > visually-guided reach, sound-then-light listening, colour-anchored finding, a resting
 > scene, an ordered sweep), a bridge on every lesson, per-lesson skill chips and
-> gentler/bolder step links, and a quiet-looking suggestion on the search lessons.
+> gentler/bolder step links, and a quiet-looking rule on the search lessons (now binding;
+> see `sound-design.md` for the July 2026 sound rework).
 > What's still open is the human-dependent work, if anyone takes it on:
 > Phase 0's clinical review and family testing, the AT hardware walkthrough
 > (`at-walkthrough.md`), and the on-device performance soak (`perf-budgets.md`).

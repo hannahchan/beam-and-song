@@ -130,12 +130,15 @@ photo lessons (all media on-device only).
    ordered sweep, crowding, faces via family photos, all inside the unchanged safety
    limits). Any red flags in how they landed, and what should the *next* expansion be?
 9. What's missing that you'd actually use with a client family?
-10. **Sound during searching.** The find/search lessons now carry a card note suggesting
-    the "after a look" or "off" sound modes (sensory-competition reasoning: Roman-Lantzy's
-    distance-learning guidance, CVI Scotland's "eyes or ears", Pilling 2022). Should quiet
-    go further and become the *default* for those lessons, or for the earliest preset,
-    in an app whose identity is light *and* song? We deliberately left defaults unchanged
-    pending your view.
+10. **Sound during searching.** After family feedback that sound pulled attention away,
+    the find/search lessons now *bind* their quiet preference: with music set to "with the
+    visual" they play the after-a-look way instead (quiet while searching, sound only as
+    the answer to a touch), and the cause-and-effect lessons play silence between rewards
+    (sensory-competition reasoning: Roman-Lantzy's distance-learning guidance, CVI
+    Scotland's "eyes or ears", Pilling 2022; the full model is `sound-design.md`). Two
+    questions: is binding right, or should a caregiver be able to force music over a
+    search? And should quiet go further and become the app-wide *default*, in an app whose
+    identity is light *and* song? The global default is still "with".
 11. **Peekaboo timing.** Peekaboo Light hides the target for ~1.2× the child's hold
     setting and gives a small musical cue ~0.7 s before the return. Is a pre-cue right at
     all (it pairs sound with an upcoming visual), and is the hidden window sensible?
