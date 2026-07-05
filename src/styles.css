@@ -497,6 +497,18 @@ a { color: var(--focus); }
 .row { display: flex; gap: 0.8rem; flex-wrap: wrap; align-items: center; }
 .spread { display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap; }
 
+/* Public "what is this" page (#/about): a readable column that sits before the
+   grown-up gate. It borrows .card/.stack for chrome, so only the measure, the
+   lede, and the onward links need rules of their own. */
+.about-screen {
+  max-width: 760px;
+  margin-inline: auto;
+  padding-block: max(1.8rem, env(safe-area-inset-top)) 4rem;
+  padding-inline: max(1.2rem, env(safe-area-inset-left)) max(1.2rem, env(safe-area-inset-right));
+}
+.about-lede { color: var(--inkSoft); font-size: 1.12rem; max-width: 60ch; }
+.about-doors { margin-block-start: 0.4rem; }
+
 .field { margin: 0 0 1.15rem; }
 .field > label, .field > .field-label {
   display: block;
