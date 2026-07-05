@@ -1,4 +1,5 @@
 import type { AgeBand, BandVariant, LessonSpec } from '../lib/types';
+import { LOCALE, type Locale } from '../lib/locale';
 
 /**
  * CR-9 / CR-10 / CR-11 — age is an axis, not a different product.
@@ -286,21 +287,40 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
   },
 };
 
-/** Mechanical wording adaptation for bands without explicit copy overrides. */
+/**
+ * Mechanical wording adaptation for bands without an explicit copy override.
+ *
+ * This is an English-only convenience: age register in English can be reached
+ * by swapping a few nouns and possessives. It does NOT generalise — other
+ * languages carry grammatical gender, case, and register a find-replace cannot
+ * reach — so for any non-English locale this is a no-op and the band must carry
+ * explicit copy in BAND_VARIANTS instead. (Keep grammar out of logic; see the
+ * i18n-readiness note in CLAUDE.md.)
+ */
+type CopyRule = readonly [pattern: RegExp, replacement: string];
+
+const BAND_COPY_RULES: Partial<Record<Locale, Partial<Record<'child' | 'teen', readonly CopyRule[]>>>> = {
+  en: {
+    child: [
+      [/your baby's/gi, "your child's"],
+      [/your baby/gi, 'your child'],
+      [/\bbabies\b/gi, 'children'],
+      [/\bbaby\b/gi, 'child'],
+    ],
+    teen: [
+      [/your baby's/gi, 'their'],
+      [/your baby/gi, 'they'],
+      [/\bbabies\b/gi, 'young people'],
+      [/\bbaby\b/gi, 'young person'],
+    ],
+  },
+};
+
 export function adaptCopy(text: string, band: AgeBand): string {
   if (band === 'infant') return text;
-  if (band === 'child') {
-    return text
-      .replace(/your baby's/gi, "your child's")
-      .replace(/your baby/gi, 'your child')
-      .replace(/\bbabies\b/gi, 'children')
-      .replace(/\bbaby\b/gi, 'child');
-  }
-  return text
-    .replace(/your baby's/gi, 'their')
-    .replace(/your baby/gi, 'they')
-    .replace(/\bbabies\b/gi, 'young people')
-    .replace(/\bbaby\b/gi, 'young person');
+  const rules = BAND_COPY_RULES[LOCALE]?.[band];
+  if (!rules) return text; // non-English: the band must supply explicit copy
+  return rules.reduce((out, [pattern, replacement]) => out.replace(pattern, replacement), text);
 }
 
 /** Resolve a lesson for an age band: same behavior, level, skill — band-appropriate skin. */
@@ -319,7 +339,13 @@ export function resolveLesson(spec: LessonSpec, band: AgeBand): LessonSpec {
   };
 }
 
-/** Plain-language phrases for UI copy, per band. */
+// A word for the child, per band. Non-Partial so adding a locale is a compile
+// error until it supplies its own nouns — a band noun must always exist.
+const BAND_NOUNS: Record<Locale, Record<AgeBand, string>> = {
+  en: { infant: 'your baby', child: 'your child', teen: 'they' },
+};
+
+/** Plain-language phrase for the child, per band. */
 export function bandNoun(band: AgeBand): string {
-  return band === 'infant' ? 'your baby' : band === 'child' ? 'your child' : 'they';
+  return BAND_NOUNS[LOCALE][band];
 }
