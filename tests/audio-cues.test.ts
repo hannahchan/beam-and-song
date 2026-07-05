@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { CUES, VOICE_ATTACK_S } from '../src/engine/audio';
 import { MELODIES, MELODY_NOTE_RANGE } from '../src/engine/melodies';
-import { CUE_DRIVEN_BEHAVIORS, cuePan, effectiveAudioMode, LESSONS } from '../src/lessons/specs';
+import { bedElevationTimbre, CUE_DRIVEN_BEHAVIORS, cuePan, effectiveAudioMode, LESSONS } from '../src/lessons/specs';
 import { resolveLesson } from '../src/lessons/bands';
 import { SAFETY } from '../src/safety/constants';
 
@@ -66,6 +66,13 @@ describe('left and right are unmistakable where the side is the content (FR-10/C
     const look = LESSONS.find((l) => l.id === 'rolling-ball')!;
     expect(Math.abs(cuePan(look, 0.85))).toBeLessThan(0.6);
     expect(Math.sign(cuePan(look, -0.85))).toBe(-1); // still agrees with the picture
+  });
+
+  it('hearing-first beds speak at full brightness (no elevation lowpass)', () => {
+    // Elevation-as-timbre is a looking aid; in a listening lesson there is
+    // nothing to look at, and the filter dulled the family's own songs.
+    expect(bedElevationTimbre(LESSONS.find((l) => l.id === 'traveling-song')!)).toBe(false);
+    expect(bedElevationTimbre(LESSONS.find((l) => l.id === 'star-path')!)).toBe(true);
   });
 });
 

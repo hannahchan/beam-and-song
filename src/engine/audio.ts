@@ -176,28 +176,35 @@ class AudioEngine {
   } | null = null;
 
   /**
-   * Build the melody's output: lowpass (elevation-as-brightness) into a
-   * plain stereo panner (see spatialParams for why not HRTF). All movement
-   * is smoothed, sound glides, it never jumps (SR-2 spirit).
-   * Spatial chains carry beds only, so they hang off the bed bus.
+   * Build the melody's output: an optional lowpass (elevation-as-brightness,
+   * FR-10's looking aid) into a plain stereo panner (see spatialParams for
+   * why not HRTF). All movement is smoothed, sound glides, it never jumps
+   * (SR-2 spirit). Spatial chains carry beds only, so they hang off the bed
+   * bus. The hearing-first lessons omit the filter (elevationTimbre false):
+   * sound is the content there, nothing on screen gives height a meaning,
+   * and the lowpass only dulled the family's own songs (CR-3) and shaved
+   * the very highs that help the sides read.
    */
-  private createSpatialChain(): SpatialChain | null {
+  private createSpatialChain(elevationTimbre: boolean): SpatialChain | null {
     if (!this.ctx || !this.bedGain) return null;
     const ctx = this.ctx;
     const bedGain = this.bedGain;
-    const filter = ctx.createBiquadFilter();
-    filter.type = 'lowpass';
-    filter.frequency.value = spatialParams(0).filterHz;
-
     const stereo = ctx.createStereoPanner ? ctx.createStereoPanner() : null;
-    if (stereo) filter.connect(stereo).connect(bedGain);
-    else filter.connect(bedGain);
+    const filter = elevationTimbre ? ctx.createBiquadFilter() : null;
+    if (filter) {
+      filter.type = 'lowpass';
+      filter.frequency.value = spatialParams(0).filterHz;
+      if (stereo) filter.connect(stereo).connect(bedGain);
+      else filter.connect(bedGain);
+    } else if (stereo) {
+      stereo.connect(bedGain);
+    }
     return {
-      input: filter,
+      input: filter ?? stereo ?? bedGain,
       set: (pan, elevation) => {
         const s = spatialParams(pan, elevation);
         stereo?.pan.setTargetAtTime(s.pan, ctx.currentTime, 0.25);
-        filter.frequency.setTargetAtTime(s.filterHz, ctx.currentTime, 0.3);
+        filter?.frequency.setTargetAtTime(s.filterHz, ctx.currentTime, 0.3);
       },
     };
   }
@@ -292,14 +299,14 @@ class AudioEngine {
 
   startMelody(
     id: MelodyId,
-    opts: { tempoScale?: number; pan?: boolean; layered?: boolean; loop?: boolean } = {},
+    opts: { tempoScale?: number; pan?: boolean; layered?: boolean; loop?: boolean; elevationTimbre?: boolean } = {},
   ): MelodyHandle {
     const melody = MELODIES[id];
     this.stopMelody(0.25);
     if (!this.ctx || !this.master) return this.nullHandle();
     this.resetBed();
 
-    const spatial = opts.pan ? this.createSpatialChain() : null;
+    const spatial = opts.pan ? this.createSpatialChain(opts.elevationTimbre ?? true) : null;
 
     this.active = {
       melody,
@@ -364,7 +371,7 @@ class AudioEngine {
   startCustom(
     meta: CustomAudio,
     fallback: MelodyId,
-    opts: { pan?: boolean; loop?: boolean } = {},
+    opts: { pan?: boolean; loop?: boolean; elevationTimbre?: boolean } = {},
   ): MelodyHandle {
     this.stopMelody(0.25);
     if (!this.ctx || !this.master || !this.bedGain) return this.nullHandle();
@@ -372,12 +379,16 @@ class AudioEngine {
     const ctx = this.ctx;
     const bedGain = this.bedGain;
     let stopped = false;
-    const spatial = opts.pan ? this.createSpatialChain() : null;
+    const spatial = opts.pan ? this.createSpatialChain(opts.elevationTimbre ?? true) : null;
 
     void this.loadBuffer(meta).then((buffer) => {
       if (stopped) return;
       if (!buffer) {
-        this.startMelody(fallback, { pan: opts.pan, loop: opts.loop ?? true });
+        this.startMelody(fallback, {
+          pan: opts.pan,
+          loop: opts.loop ?? true,
+          elevationTimbre: opts.elevationTimbre,
+        });
         return;
       }
       // loop:false means "after a look", only playPhrase() snippets sound.

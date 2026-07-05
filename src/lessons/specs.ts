@@ -621,6 +621,17 @@ export function cuePan(spec: LessonSpec, scenePan: number): number {
 }
 
 /**
+ * FR-10's elevation-as-brightness lowpass is a looking aid: it ties a
+ * panned bed's timbre to the target's height so eye and ear agree. The
+ * hearing-first lessons omit it, sound is the content there, nothing on
+ * screen gives height a meaning, and the filter only dulled the family's
+ * own songs (CR-3) and shaved the highs that help the sides read.
+ */
+export function bedElevationTimbre(spec: LessonSpec): boolean {
+  return !spec.hearingFirst;
+}
+
+/**
  * Behaviors driven by pressed *intervals* rather than discrete taps: the
  * player feeds them touch-down→up spans (and held switches), and the kernel's
  * slew-limited holdEnvelope turns any press pattern into a calm swell.

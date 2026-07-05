@@ -64,8 +64,11 @@ Rules that connect them:
    shadow at the old ±47° cap. The two-character listening cues stage at ±0.9 (half-pans
    are only ~8 dB apart and washed out), hearing-first lessons pass their scene pan to
    cues unscaled (`cuePan` in `src/lessons/specs.ts`), and other lessons keep answers
-   leaning gently toward the target at 0.6×. Settings offers a "left, then right" speaker
-   check so a caregiver can hear whether their device separates the sides at all.
+   leaning gently toward the target at 0.6×. Hearing-first beds also skip the
+   elevation-as-brightness lowpass (`bedElevationTimbre`): that filter is a looking aid,
+   and in a listening lesson it only dulled the family's own songs and shaved the highs
+   that help the sides read. Settings offers a "left, then right" speaker check so a
+   caregiver can hear whether their device separates the sides at all.
 
 ## Where the rules are enforced
 

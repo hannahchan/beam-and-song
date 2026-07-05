@@ -1,6 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { navigate } from '../lib/router';
-import { CUE_DRIVEN_BEHAVIORS, HOLD_DRIVEN_BEHAVIORS, cuePan, effectiveAudioMode, getLesson } from '../lessons/specs';
+import {
+  bedElevationTimbre,
+  CUE_DRIVEN_BEHAVIORS,
+  cuePan,
+  effectiveAudioMode,
+  getLesson,
+  HOLD_DRIVEN_BEHAVIORS,
+} from '../lessons/specs';
 import { bandLookPhrase, bandNoun, resolveLesson } from '../lessons/bands';
 import { activeProfile, addSession, ensureProfile } from '../lib/store';
 import { buildParams } from '../engine/params';
@@ -119,13 +126,15 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
     const startMelodyIfWanted = () => {
       if (!melodyWanted() || melody || !audio.unlocked) return;
       const usePan = settings.soundFollowsTarget || spec.behavior === 'audioPan';
+      const elevationTimbre = bedElevationTimbre(spec);
       melody = customMeta
-        ? audio.startCustom(customMeta, spec.melody, { pan: usePan, loop: true })
+        ? audio.startCustom(customMeta, spec.melody, { pan: usePan, loop: true, elevationTimbre })
         : audio.startMelody(spec.melody, {
             tempoScale: params.tempoScale,
             pan: usePan,
             layered: settings.audioStyle === 'layered',
             loop: true,
+            elevationTimbre,
           });
     };
 
