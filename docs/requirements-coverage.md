@@ -24,7 +24,7 @@ Legend: ✅ done · 🟡 partial (human/hardware step remaining)
 
 | ID | Status | Notes |
 |---|---|---|
-| FR-6 | ✅ | Three sound modes: with / **after a look** (tap-to-answer) / off. |
+| FR-6 | ✅ | Three sound modes: with / **after a look** (tap-to-answer) / off. On the find/search lessons "with" binds to the after-a-look way (quiet search, sound as the answer; PR-11, see `sound-design.md`). |
 | FR-7 | ✅ | Pace axis multiplies all durations; nothing ever auto-advances faster than configured; session ends in a rest screen, not more content. |
 | FR-8 | ✅ | Kernel enforces ≥500 ms eased fades; verified by simulation (a hard cut was caught and fixed in development). |
 | FR-9 | ✅ | Magic Touch + interactive responses across the cause-and-effect lessons; tap-anywhere; Space/Enter = switch input; rewards obey all safety caps under input mashing (tested). |
@@ -53,9 +53,10 @@ Legend: ✅ done · 🟡 partial (human/hardware step remaining)
 
 PR-1…PR-14: **all implemented**: colour+background (PR-1), movement/speed (PR-2), complexity (PR-3),
 field bias incl. strength (PR-4), pace (PR-5), size (PR-6), brightness (PR-7), audio volume/texture/binding
-(PR-8), favourites-first novelty control (PR-9), presets (PR-10), audio-competition modes (PR-11, the
-find/search lesson cards now also *suggest* the quiet modes, since searching competes with listening;
-defaults unchanged pending clinical review), guided setup (PR-12), glow-to-zero with anti-light-gazing
+(PR-8), favourites-first novelty control (PR-9), presets (PR-10), audio-competition modes (PR-11,
+binding on the find/search lessons: searching competes with listening, so "with" plays them the
+after-a-look way, quiet search and sound as the answer; the app-wide default stays "with" pending
+clinical review, see `sound-design.md`), guided setup (PR-12), glow-to-zero with anti-light-gazing
 copy (PR-13), and age band per profile (PR-14).
 
 ## §6 Parent/caregiver tooling
