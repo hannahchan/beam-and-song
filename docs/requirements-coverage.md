@@ -119,7 +119,8 @@ copy (PR-13), and age band per profile (PR-14).
 
 PV-1 ✅ (nickname-only, copy discourages real names) · PV-2 ✅ (no network after load, no analytics) ·
 PV-3 ✅ (optional PIN, honestly framed as a courtesy lock) · PV-4 ✅ (export dialogs state contents;
-downloads are local) · PV-5 ✅ (photos listed, removable, never transmitted).
+downloads are local) · PV-5 ✅ (photos listed, removable, never transmitted; Children page also offers a guarded full erase of
+all on-device data, localStorage and media blobs alike).
 
 ## §11 Caveats carried forward
 

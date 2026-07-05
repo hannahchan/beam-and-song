@@ -209,7 +209,7 @@ function ProfileCard({ profile, isActive, multiple }: { profile: Profile; isActi
 }
 
 /**
- * PV-4, a full on-device reset without leaving the app, the friendly
+ * PV-5, a full on-device reset without leaving the app, the friendly
  * equivalent of the browser's "delete all site data". Guarded so it is never a
  * single stray tap: it reveals a warning, offers a backup first, and asks for a
  * deliberate press-and-hold to finish (the same gesture that guards this area).
