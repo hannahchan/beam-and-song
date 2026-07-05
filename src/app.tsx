@@ -28,15 +28,15 @@ export function App() {
     scanner.configure(scanning, dwellFromPace(paceMultiplier(pace)));
   }, [scanning, pace]);
 
-  // PV-3 — when a PIN is set, leaving the grown-up area re-locks it: on a
-  // shared or therapist device, handing the tablet over must not hand over
-  // the notes. Without a PIN the hold-gate simply asks again next visit.
-  const pinSet = !!state.pinHash;
+  // FR-5/PV-3 — leaving the grown-up area always re-locks it, so a parent who
+  // opens Settings first and then hands the tablet to their child doesn't leave
+  // the grown-up area unlocked behind them. With a PIN set the PIN re-prompts on
+  // return; without one, the press-and-hold / tap-the-word gate does.
   useEffect(() => {
-    if (pinSet && !route.path.startsWith('/grown-ups')) {
+    if (!route.path.startsWith('/grown-ups')) {
       sessionStorage.removeItem(GATE_KEY);
     }
-  }, [route.path, pinSet]);
+  }, [route.path]);
 
   useEffect(() => {
     const titles: Record<string, string> = {

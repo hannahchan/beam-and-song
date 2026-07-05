@@ -21,9 +21,9 @@ export const GATE_KEY = 'light-and-sound:grownup-ok';
  * accessible navigation (AR-6), and the professional-companion framing that
  * belongs on every page (SR-4).
  *
- * When a PIN is set, the PIN *is* the gate (it re-locks every time the app
- * returns to the child screen — see App); without one, the press-and-hold /
- * tap-the-word gate keeps small hands out.
+ * The gate re-locks every time the app returns to the child screen (see App),
+ * so it re-arms after every hand-over. When a PIN is set the PIN *is* the gate;
+ * without one, the press-and-hold / tap-the-word challenge keeps small hands out.
  */
 export function GrownUps({ route }: { route: Route }) {
   const state = useStore();
