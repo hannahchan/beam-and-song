@@ -69,7 +69,7 @@ a { color: var(--focus); }
 
 .skip-link {
   position: absolute;
-  left: 1rem;
+  inset-inline-start: 1rem;
   top: -4rem;
   background: var(--accent);
   color: var(--accentInk);
@@ -238,7 +238,7 @@ a { color: var(--focus); }
 }
 
 .landing-grownups {
-  margin-left: auto;
+  margin-inline-start: auto;
   color: var(--inkSoft);
 }
 
@@ -479,7 +479,7 @@ input[type='range'] {
   color: var(--accent);
   font-weight: 650;
   font-size: 0.98rem;
-  margin-left: 0.5rem;
+  margin-inline-start: 0.5rem;
 }
 
 fieldset {
@@ -610,9 +610,9 @@ details summary::before {
   width: 0.55em;
   height: 0.55em;
   flex-shrink: 0;
-  border-right: 2.5px solid var(--accent);
+  border-inline-end: 2.5px solid var(--accent);
   border-bottom: 2.5px solid var(--accent);
-  transform: rotate(-45deg); /* points right: closed */
+  transform: rotate(-45deg); /* points toward the inline end: closed */
   transition: transform 0.25s ease;
 }
 details[open] summary::before {
@@ -681,7 +681,7 @@ details summary:hover {
   padding: 0.1rem 0.65rem;
   font-size: 0.85rem;
   color: var(--inkSoft);
-  margin-left: 0.35rem;
+  margin-inline-start: 0.35rem;
 }
 
 .photo-entry { border-bottom: 1px solid var(--line); }
@@ -694,7 +694,8 @@ details summary:hover {
   align-items: center;
   flex-wrap: wrap;
   gap: 0.6rem;
-  padding: 0 0 0.8rem calc(74px + 1rem);
+  padding-block: 0 0.8rem;
+  padding-inline-start: calc(74px + 1rem);
 }
 
 /* Settings live preview: always visible while adjusting (no screen-hopping). */
@@ -769,7 +770,7 @@ details summary:hover {
 .print-sheet h2 { font-size: 1.05rem; margin-top: 1.4rem; }
 .print-muted { color: var(--inkSoft); font-size: 0.92rem; }
 .print-table { width: 100%; border-collapse: collapse; font-size: 0.92rem; }
-.print-table th, .print-table td { text-align: left; padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+.print-table th, .print-table td { text-align: start; padding: 0.4rem 0.6rem; border-bottom: 1px solid var(--line); vertical-align: top; }
 
 /* The off-screen kit (CR-4): one bold shape per page in the child's colour. */
 .kit-page { text-align: center; padding: 1.4rem 0; }
