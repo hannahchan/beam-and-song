@@ -28,32 +28,34 @@ export function Chooser() {
   const color = TARGET_COLORS[profile.settings.targetColor] ?? TARGET_COLORS.red;
 
   return (
-    <main class="child-screen">
+    <main class="child-screen chooser-screen">
       <h1 class="sr-only">Choose a lesson</h1>
       {getState().profiles.length > 1 && <p class="chooser-for">{profile.nickname}'s lessons</p>}
-      <div class="chooser">
-        {programs.map((p) => (
-          <button
-            key={p.id}
-            class="chooser-tile"
-            onClick={() => navigate('/play', { program: p.id })}
-            aria-label={`Play the program ${p.name}`}
-          >
-            <ProgramGlyph color={color} />
-            <span>{p.name}</span>
-          </button>
-        ))}
-        {lessons.map((l) => (
-          <button
-            key={l.id}
-            class="chooser-tile"
-            onClick={() => navigate('/play', { lesson: l.id })}
-            aria-label={`Play ${l.title}`}
-          >
-            <TileGlyph lesson={l} color={color} />
-            <span>{l.title}</span>
-          </button>
-        ))}
+      <div class="chooser-wrap">
+        <div class="chooser">
+          {programs.map((p) => (
+            <button
+              key={p.id}
+              class="chooser-tile"
+              onClick={() => navigate('/play', { program: p.id })}
+              aria-label={`Play the program ${p.name}`}
+            >
+              <ProgramGlyph color={color} />
+              <span>{p.name}</span>
+            </button>
+          ))}
+          {lessons.map((l) => (
+            <button
+              key={l.id}
+              class="chooser-tile"
+              onClick={() => navigate('/play', { lesson: l.id })}
+              aria-label={`Play ${l.title}`}
+            >
+              <TileGlyph lesson={l} color={color} />
+              <span>{l.title}</span>
+            </button>
+          ))}
+        </div>
       </div>
       <a class="btn btn-quiet landing-grownups" href="#/grown-ups">
         For grown-ups

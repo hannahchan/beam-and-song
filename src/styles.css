@@ -264,6 +264,33 @@ a { color: var(--focus); }
   margin: 0;
 }
 
+/* Same viewport-pinning as the landing (.landing-screen): a fixed inset:0 box
+   so the dvh recompute on the fullscreen request / orientation change can't
+   re-centre the content. Unlike the landing, the tile grid can outgrow a short
+   landscape screen, so the grid lives in a scrollable .chooser-wrap and only
+   the "For grown-ups" link is pinned to the bottom, landing where the landing
+   page's link sat so it no longer leaps on navigation. Safe-area padding keeps
+   the top row and the bottom link clear of the notch and home indicator. */
+.chooser-screen {
+  position: fixed;
+  inset: 0;
+  min-height: 0;
+  padding: max(0.8rem, env(safe-area-inset-top)) max(0.8rem, env(safe-area-inset-right))
+    max(0.8rem, env(safe-area-inset-bottom)) max(0.8rem, env(safe-area-inset-left));
+}
+.chooser-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  /* safe center: centre the grid when it fits, fall back to the top when it
+     overflows so the first row stays reachable as the wrap scrolls. */
+  justify-content: safe center;
+  align-items: center;
+  overflow-y: auto;
+}
+
 /* Child lesson chooser, few, huge, calm tiles (FR-3). */
 .chooser {
   display: grid;
