@@ -5,6 +5,7 @@ import { PRESETS } from '../../lib/presets';
 import { TARGET_COLORS } from '../../safety/constants';
 import { MAX_PHOTOS_PER_PROFILE, processPhotoFile, voiceBlobId } from '../../lib/photos';
 import { uid } from '../../lib/store';
+import { formatMinutesSeconds } from '../../lib/fmt';
 import {
   analyzeAudio,
   checkAudioFile,
@@ -416,7 +417,7 @@ function AudioManager({ profile }: { profile: Profile }) {
               <span class="radio-text">
                 <b>{a.label}</b>
                 <small>
-                  {Math.round(a.duration / 60)} min {Math.round(a.duration % 60)} s ·{' '}
+                  {formatMinutesSeconds(a.duration)} ·{' '}
                   <button type="button" class="btn btn-small btn-ghost" onClick={() => void removeAudio(a.id)}>
                     Remove
                   </button>
