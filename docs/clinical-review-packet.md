@@ -27,7 +27,7 @@ Nothing in this packet assumes you'll be gentle; critical findings are the valua
 
 ## 2. How to review
 
-- Live site: (deploy URL here), works on any tablet/laptop; nothing installs, no data leaves the device.
+- Live site: https://lightandsound.app, works on any tablet/laptop; nothing installs, no data leaves the device.
 - The child flow: tap **Start** → a lesson tile → watch a full session end in the "rest" screen.
 - The grown-up area: **For grown-ups** → hold the button (or tap "two") → explore
   Lessons, Settings, Notes, and the Guide. Try the guided setup with an imagined child.
