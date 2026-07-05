@@ -309,7 +309,7 @@ export function importProfile(json: unknown): { ok: true; profile: Profile } | {
   return { ok: true, profile: p };
 }
 
-/* ------------------------------- full reset (PV-4) ------------------------------- */
+/* ------------------------------- full reset (PV-5) ------------------------------- */
 
 /**
  * The in-app equivalent of the browser's "delete all site data": remove every

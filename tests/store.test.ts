@@ -182,7 +182,7 @@ describe('photo visibility toggle (CR-3)', () => {
   });
 });
 
-describe('full device reset (PV-4/PV-5)', () => {
+describe('full device reset (PV-5)', () => {
   beforeEach(reset);
 
   it('removes every profile, the PIN, and the stored key, and stays usable after', async () => {
