@@ -54,7 +54,7 @@ export function Profiles({ state }: { state: AppState }) {
 
       <Card title="Bring a profile from another device">
         <p class="card-note">
-          Choose a <code>.json</code> file exported from Light & Sound, settings, notes, and photos come with it.
+          Choose a <code>.json</code> file exported from Light & Sound; settings, notes, and photos come with it.
         </p>
         <input
           ref={fileRef}
@@ -187,8 +187,8 @@ function ProfileCard({ profile, isActive, multiple }: { profile: Profile; isActi
         ) : (
           <div>
             <p class="msg-err">
-              This deletes {profile.nickname}'s settings, notes, and photos from this device. There is no undo,
-              consider exporting first.
+              This deletes {profile.nickname}'s settings, notes, and photos from this device. There is no undo.
+              Consider exporting first.
             </p>
             <div class="row">
               <button class="btn btn-small btn-danger" onClick={() => deleteProfile(profile.id)}>

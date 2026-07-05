@@ -205,7 +205,7 @@ function ReviewInner({ profile }: { profile: Profile }) {
         <p class="card-note">{spec.goal}</p>
         {missingPhoto && (
           <p class="card-note">
-            This one uses the family's own photos, <a href="#/grown-ups/settings">add one in Settings</a> to
+            This one uses the family's own photos. <a href="#/grown-ups/settings">Add one in Settings</a> to
             see it properly. A soft placeholder stands in meanwhile.
           </p>
         )}

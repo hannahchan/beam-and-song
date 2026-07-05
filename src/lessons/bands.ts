@@ -84,7 +84,7 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
       goal: 'Two resting lights. One at a time brightens and sounds, inviting a look, a gentle experience of choosing where to look. A touch anywhere makes the bright one answer.',
       watchFor: 'A look that moves to whichever light is glowing, even slowly.',
       bridge:
-        'Hold two small lights or objects a little apart and let one at a time "call", a slow wiggle, a hum, and notice which one earns the look.',
+        'Hold two small lights or objects a little apart and let one at a time "call" (a slow wiggle, a hum), and notice which one earns the look.',
     },
   },
   'rolling-ball': {
@@ -103,7 +103,7 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
       melody: 'tideGlass',
       goal: 'A small boat glides across still water, pausing midway. A familiar shape, slow movement, simple ground.',
       watchFor: 'Following the boat across, or a flicker of recognition at the pause.',
-      bridge: 'If they have an object that "travels", a model car, a boat, bring it out afterwards and glide it the same slow way.',
+      bridge: 'If they have an object that "travels" (a model car, a boat), bring it out afterwards and glide it the same slow way.',
     },
   },
   balloon: {
@@ -113,14 +113,14 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
       goal: 'A lantern-light drifts slowly upward and away, then another follows, practice lifting the gaze outward from where they see best. A touch makes it sway.',
       watchFor: 'Eyes lifting with it a little further each time.',
       bridge:
-        'Watch slow rising things together, steam from a mug, bubbles if they enjoy them, few, gentle, and unhurried.',
+        'Watch slow rising things together (steam from a mug, bubbles if they enjoy them), few, gentle, and unhurried.',
     },
   },
   'familiar-photo': {
     teen: {
       title: 'A Familiar Face or Thing',
       melody: 'ember',
-      goal: 'Your own photo, someone they love, or a thing they genuinely care about, fading gently in on a plain background. Familiarity is the strongest doorway at any age. Add a photo in Settings to unlock this lesson; photos stay on this device only.',
+      goal: 'Your own photo (someone they love, or a thing they genuinely care about) fading gently in on a plain background. Familiarity is the strongest doorway at any age. Add a photo in Settings to unlock this lesson; photos stay on this device only.',
       watchFor: 'A different quality of attention than for shapes: longer, warmer, more searching.',
       bridge: 'Show the real thing, or the real person, right after the screen version.',
     },
@@ -147,7 +147,7 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
     teen: {
       title: 'Spot the Familiar',
       melody: 'ember',
-      goal: 'Their own familiar thing, something they genuinely care about, resting among a few dim shapes. Familiarity does the finding at first; that is the point. Add a photo in Settings to unlock.',
+      goal: 'Their own familiar thing (something they genuinely care about) resting among a few dim shapes. Familiarity does the finding at first; that is the point. Add a photo in Settings to unlock.',
       watchFor: 'A quicker, warmer settle on the photo than on the shapes around it.',
       bridge: 'Play the same game in the room: the real object among two others, offered slowly.',
     },
@@ -158,7 +158,7 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
       title: 'Near and Far',
       melody: 'nightSky',
       goal: 'The light returns large, then smaller, then small, like something seen from across a room. Smaller sizes gently work the beginnings of distance viewing.',
-      watchFor: 'Whether the small appearances still earn a look, or only the large ones, a useful thing to notice, and only ever that.',
+      watchFor: 'Whether the small appearances still earn a look, or only the large ones. A useful thing to notice, and only ever that.',
       bridge: 'Try the real-world version: a favourite object close, then from across the room, unhurried.',
     },
   },
@@ -184,7 +184,7 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
       title: 'Familiar Faces',
       melody: 'ember',
       goal: 'The people they love, one at a time, held long enough to really look. Faces are among the hardest and most rewarding things to see with CVI, and only your own photos are ever used. Add face photos in Settings to unlock.',
-      watchFor: 'A change when a face appears versus a shape: stilling, brightening, vocalising, recognition wears many coats.',
+      watchFor: 'A change when a face appears versus a shape: stilling, brightening, vocalising. Recognition wears many coats.',
       bridge: 'Best right before time with the real person: photo first, then the face itself, close and unhurried.',
     },
   },
@@ -225,7 +225,7 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
       goal: 'The light slides behind a dark headland, waits, sounds a low note, and returns in the very same place, like a lighthouse coming around. Practice at expecting: knowing where something will reappear, and being there to meet it. With movement off, the light hides in place instead of travelling.',
       watchFor: 'Eyes holding near the hiding place through the pause, or settling back there when the note sounds.',
       bridge:
-        'The real-world twin: watch a slow, predictable coming-and-going together, a pedestrian light, headlights that sweep past and return, waves reaching and retreating.',
+        'The real-world twin: watch a slow, predictable coming-and-going together (a pedestrian light, headlights that sweep past and return, waves reaching and retreating).',
     },
   },
   'keep-the-light-singing': {
@@ -270,7 +270,7 @@ export const BAND_VARIANTS: Record<string, Partial<Record<'child' | 'teen', Band
       title: 'Night Harbour',
       shape: 'boat',
       melody: 'nightSky',
-      goal: 'Two or three quiet shapes resting together, a boat on still water, the moon above, with nothing asked at all. An unhurried taste of more-than-one-thing staying calmly where it is. The complexity setting decides how much company appears.',
+      goal: 'Two or three quiet shapes resting together (a boat on still water, the moon above), with nothing asked at all. An unhurried taste of more-than-one-thing staying calmly where it is. The complexity setting decides how much company appears.',
       watchFor: 'Eyes travelling from one thing to another and coming back, visiting the scene rather than holding one point.',
       bridge: 'Set two or three meaningful things together on a plain surface and name them slowly, touching each in turn. No questions, just company.',
     },

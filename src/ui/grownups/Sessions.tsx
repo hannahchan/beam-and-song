@@ -35,7 +35,7 @@ export function Sessions({ profile }: { profile: Profile | null }) {
 
       <Card title="The last four weeks">
         {s.total === 0 ? (
-          <p class="card-note">Nothing noted yet, after each lesson you'll be offered a ten-second note.</p>
+          <p class="card-note">Nothing noted yet. After each lesson you'll be offered a ten-second note.</p>
         ) : (
           <>
             <p>
