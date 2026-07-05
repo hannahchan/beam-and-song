@@ -349,14 +349,36 @@ export function Settings({ profile }: { profile: Profile | null }) {
  */
 function StereoCheck({ volume }: { volume: number }) {
   const [playing, setPlaying] = useState(false);
+  // Synchronous guard: the first press awaits unlock(), and a quick second
+  // tap must not schedule the check twice while the state hasn't rendered.
+  const busyRef = useRef(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  useEffect(
+    () => () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    },
+    [],
+  );
   const play = async () => {
-    if (playing) return;
+    if (busyRef.current) return;
+    busyRef.current = true;
     await audio.unlock();
-    audio.setVolume(volume);
+    // A check must be audible to be a check: at the "Silent" volume setting
+    // two silences would read as blended-mono hardware, so the notes play
+    // at a gentle floor and the real setting is handed back afterwards.
+    audio.setVolume(Math.max(volume, 0.4));
     const secs = audio.stereoCheck();
-    if (secs <= 0) return;
+    if (secs <= 0) {
+      audio.setVolume(volume);
+      busyRef.current = false;
+      return;
+    }
     setPlaying(true);
-    setTimeout(() => setPlaying(false), secs * 1000);
+    timerRef.current = setTimeout(() => {
+      audio.setVolume(volume);
+      busyRef.current = false;
+      setPlaying(false);
+    }, secs * 1000);
   };
   return (
     <div class="field">

@@ -4,6 +4,9 @@ import { MELODIES, MELODY_NOTE_RANGE } from '../src/engine/melodies';
 import { bedElevationTimbre, CUE_DRIVEN_BEHAVIORS, cuePan, effectiveAudioMode, LESSONS } from '../src/lessons/specs';
 import { resolveLesson } from '../src/lessons/bands';
 import { SAFETY } from '../src/safety/constants';
+import { computeScene } from '../src/engine/scenes';
+import { buildParams } from '../src/engine/params';
+import { DEFAULT_SETTINGS } from '../src/lib/store';
 
 /**
  * The sound model: event sounds are data (deterministic, gentle, in their own
@@ -73,6 +76,17 @@ describe('left and right are unmistakable where the side is the content (FR-10/C
     // nothing to look at, and the filter dulled the family's own songs.
     expect(bedElevationTimbre(LESSONS.find((l) => l.id === 'traveling-song')!)).toBe(false);
     expect(bedElevationTimbre(LESSONS.find((l) => l.id === 'star-path')!)).toBe(true);
+  });
+
+  it('the picture and the stage agree: the glowing side is the sounding side', () => {
+    // The bell's fixed stage position must match the scene's own pan and
+    // the side of the orb that glows for it; flipping one alone would make
+    // the sound contradict the picture without breaking any other test.
+    const spec = LESSONS.find((l) => l.id === 'bell-and-drum')!;
+    const scene = computeScene(spec, buildParams(DEFAULT_SETTINGS), 3000, { seed: 1, taps: [] }, 2900);
+    expect(Math.sign(scene.pan)).toBe(Math.sign(CUES.bell.pan!));
+    const lit = scene.items.reduce((a, b) => (a.alpha > b.alpha ? a : b));
+    expect(Math.sign(lit.x - 0.5)).toBe(Math.sign(scene.pan));
   });
 });
 
