@@ -3,6 +3,7 @@ import { useRoute } from './lib/router';
 import { Landing } from './ui/Landing';
 import { Chooser } from './ui/Chooser';
 import { Player } from './ui/Player';
+import { About } from './ui/About';
 import { GATE_KEY, GrownUps } from './ui/grownups/GrownUps';
 import { useStore } from './ui/useStore';
 import { paceMultiplier } from './engine/params';
@@ -43,6 +44,7 @@ export function App() {
       '/': 'The Light & Sound App for Kids with CVI',
       '/choose': 'Choose a lesson, Light & Sound',
       '/play': 'Lesson, Light & Sound',
+      '/about': 'About, Light & Sound',
     };
     document.title = route.path.startsWith('/grown-ups')
       ? 'For grown-ups, Light & Sound'
@@ -71,6 +73,7 @@ export function App() {
         programId={route.params.get('program') ?? undefined}
       />
     );
+  else if (route.path === '/about') page = <About />;
   else if (route.path.startsWith('/grown-ups')) page = <GrownUps route={route} />;
   else page = <Landing />;
 

@@ -74,4 +74,5 @@ describe('grown-up pages have no WCAG A/AA violations (axe)', () => {
 
 describe('child-facing pages are semantically sound too', () => {
   it('landing', () => checkRoute('/'));
+  it('about', () => checkRoute('/about'));
 });
