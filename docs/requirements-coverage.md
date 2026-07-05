@@ -28,7 +28,7 @@ Legend: ✅ done · 🟡 partial (human/hardware step remaining)
 | FR-7 | ✅ | Pace axis multiplies all durations; nothing ever auto-advances faster than configured; session ends in a rest screen, not more content. |
 | FR-8 | ✅ | Kernel enforces ≥500 ms eased fades; verified by simulation (a hard cut was caught and fixed in development). |
 | FR-9 | ✅ | Magic Touch + interactive responses across the cause-and-effect lessons; tap-anywhere; Space/Enter = switch input; rewards obey all safety caps under input mashing (tested). |
-| FR-10 | ✅ | StereoPanner follows target x; per-profile toggle; hearing lessons pan by design. |
+| FR-10 | ✅ | Plain StereoPanner follows target x (HRTF dropped on purpose: a headphone technique, and the stated hardware is speakers); listening lessons stage their voices fully left/right; Settings offers a left-then-right speaker check. Per-profile toggle; hearing lessons pan by design. |
 | FR-12 | ✅ | Pause overlay dims + hushes instantly; "Softer" mode halves light/sound; End is always two taps away; auto-pause when the tab hides. |
 
 ## §4 Content & progression
