@@ -16,13 +16,13 @@ export function Dashboard({ profile }: { profile: Profile | null }) {
 
   return (
     <div class="stack">
-      <h1 tabindex={-1}>Hello — this is {profile.nickname}'s space</h1>
+      <h1 tabindex={-1}>Hello, this is {profile.nickname}'s space</h1>
 
       {!profile.presetId && (
         <Card title="Two minutes to a good starting point">
           <p>
             Answer five quick questions about what {profile.nickname} notices, and we'll suggest a starting setup.
-            You can change anything later — with your vision professional's advice wherever possible.
+            You can change anything later, with your vision professional's advice wherever possible.
           </p>
           <a class="btn btn-primary" href="#/grown-ups/setup">
             Start guided setup
@@ -35,7 +35,7 @@ export function Dashboard({ profile }: { profile: Profile | null }) {
           <p class="card-note">
             Notes and photos live only in this browser, and browsers can clear rarely-used site data. One file
             keeps everything safe (recordings stay on this device). It contains personal information about your
-            child — keep it somewhere you trust.
+            child, so keep it somewhere you trust.
           </p>
           <button
             class="btn"
@@ -50,7 +50,7 @@ export function Dashboard({ profile }: { profile: Profile | null }) {
         <Card title="Time for a gentle settings review?">
           <p>
             It's been a while since settings changed, and CVI can shift over months. Have a look at the recent
-            notes, then see whether colour, pace, or complexity still fit — ideally together with your vision
+            notes, then see whether colour, pace, or complexity still fit, ideally together with your vision
             professional.
           </p>
           <div class="row">
@@ -67,7 +67,7 @@ export function Dashboard({ profile }: { profile: Profile | null }) {
       <Card title="Start a lesson">
         <p class="card-note">
           {preset ? `Current setup: “${preset.title}”. ` : ''}
-          Short and often beats long and rare — a few minutes is a full session.
+          Short and often beats long and rare. A few minutes is a full session.
         </p>
         <div class="row">
           {firstLesson && (
@@ -87,8 +87,8 @@ export function Dashboard({ profile }: { profile: Profile | null }) {
       <Card title="The last two weeks">
         {summary.total === 0 ? (
           <p class="card-note">
-            No sessions noted yet. After each lesson you'll be offered a ten-second note — they build into a
-            picture you can share with {profile.nickname}'s vision team.
+            No sessions noted yet. After each lesson you'll be offered a ten-second note, and they build into
+            a picture you can share with {profile.nickname}'s vision team.
           </p>
         ) : (
           <>
@@ -96,7 +96,7 @@ export function Dashboard({ profile }: { profile: Profile | null }) {
               {summary.total} short {plural(summary.total, { one: 'session', other: 'sessions' })};{' '}
               {summary.withResponse > 0
                 ? `a response you noticed in ${summary.withResponse} of them.`
-                : 'no clear responses noted — which is common early on, and still useful to know.'}
+                : 'no clear responses noted, which is common early on and still useful to know.'}
             </p>
             {summary.hardDayLine && <p class="card-note">{summary.hardDayLine}</p>}
             <a class="btn btn-small" href="#/grown-ups/sessions">
@@ -115,6 +115,15 @@ export function Dashboard({ profile }: { profile: Profile | null }) {
           Read the guide
         </a>
       </Card>
+
+      <Card title="About this app">
+        <p class="card-note">
+          Light & Sound was built by Claude Fable 5 as a demonstration, and it came from a genuine wish to
+          help children with CVI. It is looked after as a side project, so it has not had a clinical review,
+          and it has not been tried with children with CVI. Please treat it as a gentle companion to use
+          alongside {profile.nickname}'s vision team, rather than a clinically validated tool.
+        </p>
+      </Card>
     </div>
   );
 }
@@ -126,9 +135,13 @@ function Welcome() {
       <h1 tabindex={-1}>Welcome</h1>
       <Card title="Light & Sound, in one breath">
         <p>
-          Gentle, tuneable light-and-sound lessons for babies with CVI (cortical/cerebral visual impairment) — built
-          to be adjusted to <em>your</em> baby, used in short sessions, alongside your vision professional or
+          Gentle, tuneable light-and-sound lessons for babies with CVI (cortical/cerebral visual impairment),
+          built to be adjusted to <em>your</em> baby, used in short sessions, alongside your vision professional or
           early-intervention team.
+        </p>
+        <p class="card-note">
+          It was made by Claude Fable 5 as a demonstration and is cared for as a side project, so please treat it
+          as a gentle companion rather than a clinically validated tool.
         </p>
       </Card>
       <Card title="First: who is this for?">
@@ -142,7 +155,7 @@ function Welcome() {
         >
           <label class="field" style={{ flex: 1, minWidth: '14rem', margin: 0 }}>
             <span class="field-label">A nickname for your child</span>
-            <p class="hint">A first name or nickname is plenty — no full names or birthdays needed, ever.</p>
+            <p class="hint">A first name or nickname is plenty. No full names or birthdays needed, ever.</p>
             <input
               type="text"
               value={name}

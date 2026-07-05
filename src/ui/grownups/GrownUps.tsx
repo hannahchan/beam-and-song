@@ -111,7 +111,7 @@ export function GrownUps({ route }: { route: Route }) {
       </main>
       <footer class="gu-footer">
         <p>
-          Light & Sound is a companion to your child's vision professional or early-intervention team — not a
+          Light & Sound is a companion to your child's vision professional or early-intervention team, not a
           programme, a curriculum, or any kind of assessment. Everything you save stays on this device only.
         </p>
       </footer>
@@ -166,7 +166,7 @@ function Gate({ hasPin, onPassed }: { hasPin: boolean; onPassed: () => void }) {
             Back to the child screen
           </a>
           <p class="card-note" style={{ marginTop: '0.8rem' }}>
-            Forgotten it? There is no recovery by design — clearing this site's data in your browser settings
+            Forgotten it? There is no recovery by design. Clearing this site's data in your browser settings
             removes the lock, along with every profile, note, and photo on this device. A saved backup file
             brings the children back afterwards.
           </p>
