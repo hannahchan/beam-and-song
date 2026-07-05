@@ -726,6 +726,15 @@ details summary:hover {
 .word-choice { display: flex; gap: 0.8rem; justify-content: center; }
 .word-choice .btn { min-width: 96px; }
 
+/* The child's safe way out of the gate (FR-5). Promoted from the old quiet link
+   to a solid, icon-led button and set a little apart from the "enter"
+   affordances above, so a child who wanders in can find the way back, not only
+   a parent who came on purpose. Left non-accent so it stays distinct from the
+   enter action (the PIN gate's gold "Open"). */
+.gate-exit {
+  margin-top: 0.4rem;
+}
+
 .bars { display: flex; flex-direction: column; gap: 0.45rem; margin: 0.6rem 0; }
 .bar-row { display: grid; grid-template-columns: 7.5rem 1fr 3.5rem; align-items: center; gap: 0.7rem; font-size: 0.95rem; }
 .bar-track { background: var(--bg2); border-radius: 999px; height: 16px; overflow: hidden; }

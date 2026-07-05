@@ -162,7 +162,8 @@ function Gate({ hasPin, onPassed }: { hasPin: boolean; onPassed: () => void }) {
           <button class="btn btn-primary" type="submit">
             Open
           </button>
-          <a class="btn btn-quiet" href="#/">
+          <a class="btn gate-exit" href="#/">
+            <HomeIcon />
             Back to the child screen
           </a>
           <p class="card-note" style={{ marginTop: '0.8rem' }}>
@@ -192,10 +193,32 @@ function Gate({ hasPin, onPassed }: { hasPin: boolean; onPassed: () => void }) {
             </button>
           ))}
         </div>
-        <a class="btn btn-quiet" href="#/">
+        <a class="btn gate-exit" href="#/">
+          <HomeIcon />
           Back to the child screen
         </a>
       </div>
     </main>
+  );
+}
+
+/** A simple house glyph on the gate's exit, so the way back to the child screen
+ *  reads as "home" even to a child who cannot yet read the label (FR-5). */
+function HomeIcon() {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width="22"
+      height="22"
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2.2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path d="M4 11.5 12 5l8 6.5" />
+      <path d="M6.5 10.5V19h11v-8.5" />
+    </svg>
   );
 }
