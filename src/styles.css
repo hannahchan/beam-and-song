@@ -152,6 +152,20 @@ a { color: var(--focus); }
   overflow: hidden;
 }
 
+/* The landing is a fixed, always-one-screen door, so pin it to the viewport
+   rather than sizing it with 100dvh. On iOS Safari the dynamic viewport height
+   lags and recomputes in steps through an orientation change (landscape to
+   portrait), which made the flex-centred orb jump between two positions and
+   briefly exposed the lighter body colour (--bg0) as a "chin" below the black
+   screen. A fixed inset:0 box always covers the screen edge to edge
+   (viewport-fit=cover spans the safe areas), so there is no dynamic height to
+   re-centre against and nothing to peek through underneath. */
+.landing-screen {
+  position: fixed;
+  inset: 0;
+  min-height: 0;
+}
+
 .landing-title {
   margin: 0;
   padding-top: max(1.2rem, env(safe-area-inset-top));
