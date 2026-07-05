@@ -248,8 +248,9 @@ function pulse(scene: Scene, p: EngineParams, tMs: number): void {
   const pos = biasPoint(0.5, 0.5, p.fieldBias, p.biasStrength);
   // One unified breath: size and brightness swell together (same wave, in phase)
   // so the pulse reads as a single slow inhale rather than a faint shimmer. The
-  // size term carries most of the visible depth while barely moving whole-screen
-  // luminance, so the breath stays well inside the analyzer's flash budget.
+  // size term (via r^2) is actually the largest contributor to the luminance
+  // swing; it's the slow, frequency-clamped rate that keeps the breath inside the
+  // analyzer's flash budget — verified at every setting by tests/safety.test.ts.
   const wave = safeMod(tMs / 1000, p.modHz, p.modDepth);
   const a = p.peakAlpha * 0.9 * (1 + wave) * entry(tMs, p);
   scene.items.push(
