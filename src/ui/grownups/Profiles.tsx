@@ -10,6 +10,7 @@ import {
   setPin,
   updateProfile,
 } from '../../lib/store';
+import { formatDate, plural } from '../../lib/fmt';
 import { Card, downloadFile } from './bits';
 
 /** PT-1 / PT-3 / PV-3 / PV-4 — children on this device, moving profiles, the courtesy lock. */
@@ -129,8 +130,9 @@ function ProfileCard({ profile, isActive, multiple }: { profile: Profile; isActi
         )}
       </div>
       <p class="card-note">
-        {profile.sessions.length} session note{profile.sessions.length === 1 ? '' : 's'} · {profile.photos.length}{' '}
-        photo{profile.photos.length === 1 ? '' : 's'} · since {new Date(profile.createdAt).toLocaleDateString()}
+        {profile.sessions.length} session {plural(profile.sessions.length, { one: 'note', other: 'notes' })} ·{' '}
+        {profile.photos.length} {plural(profile.photos.length, { one: 'photo', other: 'photos' })} · since{' '}
+        {formatDate(profile.createdAt)}
       </p>
 
       <details>

@@ -3,6 +3,7 @@ import { backupIsDue, createProfile, exportAll, getState, reviewIsDue } from '..
 import { getLesson, DEFAULT_LESSON_IDS } from '../../lessons/specs';
 import { summarize } from '../../lib/summary';
 import { getPreset } from '../../lib/presets';
+import { plural } from '../../lib/fmt';
 import { Card, downloadFile } from './bits';
 import { useState } from 'preact/hooks';
 
@@ -92,7 +93,7 @@ export function Dashboard({ profile }: { profile: Profile | null }) {
         ) : (
           <>
             <p>
-              {summary.total} short session{summary.total === 1 ? '' : 's'};{' '}
+              {summary.total} short {plural(summary.total, { one: 'session', other: 'sessions' })};{' '}
               {summary.withResponse > 0
                 ? `a response you noticed in ${summary.withResponse} of them.`
                 : 'no clear responses noted — which is common early on, and still useful to know.'}

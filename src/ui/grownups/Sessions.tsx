@@ -3,6 +3,8 @@ import { getLesson } from '../../lessons/specs';
 import { buildShareText, summarize } from '../../lib/summary';
 import { regionInsight } from '../../lib/regions';
 import { exportProfile } from '../../lib/store';
+import { formatDate, formatDuration, plural } from '../../lib/fmt';
+import { TAG_LABELS } from '../../lib/labels';
 import { Card, downloadFile } from './bits';
 
 /** PT-4 / PT-7 / PT-8 — notes, a readable trend, and a shareable summary. */
@@ -37,8 +39,8 @@ export function Sessions({ profile }: { profile: Profile | null }) {
         ) : (
           <>
             <p>
-              {s.total} session{s.total === 1 ? '' : 's'} · a response you noticed in {s.withResponse} · clearest
-              friend so far: {s.topLesson ? <b>{s.topLesson.title}</b> : '—'}
+              {s.total} {plural(s.total, { one: 'session', other: 'sessions' })} · a response you noticed in{' '}
+              {s.withResponse} · clearest friend so far: {s.topLesson ? <b>{s.topLesson.title}</b> : '—'}
             </p>
             <div class="bars" role="img" aria-label={weeksAria(s.weeks)}>
               {s.weeks.map((w) => (
@@ -95,10 +97,10 @@ export function Sessions({ profile }: { profile: Profile | null }) {
           <div key={r.id} class="session-item">
             <span>
               <b>{r.programName ? `${r.programName} (program)` : (getLesson(r.lessonId)?.title ?? r.lessonId)}</b>
-              <span class="card-note"> · {new Date(r.at).toLocaleDateString()} · {Math.max(1, Math.round(r.durationSec / 60))} min</span>
+              <span class="card-note"> · {formatDate(r.at)} · {formatDuration(r.durationSec)}</span>
               {r.tags.map((t) => (
                 <span key={t} class="tag-pill">
-                  {t}
+                  {TAG_LABELS[t]}
                 </span>
               ))}
               {r.note && <div class="card-note">“{r.note}”</div>}

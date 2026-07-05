@@ -1,6 +1,15 @@
 import type { Profile, SessionRecord } from './types';
 import { getLesson } from '../lessons/specs';
 import { regionInsight } from './regions';
+import { formatDate, plural } from './fmt';
+import {
+  AUDIO_MODE_LABELS,
+  AUDIO_STYLE_LABELS,
+  BIAS_STRENGTH_LABELS,
+  COLOR_LABELS,
+  FIELD_BIAS_LABELS,
+  TAG_LABELS,
+} from './labels';
 
 /**
  * PT-7 — turn raw observations into something a caregiver (and their vision
@@ -54,7 +63,7 @@ export function summarize(profile: Profile, days = 28, now = Date.now()): Summar
       return t > start && t <= end;
     });
     weeks.push({
-      label: w === 0 ? 'This week' : `${w} wk${w > 1 ? 's' : ''} ago`,
+      label: w === 0 ? 'This week' : `${w} ${plural(w, { one: 'wk', other: 'wks' })} ago`,
       total: inWeek.length,
       responded: inWeek.filter((s) => s.response === 'clear' || s.response === 'some').length,
     });
@@ -84,7 +93,7 @@ export function buildShareText(profile: Profile, days = 28): string {
   const s = summarize(profile, days);
   const lines: string[] = [
     `Light & Sound — family observations for "${profile.nickname}"`,
-    `Window: last ${days} days · exported ${new Date().toLocaleDateString()}`,
+    `Window: last ${days} ${plural(days, { one: 'day', other: 'days' })} · exported ${formatDate(Date.now())}`,
     '',
     'These are informal observations made by family during short at-home',
     'sessions. They are not measurements, assessments, or clinical results.',
@@ -102,10 +111,10 @@ export function buildShareText(profile: Profile, days = 28): string {
   lines.push('', 'Current settings:');
   const st = profile.settings;
   lines.push(
-    `  Colour ${st.targetColor} · size ${st.size}/5 · glow ${st.glow}/3 · brightness ${st.brightness}/3`,
+    `  Colour ${COLOR_LABELS[st.targetColor]} · size ${st.size}/5 · glow ${st.glow}/3 · brightness ${st.brightness}/3`,
     `  Movement ${st.movement ? `on (speed ${st.speed}/5)` : 'off'} · pace ${st.pace}/5 · complexity ${st.complexity}/3`,
-    `  Field: ${st.fieldBias === 'none' ? 'everywhere' : `favouring ${st.fieldBias} (${st.biasStrength})`}`,
-    `  Sound: ${st.audioMode === 'with' ? 'with the visual' : st.audioMode === 'after' ? 'after a look' : 'off'} · ${st.audioStyle}`,
+    `  Field: ${st.fieldBias === 'none' ? FIELD_BIAS_LABELS.none : `favouring ${FIELD_BIAS_LABELS[st.fieldBias]} (${BIAS_STRENGTH_LABELS[st.biasStrength]})`}`,
+    `  Sound: ${AUDIO_MODE_LABELS[st.audioMode]} · ${AUDIO_STYLE_LABELS[st.audioStyle]}`,
   );
   const recent = profile.sessions
     .filter((x) => inWindow(x, days))
@@ -114,13 +123,13 @@ export function buildShareText(profile: Profile, days = 28): string {
   if (recent.length) {
     lines.push('', 'Recent sessions:');
     for (const r of recent) {
-      const d = new Date(r.at).toLocaleDateString();
+      const d = formatDate(r.at);
       const resp =
         r.response === 'clear' ? 'clear response' :
         r.response === 'some' ? 'a little' :
         r.response === 'none' ? 'no response noticed' :
         r.response === 'unsure' ? 'hard to say' : 'not recorded';
-      const tags = r.tags.length ? ` [${r.tags.join(', ')}]` : '';
+      const tags = r.tags.length ? ` [${r.tags.map((t) => TAG_LABELS[t]).join(', ')}]` : '';
       const note = r.note ? ` — ${r.note}` : '';
       lines.push(`  ${d} · ${getLesson(r.lessonId)?.title ?? r.lessonId} · ${resp}${tags}${note}`);
     }
