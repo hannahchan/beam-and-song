@@ -83,6 +83,24 @@ export async function deleteBlob(id: string): Promise<void> {
   });
 }
 
+/**
+ * Remove every stored blob at once, for a full on-device reset (PV-5). Clears
+ * the in-memory fallback too, so the wipe is complete whether or not IndexedDB
+ * is present. Metadata pointing at these blobs lives in localStorage and is
+ * cleared alongside by the store.
+ */
+export async function clearAllBlobs(): Promise<void> {
+  memory.clear();
+  const db = await openDb();
+  if (!db) return;
+  await new Promise<void>((resolve) => {
+    const tx = db.transaction(STORE, 'readwrite');
+    tx.objectStore(STORE).clear();
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => resolve();
+  });
+}
+
 /** Pure pre-checks, unit-testable without Web Audio. */
 export function checkAudioFile(file: { type: string; size: number }): string | null {
   if (!file.type.startsWith('audio/')) return 'Please choose an audio file (a song or a recording).';
