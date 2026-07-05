@@ -40,6 +40,9 @@ beforeAll(async () => {
 
 async function checkRoute(path: string): Promise<void> {
   location.hash = `#${path}`;
+  // Leaving the grown-up area now re-locks the gate (see app.tsx), so re-arm the
+  // "passed" flag before each render instead of once in beforeAll.
+  sessionStorage.setItem('light-and-sound:grownup-ok', '1');
   const host = document.createElement('div');
   document.body.innerHTML = '';
   document.body.appendChild(host);
