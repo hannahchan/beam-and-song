@@ -122,15 +122,46 @@ export function GrownUps({ route }: { route: Route }) {
 function Gate({ hasPin, onPassed }: { hasPin: boolean; onPassed: () => void }) {
   const [pin, setPin] = useState('');
   const [err, setErr] = useState('');
-  // Stable shuffled order so re-renders don't shuffle under the finger.
-  const words = useMemo(() => {
-    const w = [
-      ['one', false],
-      ['two', true],
-      ['three', false],
-    ] as Array<[string, boolean]>;
-    return w.sort(() => (Math.random() < 0.5 ? -1 : 1));
+  // A stable per-visit challenge: a random target word shown among a shuffled
+  // trio, so the answer neither shuffles under the finger nor stays the same
+  // word every time the gate re-locks.
+  const { target, words } = useMemo(() => {
+    const pool = ['one', 'two', 'three'];
+    return {
+      target: pool[Math.floor(Math.random() * pool.length)],
+      words: pool.slice().sort(() => (Math.random() < 0.5 ? -1 : 1)),
+    };
   }, []);
+
+  // A gentle, self-targeting deterrent for the tap-the-word fallback: a wrong
+  // tap briefly disables the choices, and the pause grows with each consecutive
+  // wrong tap (capped at 3 s), so a child mashing all three no longer gets in
+  // instantly, while a grown-up who reads the word and taps it once never feels
+  // a thing. It never touches the hold button, the PIN, or the way back out, so
+  // the accessible entry (FR-11) and the child's exit (FR-5) stay unaffected.
+  const [wordsLocked, setWordsLocked] = useState(false);
+  const wrongStreak = useRef(0);
+  const timers = useRef<{ unlock?: number; forgive?: number }>({});
+  useEffect(
+    () => () => {
+      window.clearTimeout(timers.current.unlock);
+      window.clearTimeout(timers.current.forgive);
+    },
+    [],
+  );
+  const onWrongWord = () => {
+    wrongStreak.current = Math.min(wrongStreak.current + 1, 3);
+    const pauseMs = wrongStreak.current * 1000; // 1 s, 2 s, then capped at 3 s
+    setWordsLocked(true);
+    window.clearTimeout(timers.current.unlock);
+    timers.current.unlock = window.setTimeout(() => setWordsLocked(false), pauseMs);
+    // Forgive an isolated slip: the escalation resets after a quiet spell, so a
+    // grown-up who mistaps once is never haunted by it later.
+    window.clearTimeout(timers.current.forgive);
+    timers.current.forgive = window.setTimeout(() => {
+      wrongStreak.current = 0;
+    }, pauseMs + 6000);
+  };
 
   if (hasPin) {
     return (
@@ -184,11 +215,16 @@ function Gate({ hasPin, onPassed }: { hasPin: boolean; onPassed: () => void }) {
         </h1>
         <HoldButton label="Press and hold" onComplete={onPassed} />
         <p class="card-note" style={{ textAlign: 'center', maxWidth: '26rem' }}>
-          Or, if holding is difficult, tap the word <b>two</b>:
+          Or, if holding is difficult, tap the word <b>{target}</b>:
         </p>
-        <div class="word-choice" role="group" aria-label="Tap the word two">
-          {words.map(([word, correct]) => (
-            <button key={word} class="btn" onClick={() => (correct ? onPassed() : undefined)}>
+        <div class="word-choice" role="group" aria-label={`Tap the word ${target}`}>
+          {words.map((word) => (
+            <button
+              key={word}
+              class="btn"
+              disabled={wordsLocked}
+              onClick={() => (word === target ? onPassed() : onWrongWord())}
+            >
               {word}
             </button>
           ))}
