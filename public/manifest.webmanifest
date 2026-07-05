@@ -1,7 +1,7 @@
 {
   "name": "Light & Sound",
   "short_name": "Light & Sound",
-  "description": "Gentle light-and-song lessons for babies with CVI — a companion tool for families and vision professionals.",
+  "description": "Gentle light-and-sound lessons for children with CVI, from babies to teens, a companion tool for families and vision professionals.",
   "start_url": "./",
   "scope": "./",
   "display": "fullscreen",
