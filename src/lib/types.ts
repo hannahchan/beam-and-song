@@ -205,8 +205,7 @@ export type MelodyId =
   | 'mary'
   | 'row'
   | 'humSway'
-  | 'chime'
-  | 'plinks'
+  | 'rainfall'
   | 'musicBox'
   | 'duet'
   | 'ember'
@@ -257,9 +256,10 @@ export interface LessonSpec {
   stepUp?: string;
   /**
    * Lessons where the looking itself is the work (find/search): concurrent
-   * music competes with it for many children, so the library suggests the
-   * "after a look" or "off" sound modes here (FR-6/PR-11). Guidance only,
-   * the caregiver's sound-mode setting always wins.
+   * music competes with it for many children (FR-6/PR-11). Binding: when the
+   * profile's sound mode is "with", the player runs these lessons the
+   * after-a-look way instead (quiet search, sound as the answer); "after"
+   * and "off" are honoured as chosen. See effectiveAudioMode in specs.ts.
    */
   quietPreferred?: boolean;
   /** Grown-up copy */

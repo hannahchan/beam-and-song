@@ -1,4 +1,4 @@
-import type { Behavior, LessonSpec } from '../lib/types';
+import type { AudioMode, Behavior, LessonSpec } from '../lib/types';
 
 /**
  * The lesson library.
@@ -26,8 +26,10 @@ import type { Behavior, LessonSpec } from '../lib/types';
  *   bridge, every lesson carries a real-world follow-up (CR-4); screens
  *               are the doorway, not the destination.
  *   quietPreferred, find/search lessons where concurrent music competes
- *               with the looking; the library suggests the after-a-look or
- *               off sound modes there (FR-6/PR-11), guidance only.
+ *               with the looking (FR-6/PR-11). Binding: the player runs these
+ *               in the after-a-look way whenever "with" is chosen, so the
+ *               search happens in quiet and sound arrives as the answer
+ *               (see effectiveAudioMode below).
  */
 export const LESSONS: readonly LessonSpec[] = [
   /* ------------------------------- Level 1 ------------------------------- */
@@ -90,7 +92,7 @@ export const LESSONS: readonly LessonSpec[] = [
     theme: 'Touch & light',
     behavior: 'causeEffect',
     shape: 'orb',
-    melody: 'chime',
+    melody: 'humSway',
     interactive: true,
     skill: 'making something happen',
     stepUp: 'keep-the-light-singing',
@@ -142,7 +144,7 @@ export const LESSONS: readonly LessonSpec[] = [
     theme: 'Rain',
     behavior: 'fallDrop',
     shape: 'drop',
-    melody: 'plinks',
+    melody: 'rainfall',
     interactive: false,
     skill: 'following downward',
     stepBack: 'drifting-light',
@@ -196,7 +198,7 @@ export const LESSONS: readonly LessonSpec[] = [
     theme: 'Touch & light',
     behavior: 'reachTouch',
     shape: 'orb',
-    melody: 'chime',
+    melody: 'humSway',
     interactive: true,
     skill: 'looking, then touching',
     stepBack: 'keep-the-light-singing',
@@ -575,8 +577,12 @@ export function getLesson(id: string): LessonSpec | undefined {
 
 /**
  * Behaviors whose sound arrives entirely through scene cues, the player
- * must not run a looping melody underneath them (it would bury the very
- * contrast or localization the lesson exists for).
+ * must not run a looping melody underneath them. Two families live here:
+ * the listening lessons, where a bed would bury the very contrast or
+ * localization they exist to teach, and the pure cause-and-effect lessons,
+ * where silence between rewards makes the answer unmistakably the child's
+ * own doing (FR-9/PR-11). A bed looping the same notes as the reward had
+ * camouflaged the one sound that mattered.
  */
 export const CUE_DRIVEN_BEHAVIORS: ReadonlySet<Behavior> = new Set<Behavior>([
   'audioAlternate',
@@ -584,7 +590,20 @@ export const CUE_DRIVEN_BEHAVIORS: ReadonlySet<Behavior> = new Set<Behavior>([
   'rhythmMelody',
   'loudSoft',
   'soundThenLight',
+  'causeEffect',
+  'reachTouch',
 ]);
+
+/**
+ * FR-6/PR-11, how the chosen sound mode lands on a given lesson. In the
+ * find/search lessons (quietPreferred) the looking itself is the work and
+ * concurrent music competes with it, so "with the visual" plays those the
+ * after-a-look way instead: quiet while searching, sound as the answer to a
+ * touch. The quieter choices ("after", "off") are always honoured as chosen.
+ */
+export function effectiveAudioMode(mode: AudioMode, spec: LessonSpec): AudioMode {
+  return mode === 'with' && spec.quietPreferred ? 'after' : mode;
+}
 
 /**
  * Behaviors driven by pressed *intervals* rather than discrete taps: the

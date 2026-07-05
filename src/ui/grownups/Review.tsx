@@ -122,11 +122,13 @@ function ReviewInner({ profile }: { profile: Profile }) {
   }, []);
 
   // The looping melody follows the lesson and the sound toggle; cue-driven
-  // listening lessons stay melody-free here exactly as in the player.
+  // lessons (listening and pure cause-and-effect) stay melody-free here
+  // exactly as in the player, and the find/search lessons stay quiet too,
+  // so a reviewer hears what a session actually sounds like.
   useEffect(() => {
     melodyRef.current?.stop(0.4);
     melodyRef.current = null;
-    if (!sound || CUE_DRIVEN_BEHAVIORS.has(spec.behavior)) return;
+    if (!sound || CUE_DRIVEN_BEHAVIORS.has(spec.behavior) || spec.quietPreferred) return;
     let cancelled = false;
     void audio.unlock().then(() => {
       if (cancelled) return;

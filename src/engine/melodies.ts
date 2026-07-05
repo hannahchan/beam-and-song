@@ -4,6 +4,11 @@ import type { MelodyId } from '../lib/types';
  * All music is synthesized from note data, no audio files (CR-2, TR-3).
  * Songs are public-domain lullabies and nursery tunes.
  * Note tuple: [midi, beats]; midi 0 is a rest.
+ *
+ * These are *beds*: background tunes a lesson can loop underneath itself.
+ * Event sounds live in the CUES table in audio.ts instead, in their own
+ * reserved voice, and a reward motif must never be looped as a bed (a bed
+ * note-for-note identical to the reward camouflages the reward).
  */
 export type Note = readonly [midi: number, beats: number];
 
@@ -113,33 +118,36 @@ export const MELODIES: Record<MelodyId, Melody> = {
     ],
   },
 
-  /** Reward motif for cause-and-effect (FR-9), gentle rising arpeggio, soft attacks. */
-  chime: {
-    id: 'chime',
-    bpm: 76,
-    restBeats: 0,
-    voice: 'musicbox',
-    notes: [N(72, 0.6), N(76, 0.6), N(79, 1.8)],
+  /**
+   * A soft falling line for the rain lessons: legato and even, so nothing in
+   * the background reads as marking a landing (the plink cue owns that moment).
+   */
+  rainfall: {
+    id: 'rainfall',
+    bpm: 58,
+    restBeats: 3,
+    voice: 'soft',
+    notes: [
+      N(76, 2), N(74, 1), N(72, 2.5), N(0, 0.5),
+      N(74, 2), N(72, 1), N(69, 2.5), N(0, 0.5),
+      N(72, 2), N(69, 1), N(67, 3), N(0, 1),
+      N(69, 2), N(67, 1), N(64, 3.5), N(0, 1.5),
+    ],
   },
 
-  /** Single raindrop notes, triggered by scene cues. */
-  plinks: {
-    id: 'plinks',
-    bpm: 72,
-    restBeats: 0,
-    voice: 'musicbox',
-    notes: [N(76, 1.2)],
-  },
-
-  /** Sparse pentatonic music-box notes for fireflies. */
+  /**
+   * A flowing pentatonic music-box lullaby. Connected phrases on purpose: a
+   * sparse ping-every-few-seconds bed reads as though each note marks
+   * something on screen, which is exactly the false promise a bed must not make.
+   */
   musicBox: {
     id: 'musicBox',
     bpm: 60,
     restBeats: 2,
     voice: 'musicbox',
     notes: [
-      N(72, 1.5), N(0, 2), N(67, 1.5), N(0, 2.5), N(69, 1.5), N(0, 2),
-      N(64, 1.5), N(0, 2.5), N(72, 1.5), N(0, 2), N(74, 1.5), N(0, 3),
+      N(72, 1.5), N(74, 1.5), N(76, 2), N(74, 1), N(72, 1.5), N(69, 1.5), N(67, 2.5), N(0, 0.5),
+      N(69, 1.5), N(72, 1.5), N(74, 2), N(72, 1), N(69, 1.5), N(67, 1.5), N(64, 2.5), N(0, 0.5),
     ],
   },
 
