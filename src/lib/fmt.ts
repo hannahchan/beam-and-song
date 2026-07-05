@@ -23,9 +23,15 @@ export function formatDuration(seconds: number): string {
   return formatMinutes(Math.max(1, Math.round(seconds / 60)));
 }
 
-/** A minutes-and-seconds length ("1 min 35 s"), for short audio-clip labels. */
+/**
+ * A minutes-and-seconds length ("1 min 35 s"), for short audio-clip labels.
+ * Rounds to whole seconds first, then splits — so the seconds part is always
+ * 0–59 and a rounded-up 60 rolls into the minute (never "1 min 60 s"), and the
+ * minute is floored (a 35 s clip is "0 min 35 s", not "1 min 35 s").
+ */
 export function formatMinutesSeconds(seconds: number): string {
-  return `${formatMinutes(Math.round(seconds / 60))} ${Math.round(seconds % 60)} s`;
+  const whole = Math.max(0, Math.round(seconds));
+  return `${formatMinutes(Math.floor(whole / 60))} ${whole % 60} s`;
 }
 
 // CLDR plural categories; `other` is the required fallback every language has.
