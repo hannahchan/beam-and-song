@@ -4,7 +4,7 @@ import { TAG_LABELS } from '../lib/labels';
 
 /** The Player's DOM overlays — kept apart so Player.tsx stays the session engine. */
 
-export function AfterModeHint({ interactive, noun }: { interactive: boolean; noun: string }) {
+export function AfterModeHint({ interactive, lookPhrase }: { interactive: boolean; lookPhrase: string }) {
   const [gone, setGone] = useState(false);
   useEffect(() => {
     const id = setTimeout(() => setGone(true), 7000);
@@ -14,7 +14,7 @@ export function AfterModeHint({ interactive, noun }: { interactive: boolean; nou
     <p class="player-hint" style={{ opacity: gone ? 0 : 1 }}>
       {interactive
         ? 'Sound plays after a touch — any touch or switch press counts.'
-        : `Sound is set to follow a look: tap the screen when ${noun} look${noun === 'they' ? '' : 's'}, and the music will answer.`}
+        : `Sound is set to follow a look: tap the screen when ${lookPhrase}, and the music will answer.`}
     </p>
   );
 }

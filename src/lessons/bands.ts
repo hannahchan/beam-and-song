@@ -349,3 +349,15 @@ const BAND_NOUNS: Record<Locale, Record<AgeBand, string>> = {
 export function bandNoun(band: AgeBand): string {
   return BAND_NOUNS[LOCALE][band];
 }
+
+// A ready-inflected "{subject} {verb}" clause for "…when {X}…" hints, so no
+// caller has to inflect a verb by pronoun (keep grammar out of logic — see the
+// i18n-readiness note in CLAUDE.md).
+const BAND_LOOK_PHRASES: Record<Locale, Record<AgeBand, string>> = {
+  en: { infant: 'your baby looks', child: 'your child looks', teen: 'they look' },
+};
+
+/** "your baby looks" / "your child looks" / "they look" — a whole clause, per band. */
+export function bandLookPhrase(band: AgeBand): string {
+  return BAND_LOOK_PHRASES[LOCALE][band];
+}

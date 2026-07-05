@@ -23,6 +23,11 @@ export function formatDuration(seconds: number): string {
   return formatMinutes(Math.max(1, Math.round(seconds / 60)));
 }
 
+/** A minutes-and-seconds length ("1 min 35 s"), for short audio-clip labels. */
+export function formatMinutesSeconds(seconds: number): string {
+  return `${formatMinutes(Math.round(seconds / 60))} ${Math.round(seconds % 60)} s`;
+}
+
 // CLDR plural categories; `other` is the required fallback every language has.
 type PluralCategory = 'zero' | 'one' | 'two' | 'few' | 'many' | 'other';
 export type PluralForms = { other: string } & Partial<Record<PluralCategory, string>>;

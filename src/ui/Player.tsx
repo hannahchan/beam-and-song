@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { navigate } from '../lib/router';
 import { CUE_DRIVEN_BEHAVIORS, HOLD_DRIVEN_BEHAVIORS, getLesson } from '../lessons/specs';
-import { bandNoun, resolveLesson } from '../lessons/bands';
+import { bandLookPhrase, bandNoun, resolveLesson } from '../lessons/bands';
 import { activeProfile, addSession, ensureProfile } from '../lib/store';
 import { buildParams } from '../engine/params';
 import { computeScene, primarySceneItem, restScene, type SimInput } from '../engine/scenes';
@@ -464,7 +464,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
       )}
 
       {settings.audioMode === 'after' && phase === 'running' && (
-        <AfterModeHint interactive={current.interactive} noun={bandNoun(profile.ageBand)} />
+        <AfterModeHint interactive={current.interactive} lookPhrase={bandLookPhrase(profile.ageBand)} />
       )}
 
       {phase === 'running' && (
