@@ -325,8 +325,9 @@ describe('raindrop (fallDrop), the plink lands with the picture', () => {
 
   it('one landing, one plink, and the ripple rises with it', () => {
     const { plinkAt, plinks, maxY } = scan();
-    // 40 s covers just under two default cycles: one plink each, never a spray.
-    expect(plinks).toBeLessThanOrEqual(2);
+    // 40 s covers exactly two default cycles: one plink each, never a spray,
+    // and never a swallowed landing at the cycle wrap.
+    expect(plinks).toBe(2);
     const after = computeScene(spec('raindrop'), params, plinkAt + 200, sim, plinkAt + 150);
     const ripple = after.items.find((i) => i.shape === 'bloom');
     expect(ripple).toBeDefined();

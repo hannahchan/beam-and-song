@@ -6,7 +6,7 @@ import { activeProfile, addSession, ensureProfile } from '../lib/store';
 import { buildParams } from '../engine/params';
 import { computeScene, primarySceneItem, restScene, type SimInput } from '../engine/scenes';
 import { createPhotoCache, drawScene, fitCanvasToDisplay } from '../engine/render';
-import { audio } from '../engine/audio';
+import { audio, isTapCue } from '../engine/audio';
 import { buzz } from '../engine/haptics';
 import { effectiveTapEvents, type HoldSpan } from '../engine/kernel';
 import type { LessonSpec, TapEvent } from '../lib/types';
@@ -470,7 +470,11 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
       )}
 
       {effectiveAudioMode(settings.audioMode, current) === 'after' && phase === 'running' && (
-        <AfterModeHint interactive={current.interactive} lookPhrase={bandLookPhrase(profile.ageBand)} />
+        <AfterModeHint
+          interactive={current.interactive}
+          aimed={!!current.quietPreferred}
+          lookPhrase={bandLookPhrase(profile.ageBand)}
+        />
       )}
 
       {phase === 'running' && (
@@ -544,8 +548,4 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
       )}
     </div>
   );
-}
-
-function isTapCue(cue: string): boolean {
-  return cue === 'chime' || cue === 'note' || cue === 'hum';
 }

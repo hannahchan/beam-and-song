@@ -6,7 +6,7 @@ Status: open / accepted / fixed (commit) / declined (reason).
 
 | # | Date | Reviewer (role) | Where | Finding | Severity | Status |
 |---|------|-----------------|-------|---------|----------|--------|
-| 1 | 2026-07 | Family / usability feedback | Audio (all lessons with sound; worst in Raindrop, Magic Touch, Reach for the Light) | Sound reported as distracting. Music and interaction feedback are hard to tell apart (same level and voice, no ducking); percussive beds imply the sound tracks the picture when it doesn't; in Raindrop the plink lands after the drop. | S2 | fixed (feedback voice + ducking; bedless contingency lessons; flowing beds; quiet binding on find/search; Raindrop touchdown plink). The implemented model is `sound-design.md`; the original diagnostic (`sound-design-review.md`) lives in git history. |
+| 1 | 2026-07 | Family / usability feedback | Audio (all lessons with sound; worst in Raindrop, Magic Touch, Reach for the Light) | Sound reported as distracting. Music and interaction feedback are hard to tell apart (same level and voice, no ducking); percussive beds imply the sound tracks the picture when it doesn't; in Raindrop the plink lands after the drop. | S2 | fixed (bb95b06, 097d541, 86dbbb0: feedback voice + ducking; bedless contingency lessons; flowing beds; quiet binding on find/search; Raindrop touchdown plink). The implemented model is `sound-design.md`; the original diagnostic (`sound-design-review.md`) lives in git history. |
 
 ## Family / usability sessions
 
