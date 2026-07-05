@@ -119,9 +119,9 @@ export function Dashboard({ profile }: { profile: Profile | null }) {
       <Card title="About this app">
         <p class="card-note">
           Light & Sound was built by Claude Fable 5 as a demonstration, and it came from a genuine wish to
-          help children with CVI. It is looked after as a side project, so it has not had a clinical review,
-          and it has not been tried with children with CVI. Please treat it as a gentle companion to use
-          alongside {profile.nickname}'s vision team, rather than a clinically validated tool.
+          help children with CVI. It is looked after as a side project, so it has not had a clinical review.
+          Please treat it as a gentle companion to use alongside {profile.nickname}'s vision team, rather
+          than a clinically validated tool.
         </p>
       </Card>
     </div>

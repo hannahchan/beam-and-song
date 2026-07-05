@@ -15,10 +15,9 @@ make it respond, and slowly, only if it helps, adds a little more to look at.
 It runs entirely in the browser. **No accounts, no servers, no data ever leaves the device.**
 
 > **Where this stands:** the app is carefully tested in code, but it hasn't had a
-> clinical review, and it hasn't been tried with children with CVI across the age range. That kind of
-> review and testing might happen one day, or it might not. It's the work that would turn a demonstration
-> into something a vision professional could confidently recommend. A review packet was put together during
-> the build, and you can find it in [`docs/clinical-review-packet.md`](docs/clinical-review-packet.md).
+> clinical review. That review might happen one day, or it might not. It's the work that would turn a
+> demonstration into something a vision professional could confidently recommend. A review packet was put
+> together during the build, and you can find it in [`docs/clinical-review-packet.md`](docs/clinical-review-packet.md).
 
 ---
 
