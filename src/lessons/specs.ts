@@ -579,10 +579,13 @@ export function getLesson(id: string): LessonSpec | undefined {
  * Behaviors whose sound arrives entirely through scene cues, the player
  * must not run a looping melody underneath them. Two families live here:
  * the listening lessons, where a bed would bury the very contrast or
- * localization they exist to teach, and the pure cause-and-effect lessons,
- * where silence between rewards makes the answer unmistakably the child's
- * own doing (FR-9/PR-11). A bed looping the same notes as the reward had
- * camouflaged the one sound that mattered.
+ * localization they exist to teach, and the contingency lessons
+ * (cause-and-effect, reach, hold-to-sustain), where quiet between answers
+ * makes the answer unmistakably the child's own doing (FR-9/PR-11). A bed
+ * looping the same notes as the reward had camouflaged the one sound that
+ * mattered, and the hold lesson's bed shared its hum's warm voice.
+ * These lessons' `melody` never loops in a session; it only feeds the
+ * Settings sampler ("Hear a moment"), so tune it there, not here.
  */
 export const CUE_DRIVEN_BEHAVIORS: ReadonlySet<Behavior> = new Set<Behavior>([
   'audioAlternate',
@@ -592,6 +595,7 @@ export const CUE_DRIVEN_BEHAVIORS: ReadonlySet<Behavior> = new Set<Behavior>([
   'soundThenLight',
   'causeEffect',
   'reachTouch',
+  'holdGlow',
 ]);
 
 /**
