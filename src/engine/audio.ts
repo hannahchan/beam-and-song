@@ -124,6 +124,14 @@ export const CUES: Record<string, CueSpec> = {
   toneFull: { voice: 'warm', notes: [{ midi: 57, at: 0, dur: 2.0, peak: 1.0 }] },
 };
 
+/**
+ * The cues that answer the child's own touch or hold, the ones the
+ * after-a-look mode keeps (everything else stays quiet there, FR-6b).
+ */
+export function isTapCue(name: string): boolean {
+  return name === 'chime' || name === 'note' || name === 'hum';
+}
+
 export interface MelodyHandle {
   stop(fadeSec?: number): void;
   /** Move the music to the target: pan -1..1, elevation 0 (top) .. 1 (bottom). */

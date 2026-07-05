@@ -4,7 +4,16 @@ import { TAG_LABELS } from '../lib/labels';
 
 /** The Player's DOM overlays, kept apart so Player.tsx stays the session engine. */
 
-export function AfterModeHint({ interactive, lookPhrase }: { interactive: boolean; lookPhrase: string }) {
+export function AfterModeHint({
+  interactive,
+  aimed,
+  lookPhrase,
+}: {
+  interactive: boolean;
+  /** Find/search lessons: only a touch near the target answers (a switch press always does). */
+  aimed?: boolean;
+  lookPhrase: string;
+}) {
   const [gone, setGone] = useState(false);
   useEffect(() => {
     const id = setTimeout(() => setGone(true), 7000);
@@ -12,9 +21,11 @@ export function AfterModeHint({ interactive, lookPhrase }: { interactive: boolea
   }, []);
   return (
     <p class="player-hint" style={{ opacity: gone ? 0 : 1 }}>
-      {interactive
-        ? 'Sound plays after a touch. Any touch or switch press counts.'
-        : `Sound is set to follow a look: tap the screen when ${lookPhrase}, and the music will answer.`}
+      {aimed
+        ? 'The music waits during this lesson. A touch close to the target, or any switch press, answers with a sound.'
+        : interactive
+          ? 'Sound plays after a touch. Any touch or switch press counts.'
+          : `Sound is set to follow a look: tap the screen when ${lookPhrase}, and the music will answer.`}
     </p>
   );
 }

@@ -84,6 +84,8 @@ export function PrintSummary({ profile }: { profile: Profile | null }) {
           Sound: {AUDIO_MODE_LABELS[st.audioMode]} · {AUDIO_STYLE_LABELS[st.audioStyle]} · sound follows target:{' '}
           {st.soundFollowsTarget ? 'yes' : 'no'} · session length {formatMinutes(st.sessionMinutes)} · age
           presentation: {profile.ageBand}
+          {st.audioMode === 'with' &&
+            ' (find-and-seek lessons play quiet, with sound only as the answer to a touch)'}
         </li>
       </ul>
 

@@ -3,7 +3,7 @@ import type { Profile, TapEvent } from '../../lib/types';
 import { buildParams } from '../../engine/params';
 import { computeScene, type SimInput } from '../../engine/scenes';
 import { createPhotoCache, drawScene, fitCanvasToDisplay } from '../../engine/render';
-import { audio } from '../../engine/audio';
+import { audio, isTapCue } from '../../engine/audio';
 import { CUE_DRIVEN_BEHAVIORS, HOLD_DRIVEN_BEHAVIORS, LESSONS } from '../../lessons/specs';
 import { resolveLesson } from '../../lessons/bands';
 import { enabledPhotos } from '../../lib/photos';
@@ -109,7 +109,12 @@ function ReviewInner({ profile }: { profile: Profile }) {
       const scene = computeScene(specRef.current, params, t, simRef.current, prevTRef.current);
       prevTRef.current = t;
       if (soundRef.current) {
-        for (const cue of scene.cues) audio.playCue(cue, scene.pan * 0.6);
+        for (const cue of scene.cues) {
+          // Quiet-bound lessons keep only their answer sounds, as in a real
+          // session, so a reviewer hears what the child would.
+          if (specRef.current.quietPreferred && !isTapCue(cue)) continue;
+          audio.playCue(cue, scene.pan * 0.6);
+        }
       }
       drawScene(ctx, scene, canvas.clientWidth, canvas.clientHeight, photoCache);
       raf = requestAnimationFrame(frame);

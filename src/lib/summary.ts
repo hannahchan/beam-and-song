@@ -116,6 +116,10 @@ export function buildShareText(profile: Profile, days = 28): string {
     `  Field: ${st.fieldBias === 'none' ? FIELD_BIAS_LABELS.none : `favouring ${FIELD_BIAS_LABELS[st.fieldBias]} (${BIAS_STRENGTH_LABELS[st.biasStrength]})`}`,
     `  Sound: ${AUDIO_MODE_LABELS[st.audioMode]} · ${AUDIO_STYLE_LABELS[st.audioStyle]}`,
   );
+  if (st.audioMode === 'with') {
+    // FR-6/PR-11: a professional reading this must not picture music over the searching.
+    lines.push('  (find-and-seek lessons play quiet, with sound only as the answer to a touch)');
+  }
   const recent = profile.sessions
     .filter((x) => inWindow(x, days))
     .slice(-12)
