@@ -564,6 +564,11 @@ legend { font-weight: 650; padding: 0 0.4rem; }
   color: var(--inkSoft);
   font-size: 0.88rem;
 }
+/* In the library grid the tag stretches to the card width so every card's chip
+   lines up; Review.tsx uses it inline beside the title, so only widen it here. */
+.lesson-card .lesson-skill {
+  align-self: stretch;
+}
 /* The walk-through canvas — big enough to judge, framed like the preview. */
 .review-canvas {
   width: 100%;
