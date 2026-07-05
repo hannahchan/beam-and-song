@@ -27,6 +27,21 @@ docs/requirements-coverage.md; the source requirements live in CVI-training-site
 - Payload budgets (scripts/check-budgets.mjs) run in CI — the app stays a zero-asset-fetch
   static bundle; don't add binary lesson assets without extending the budget doc first.
 
+## Internationalisation-readiness (English-only today; keep the seams clean)
+The app ships English only, but new code must not add debt that a future translation has to unpick:
+- **Never persist a display string.** Persist a stable key and render its label from `lib/labels.ts`.
+  Stored enums (session tags, colours, settings) already do this; a new one rendered raw becomes a
+  store migration later. `lib/locale.ts` holds the single active locale (`LOCALE`).
+- **Route dates, durations, and plurals through `lib/fmt.ts`** (`formatDate`/`formatDuration`/
+  `formatMinutes`/`plural`) — no inline `toLocaleDateString()`, `${n} min`, or `${n === 1 ? '' : 's'}`.
+- **Don't bake grammar into logic:** no sentence assembly from fragments, no pronoun-conditioned verb
+  endings, no morphological find-replace. Interpolate whole values; for age bands prefer explicit
+  per-band copy in `lessons/bands.ts` over `adaptCopy`'s English-only regex (locale-gated, `en` only).
+- **CSS uses logical properties** (`margin-inline-start`, `inset-inline-start`, `text-align: start`),
+  not physical `left`/`right`, so RTL stays ~free.
+- The SR-7 guards (`NON_DIAGNOSTIC_BANNED`, the teen banned-word list in `tests/bands.test.ts`) are
+  English word-lists — any new language needs its own clinically-reviewed list; they don't translate.
+
 ## Architecture in one breath
 Scenes (`engine/scenes.ts`) are pure: (spec, params, t, sim) → display list + cues. `render.ts` only
 draws; `audio.ts` synthesizes (no audio files); `params.ts` is the single settings→engine clamping

@@ -1,9 +1,11 @@
 import { render } from 'preact';
 import { App } from './app';
 import { applyTheme } from './lib/tokens';
+import { applyLocale } from './lib/locale';
 import './styles.css';
 
 applyTheme(document.documentElement);
+applyLocale(document.documentElement);
 render(<App />, document.getElementById('app')!);
 
 // Ask the browser to treat this site's storage as persistent — profiles,

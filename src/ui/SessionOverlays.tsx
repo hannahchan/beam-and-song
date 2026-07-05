@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'preact/hooks';
 import { SESSION_TAGS, type ResponseLevel, type SessionTag } from '../lib/types';
+import { TAG_LABELS } from '../lib/labels';
 
 /** The Player's DOM overlays — kept apart so Player.tsx stays the session engine. */
 
@@ -57,7 +58,7 @@ export function ObservationCard({
         <div class="chips" role="group" aria-label="Anything about today? Optional.">
           {SESSION_TAGS.map((t) => (
             <button key={t} class="chip" aria-pressed={tags.includes(t)} onClick={() => toggleTag(t)}>
-              {t}
+              {TAG_LABELS[t]}
             </button>
           ))}
         </div>

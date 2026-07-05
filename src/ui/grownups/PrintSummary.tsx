@@ -3,6 +3,16 @@ import { getLesson } from '../../lessons/specs';
 import { resolveLesson } from '../../lessons/bands';
 import { summarize, inWindow } from '../../lib/summary';
 import { regionInsight } from '../../lib/regions';
+import { formatDate, formatMinutes, plural } from '../../lib/fmt';
+import {
+  AUDIO_MODE_LABELS,
+  AUDIO_STYLE_LABELS,
+  BACKGROUND_LABELS,
+  BIAS_STRENGTH_LABELS,
+  COLOR_LABELS,
+  FIELD_BIAS_LABELS,
+  TAG_LABELS,
+} from '../../lib/labels';
 
 /**
  * PT-7 — a one-page, clinic-friendly version of the share summary.
@@ -44,14 +54,14 @@ export function PrintSummary({ profile }: { profile: Profile | null }) {
 
       <h1>Light & Sound — family observations for “{profile.nickname}”</h1>
       <p class="print-muted">
-        Last 28 days · prepared {new Date().toLocaleDateString()} · These are informal observations made by
+        Last 28 days · prepared {formatDate(Date.now())} · These are informal observations made by
         family during short at-home sessions. They are not measurements, clinical results, or any kind of
         evaluation; responses vary a lot with tiredness, health, and mood on the day.
       </p>
 
       <h2>Sessions</h2>
       <p>
-        {s.total} short session{s.total === 1 ? '' : 's'} · responded clearly: {s.clear} · a little: {s.some} ·
+        {s.total} short {plural(s.total, { one: 'session', other: 'sessions' })} · responded clearly: {s.clear} · a little: {s.some} ·
         no response noticed: {s.none} · hard to say: {s.unsure} · not recorded: {s.unrecorded}
         {s.topLesson ? ` · most-used lesson: ${s.topLesson.title}` : ''}
       </p>
@@ -60,17 +70,20 @@ export function PrintSummary({ profile }: { profile: Profile | null }) {
       <h2>Current settings</h2>
       <ul>
         <li>
-          Colour {st.targetColor} · size {st.size}/5 · glow {st.glow}/3 · brightness {st.brightness}/3 ·
-          background {st.background}
+          Colour {COLOR_LABELS[st.targetColor]} · size {st.size}/5 · glow {st.glow}/3 · brightness {st.brightness}/3 ·
+          background {BACKGROUND_LABELS[st.background]}
         </li>
         <li>
           Movement {st.movement ? `on (speed ${st.speed}/5)` : 'off'} · pace {st.pace}/5 · complexity{' '}
-          {st.complexity}/3 · field: {st.fieldBias === 'none' ? 'everywhere' : `favouring ${st.fieldBias} (${st.biasStrength})`}
+          {st.complexity}/3 · field:{' '}
+          {st.fieldBias === 'none'
+            ? FIELD_BIAS_LABELS.none
+            : `favouring ${FIELD_BIAS_LABELS[st.fieldBias]} (${BIAS_STRENGTH_LABELS[st.biasStrength]})`}
         </li>
         <li>
-          Sound: {st.audioMode === 'with' ? 'with the visual' : st.audioMode === 'after' ? 'after a look' : 'off'} ·{' '}
-          {st.audioStyle} · sound follows target: {st.soundFollowsTarget ? 'yes' : 'no'} · session length{' '}
-          {st.sessionMinutes} min · age presentation: {profile.ageBand}
+          Sound: {AUDIO_MODE_LABELS[st.audioMode]} · {AUDIO_STYLE_LABELS[st.audioStyle]} · sound follows target:{' '}
+          {st.soundFollowsTarget ? 'yes' : 'no'} · session length {formatMinutes(st.sessionMinutes)} · age
+          presentation: {profile.ageBand}
         </li>
       </ul>
 
@@ -98,7 +111,7 @@ export function PrintSummary({ profile }: { profile: Profile | null }) {
         <tbody>
           {recent.map((r) => (
             <tr key={r.id}>
-              <td>{new Date(r.at).toLocaleDateString()}</td>
+              <td>{formatDate(r.at)}</td>
               <td>{r.programName ? `${r.programName} (program)` : lessonTitle(r.lessonId)}</td>
               <td>
                 {r.response === 'clear'
@@ -112,7 +125,7 @@ export function PrintSummary({ profile }: { profile: Profile | null }) {
                         : '—'}
               </td>
               <td>
-                {r.tags.join(', ')}
+                {r.tags.map((t) => TAG_LABELS[t]).join(', ')}
                 {r.note ? `${r.tags.length ? ' · ' : ''}“${r.note}”` : ''}
               </td>
             </tr>
