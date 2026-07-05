@@ -21,7 +21,7 @@ export function Profiles({ state }: { state: AppState }) {
   return (
     <div class="stack">
       <h1 tabindex={-1}>Children on this device</h1>
-      <p class="card-note" style={{ maxWidth: '46rem' }}>
+      <p class="card-note">
         Each child has their own settings, starred lessons, notes, and photos — all stored only in this browser.
         A nickname is all that's needed; please avoid full names and birthdays.
       </p>
