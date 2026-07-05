@@ -6,7 +6,7 @@ Status: open / accepted / fixed (commit) / declined (reason).
 
 | # | Date | Reviewer (role) | Where | Finding | Severity | Status |
 |---|------|-----------------|-------|---------|----------|--------|
-| 1 | | | | | | |
+| 1 | 2026-07 | Family / usability feedback | Audio (all lessons with sound; worst in Raindrop, Magic Touch, Reach for the Light) | Sound reported as distracting. Music and interaction feedback are hard to tell apart (same level and voice, no ducking); percussive beds imply the sound tracks the picture when it doesn't; in Raindrop the plink lands after the drop. Full write-up and options in `sound-design-review.md`. | S2 | open |
 
 ## Family / usability sessions
 
