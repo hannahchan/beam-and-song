@@ -222,13 +222,25 @@ function Gate({ hasPin, onPassed }: { hasPin: boolean; onPassed: () => void }) {
             <button
               key={word}
               class="btn"
-              disabled={wordsLocked}
-              onClick={() => (word === target ? onPassed() : onWrongWord())}
+              aria-disabled={wordsLocked}
+              onClick={() => {
+                // Ignore taps during the cooldown, but keep the choices in the
+                // switch-scan set (aria-disabled, not disabled) so a switch or
+                // screen-reader caregiver never loses them mid-pause (FR-11).
+                if (wordsLocked) return;
+                if (word === target) onPassed();
+                else onWrongWord();
+              }}
             >
               {word}
             </button>
           ))}
         </div>
+        {/* Non-visual counterpart to the dimming: tells a screen-reader
+            caregiver why a tap did nothing during the cooldown (AR-6). */}
+        <p class="sr-only" aria-live="polite">
+          {wordsLocked ? 'Just a moment, then try again.' : ''}
+        </p>
         <a class="btn gate-exit" href="#/">
           <HomeIcon />
           Back to the child screen
