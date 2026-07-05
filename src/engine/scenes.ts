@@ -350,6 +350,17 @@ function appearSpots(scene: Scene, p: EngineParams, tMs: number, seed: number): 
   scene.pan = (pos.x - 0.5) * 1.6;
 }
 
+/**
+ * The plink marks *apparent* touchdown, not the geometric endpoint. The
+ * eased fall decelerates so hard into u = 1 that the last stretch of travel
+ * is invisible (under 2% of the drop's journey spread over seconds); by
+ * LAND_U the drop already reads as landed, so the sound and the ripple both
+ * key to that moment. Cueing at u = 1 trailed the picture by over a second
+ * at default settings, which taught "the sound comes late", not "the drop
+ * lands with a plink".
+ */
+const LAND_U = 0.92;
+
 function fallDrop(
   scene: Scene,
   p: EngineParams,
@@ -364,8 +375,8 @@ function fallDrop(
   const rng = makeRng((seed ^ (idx * 40503)) >>> 0);
   const x = biasPoint(rng(), 0.5, p.fieldBias, p.biasStrength).x;
 
-  const landAt = idx * cycleMs + p.fadeMs + fallMs;
-  cue('plink', landAt);
+  const landMs = p.fadeMs + fallMs * LAND_U;
+  cue('plink', idx * cycleMs + landMs);
 
   const u = easeInOutSine(clamp01((local - p.fadeMs) / fallMs));
   const y = mix(0.12, 0.74, u);
@@ -373,8 +384,9 @@ function fallDrop(
   if (env > 0.005) {
     scene.items.push({ ...orb(p, { x, y }), shape: 'drop', r: p.radius * 0.62, alpha: clamp01(p.peakAlpha * env) });
   }
-  // Soft landing ripple, small, dim, slow (SR-6 applies to every "moment").
-  const sinceLand = local - (p.fadeMs + fallMs);
+  // Soft landing ripple, small, dim, slow (SR-6 applies to every "moment"),
+  // rising at the same instant as the plink so ear and eye agree.
+  const sinceLand = local - landMs;
   if (sinceLand > 0) {
     const rippleEnv = fadeEnvelope(sinceLand, 0, 500, 100, 900);
     const spread = smooth(clamp01(sinceLand / 1500));

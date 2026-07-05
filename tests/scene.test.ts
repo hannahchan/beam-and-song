@@ -287,3 +287,49 @@ describe('determinism (testability of everything above)', () => {
     }
   });
 });
+
+describe('raindrop (fallDrop), the plink lands with the picture', () => {
+  const params = buildParams(DEFAULT_SETTINGS);
+  const sim: SimInput = { seed: 42, taps: [] };
+
+  /** Scan one cycle at 50 ms steps, collecting the first plink and drop positions. */
+  function scan() {
+    let plinkAt = -1;
+    let yAtPlink = -1;
+    let plinks = 0;
+    let maxY = 0;
+    for (let t = 0; t <= 40_000; t += 50) {
+      const s = computeScene(spec('raindrop'), params, t, sim, t - 50);
+      const drop = s.items.find((i) => i.shape === 'drop');
+      if (drop) maxY = Math.max(maxY, drop.y);
+      if (s.cues.includes('plink')) {
+        plinks++;
+        if (plinkAt < 0) {
+          plinkAt = t;
+          yAtPlink = drop?.y ?? -1;
+        }
+      }
+    }
+    return { plinkAt, yAtPlink, plinks, maxY };
+  }
+
+  it('fires the plink at apparent touchdown, while the drop is on screen at the bottom', () => {
+    const { plinkAt, yAtPlink, maxY } = scan();
+    expect(plinkAt).toBeGreaterThan(0);
+    // The drop is still visible when it sounds…
+    expect(yAtPlink).toBeGreaterThan(0);
+    // …and visually at the bottom of its journey: the travel left after the
+    // plink is a sliver, not the second-plus crawl the eased endpoint gave.
+    expect(maxY - yAtPlink).toBeLessThan(0.02);
+  });
+
+  it('one landing, one plink, and the ripple rises with it', () => {
+    const { plinkAt, plinks, maxY } = scan();
+    // 40 s covers just under two default cycles: one plink each, never a spray.
+    expect(plinks).toBeLessThanOrEqual(2);
+    const after = computeScene(spec('raindrop'), params, plinkAt + 200, sim, plinkAt + 150);
+    const ripple = after.items.find((i) => i.shape === 'bloom');
+    expect(ripple).toBeDefined();
+    expect(ripple!.y).toBeGreaterThan(maxY - 0.1); // the ripple sits at the landing point
+  });
+});
