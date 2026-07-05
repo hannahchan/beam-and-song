@@ -53,6 +53,7 @@ export function LivePreview({ profile }: { profile: Profile }) {
     // No document.hidden guard: browsers already pause rAF in hidden tabs,
     // and some embedded webviews report "hidden" while still rendering.
     const frame = (now: number) => {
+      fitCanvasToDisplay(canvas, ctx); // stay glued to the CSS box (see engine/render)
       const params = buildParams(settingsRef.current);
       const scene = computeScene(specRef.current, params, now - t0, simRef.current);
       drawScene(ctx, scene, canvas.clientWidth, canvas.clientHeight, photoCache);
