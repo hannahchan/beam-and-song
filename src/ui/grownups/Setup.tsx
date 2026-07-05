@@ -67,7 +67,7 @@ export function Setup({ profile }: { profile: Profile | null }) {
   return (
     <div class="stack">
       <h1 tabindex={-1}>Guided setup for {profile.nickname}</h1>
-      <p class="card-note" style={{ maxWidth: '46rem' }}>
+      <p class="card-note">
         Five questions, best guesses welcome — “not sure” is a perfectly good answer. This only chooses a starting
         point.
       </p>

@@ -41,7 +41,7 @@ export function Settings({ profile }: { profile: Profile | null }) {
       <LivePreview profile={profile} />
       <div class="stack settings-main">
       <h1 tabindex={-1}>Settings for {profile.nickname}</h1>
-      <p class="card-note" style={{ maxWidth: '46rem' }}>
+      <p class="card-note">
         There is no single right setup — the right one is {profile.nickname}'s. Start from a preset, change one
         thing at a time, and let your vision professional guide the bigger choices. The preview follows every
         change as you make it.

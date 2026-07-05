@@ -185,7 +185,7 @@ function ReviewInner({ profile }: { profile: Profile }) {
   return (
     <div class="stack">
       <h1 tabindex={-1}>Walk through the lessons</h1>
-      <p class="card-note" style={{ maxWidth: '46rem' }}>
+      <p class="card-note">
         Every lesson, one after another, played by the real engine with {profile.nickname}'s current
         settings, age band, and photos. Tap the picture to try a touch response. This is the quickest way to
         see the whole library — for you, or for a vision professional reviewing it.

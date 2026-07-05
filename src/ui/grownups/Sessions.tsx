@@ -25,7 +25,7 @@ export function Sessions({ profile }: { profile: Profile | null }) {
   return (
     <div class="stack">
       <h1 tabindex={-1}>Notes for {profile.nickname}</h1>
-      <p class="card-note" style={{ maxWidth: '46rem' }}>
+      <p class="card-note">
         These are your own informal observations — a picture that builds over weeks, not a test of any kind. CVI
         function genuinely swings day to day with tiredness, health, and mood; single days mean very little on
         their own.

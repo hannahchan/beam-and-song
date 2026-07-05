@@ -55,7 +55,7 @@ export function Library({ profile }: { profile: Profile | null }) {
   return (
     <div>
       <h1 tabindex={-1}>Lessons</h1>
-      <p class="card-note" style={{ maxWidth: '46rem' }}>
+      <p class="card-note">
         Star the ones that suit {profile?.nickname ?? 'your child'} — starred lessons become the big tiles on
         their screen. Every lesson follows the colour, size, pace, sound, and <b>age</b> choices in Settings:
         the same practice is presented differently for a baby, a child, or a teen. When in doubt about level,
