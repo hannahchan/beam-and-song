@@ -25,8 +25,9 @@ export function About() {
   }, []);
 
   // Sharing keeps the app's no-network promise: it opens the native share sheet,
-  // or copies the link where no sheet exists, and sends nothing itself. The link
-  // shared is this page, so whoever receives it lands on this same explanation.
+  // or copies the link when there is no sheet (or the sheet fails), and sends
+  // nothing itself. The link shared is this page, so whoever receives it lands on
+  // this same explanation.
   const share = async () => {
     const url = location.href;
     const data = {
@@ -35,13 +36,14 @@ export function About() {
       url,
     };
     if (navigator.share) {
-      // A cancelled share rejects; that is a normal outcome, not an error.
       try {
         await navigator.share(data);
-      } catch {
-        /* dismissed */
+        return;
+      } catch (err) {
+        // A cancelled share sheet rejects with AbortError, which is intentional and
+        // needs no feedback. Any other failure falls through to the copy path below.
+        if ((err as { name?: string })?.name === 'AbortError') return;
       }
-      return;
     }
     try {
       await navigator.clipboard.writeText(url);
