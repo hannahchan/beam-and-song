@@ -187,11 +187,24 @@ a { color: var(--focus); }
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Breathing room the orb's max-height:100% resolves against, so when a short
+     landscape shrinks the orb to this slot it keeps a small gap from the title
+     and footnote instead of butting right up against them. */
+  padding-block: clamp(0.4rem, 1.6vmin, 0.9rem);
 }
 
 .start-orb {
-  width: min(52vmin, 340px);
+  /* Size to the smaller of the design cap and the height actually left in the
+     flex slot between the title and footer. A short landscape viewport then
+     shrinks the orb to fit instead of overflowing its slot and clipping (the
+     overflow:hidden screen) to a squished ellipse. aspect-ratio keeps it a
+     perfect circle as max-height caps the height; the wrap's padding leaves a
+     little breathing room so it never quite touches the title or footnote. */
+  aspect-ratio: 1;
+  width: auto;
   height: min(52vmin, 340px);
+  max-width: 100%;
+  max-height: 100%;
   border-radius: 50%;
   border: none;
   cursor: pointer;
