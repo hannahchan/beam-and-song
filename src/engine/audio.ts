@@ -408,7 +408,10 @@ class AudioEngine {
     return {
       stop: (fade = 0.5) => {
         stopped = true;
-        this.stopCustom(fade);
+        // stopMelody covers both lives this handle can lead: the custom
+        // source, and the synth bed the missing-blob path fell back to
+        // (stopCustom alone left that bed looping through the wind-down).
+        this.stopMelody(fade);
       },
       setPan: (p, elevation = 0.5) => spatial?.set(p, elevation),
       playPhrase: () => void this.playCustomSnippet(meta),
@@ -550,7 +553,9 @@ class AudioEngine {
    * from one. Returns the check's length in seconds (0 when still locked).
    */
   stereoCheck(): number {
-    if (!this.ctx || !this.master) return 0;
+    // A suspended context would silently bank the notes and replay them
+    // whenever it resumes, two stray beeps mid-lesson; require running.
+    if (!this.ctx || !this.master || !this.unlocked) return 0;
     const t = this.ctx.currentTime + 0.05;
     this.note(64, t, 0.9, 'glass', null, false, -0.9);
     this.note(64, t + 1.4, 0.9, 'glass', null, false, 0.9);
@@ -622,9 +627,9 @@ class AudioEngine {
   private panCache = new Map<number, StereoPannerNode | GainNode>();
   private panFor(p: number): AudioNode {
     if (!this.ctx || !this.master) throw new Error('audio not unlocked');
-    // Eighth steps: coarse enough to reuse nodes, fine enough that a ±0.9
-    // stage position stays strongly lateral instead of rounding down to 0.75.
-    const key = Math.round(p * 8) / 8;
+    // Eighth steps: coarse enough to reuse nodes, fine enough that a ±0.85
+    // side call stays strongly lateral (quarter steps rounded it to 0.75).
+    const key = Math.round(clamp(p, -1, 1) * 8) / 8;
     let node = this.panCache.get(key);
     if (!node) {
       if (this.ctx.createStereoPanner) {
