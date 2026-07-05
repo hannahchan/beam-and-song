@@ -246,9 +246,14 @@ function breathe(p: EngineParams, tMs: number, phase = 0): number {
 
 function pulse(scene: Scene, p: EngineParams, tMs: number): void {
   const pos = biasPoint(0.5, 0.5, p.fieldBias, p.biasStrength);
-  const a = p.peakAlpha * 0.92 * breathe(p, tMs) * entry(tMs, p);
+  // One unified breath: size and brightness swell together (same wave, in phase)
+  // so the pulse reads as a single slow inhale rather than a faint shimmer. The
+  // size term carries most of the visible depth while barely moving whole-screen
+  // luminance, so the breath stays well inside the analyzer's flash budget.
+  const wave = safeMod(tMs / 1000, p.modHz, p.modDepth);
+  const a = p.peakAlpha * 0.9 * (1 + wave) * entry(tMs, p);
   scene.items.push(
-    orb(p, { x: pos.x, y: pos.y, alpha: clamp01(a), r: p.radius * (1 + 0.4 * safeMod(tMs / 1000, p.modHz, p.modDepth, Math.PI / 2)) }),
+    orb(p, { x: pos.x, y: pos.y, alpha: clamp01(a), r: p.radius * (1 + 0.8 * wave) }),
   );
   scene.pan = (pos.x - 0.5) * 1.6;
 }

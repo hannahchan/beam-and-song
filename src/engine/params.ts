@@ -53,7 +53,7 @@ export function buildParams(s: ChildSettings): EngineParams {
     peakAlpha: [0.72, 0.86, 1.0][clamp(s.brightness, 1, 3) - 1],
     glow: [0, 0.6, 1.0, 1.4][clamp(s.glow, 0, 3)],
     modHz: clamp(0.14 / paceMult, 0.02, SAFETY.MAX_MOD_HZ),
-    modDepth: clamp(0.05 + 0.01 * s.brightness, 0, SAFETY.MAX_MOD_DEPTH),
+    modDepth: clamp(0.07 + 0.01 * s.brightness, 0, SAFETY.MAX_MOD_DEPTH),
     complexity: s.complexity,
     fieldBias: s.fieldBias,
     biasStrength: s.biasStrength,
