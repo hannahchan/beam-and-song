@@ -267,6 +267,7 @@ export function Settings({ profile }: { profile: Profile | null }) {
           hint="The song sits where the target is and travels with it, joining looking and listening. Needs stereo speakers to be felt."
           onChange={(soundFollowsTarget) => set({ soundFollowsTarget })}
         />
+        <StereoCheck volume={s.volume} />
         <AudioManager profile={profile} />
         <Toggle
           label="A tiny vibration on touch rewards"
@@ -337,6 +338,36 @@ export function Settings({ profile }: { profile: Profile | null }) {
         </button>
       </Card>
       </div>
+    </div>
+  );
+}
+
+/**
+ * FR-10/CR-5, a quick way to hear whether this device truly has two sides.
+ * The lessons that call from one side depend on real stereo separation, and
+ * some tablets and phones quietly blend the channels together.
+ */
+function StereoCheck({ volume }: { volume: number }) {
+  const [playing, setPlaying] = useState(false);
+  const play = async () => {
+    if (playing) return;
+    await audio.unlock();
+    audio.setVolume(volume);
+    const secs = audio.stereoCheck();
+    if (secs <= 0) return;
+    setPlaying(true);
+    setTimeout(() => setPlaying(false), secs * 1000);
+  };
+  return (
+    <div class="field">
+      <button class="btn" disabled={playing} onClick={() => void play()}>
+        {playing ? 'Listening for two sides…' : 'Check the speakers: left, then right'}
+      </button>
+      <p class="hint">
+        A soft note from the left, then the same note from the right. If the two sound the same, this
+        device is blending the sides together, and the listening lessons that call from one side will
+        not carry. A small speaker placed to one side of your child works beautifully for those.
+      </p>
     </div>
   );
 }

@@ -533,6 +533,21 @@ class AudioEngine {
   }
 
   /**
+   * The Settings "left, then right" speaker check (FR-10/CR-5): the same
+   * soft note fully to each side, so a caregiver can hear whether this
+   * device truly separates the sides before trusting a lesson that calls
+   * from one. Returns the check's length in seconds (0 when still locked).
+   */
+  stereoCheck(): number {
+    if (!this.ctx || !this.master) return 0;
+    const t = this.ctx.currentTime + 0.05;
+    this.note(64, t, 0.9, 'glass', null, false, -0.9);
+    this.note(64, t + 1.4, 0.9, 'glass', null, false, 0.9);
+    this.duckBedFor(2.5);
+    return 2.5;
+  }
+
+  /**
    * Synthesize one note. Attack always >= SAFETY.MIN_AUDIO_ATTACK_S; release
    * is long and smooth, nothing clicks, nothing startles. Beds pass their
    * own destination (the bed bus or its spatial chain); cues pass null and
