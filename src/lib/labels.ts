@@ -3,8 +3,8 @@ import type { AudioMode, BackgroundId, ChildSettings, FieldBias, SessionTag, Tar
 /**
  * Display labels for values that are PERSISTED as stable keys. Stored data
  * (SessionRecord.tags, ChildSettings.targetColor, …) holds the key; the UI and
- * exports render the label from here. Localising later means editing this file
- *, never a store migration and never touching a caregiver's saved data.
+ * exports render the label from here. Localising later means editing this file,
+ * never a store migration and never touching a caregiver's saved data.
  *
  * The rule this enforces: never render a stored enum value directly. Today the
  * English labels mostly equal their keys; that is fine, the decoupling is the

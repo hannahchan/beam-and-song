@@ -47,7 +47,7 @@ check('HTML (gzip)', gzipKB(files.filter((f) => f.endsWith('.html'))), BUDGETS.h
 check('Total payload (raw)', rawKB, BUDGETS.totalRawKB);
 
 if (failed) {
-  console.error('\nBudget exceeded (TR-9). Trim before shipping, lessons must never stutter on low-end tablets.');
+  console.error('\nBudget exceeded (TR-9). Trim before shipping. Lessons must never stutter on low-end tablets.');
   process.exit(1);
 }
 console.log('\nAll performance budgets met.');

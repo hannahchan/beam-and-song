@@ -122,7 +122,7 @@ export function PrintSummary({ profile }: { profile: Profile | null }) {
                       ? 'none noticed'
                       : r.response === 'unsure'
                         ? 'hard to say'
-                        : ', '}
+                        : '–'}
               </td>
               <td>
                 {r.tags.map((t) => TAG_LABELS[t]).join(', ')}

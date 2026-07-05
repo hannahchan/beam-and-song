@@ -45,12 +45,12 @@ lesson at every setting:
 | Constraint | Value we enforce | Reference point |
 |---|---|---|
 | Periodic modulation (pulse/twinkle/bob) | ≤ 0.5 Hz | risk band starts ≈ 3 Hz (WCAG 2.3.1 / ISO 9241-391) |
-| Any appearance/disappearance/change | eased fade ≥ 500 ms, no cuts |, |
+| Any appearance/disappearance/change | eased fade ≥ 500 ms, no cuts | – |
 | Luminance swing in any 0.5 s window | ≤ 0.18 (relative luminance, whole screen) | WCAG "general flash" = opposing swings ≥ 0.10 |
 | Opposing luminance swings ("flash pairs") | ≤ 1 per second | WCAG allows 3/s |
 | Saturated-red area transitions | zero | WCAG red-flash |
 | Whole-screen relative luminance | ≤ 0.8 | dark-first design |
-| Reward re-trigger (tap spam) | ≥ 1.5 s cooldown |, |
+| Reward re-trigger (tap spam) | ≥ 1.5 s cooldown | – |
 | Patterns (stripes/checks/gratings) | none exist anywhere | pattern-sensitivity literature |
 | Music tempo | ≤ 84 BPM, soft attacks ≥ 30 ms | comfort, not seizure-driven |
 

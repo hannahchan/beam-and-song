@@ -28,7 +28,7 @@ export function Guide({ topic }: { topic?: string | null }) {
         <p>
           Cortical (or cerebral) visual impairment means the eyes gather light well enough, but the brain has a
           harder time making sense of what arrives. It is the most common cause of visual impairment in children
-          in many countries, and, importantly, <b>vision with CVI can develop</b>. Familiar colours, simple
+          in many countries, and importantly, <b>vision with CVI can develop</b>. Familiar colours, simple
           scenes, movement, light, and time are the usual doorways in.
         </p>
         <p>

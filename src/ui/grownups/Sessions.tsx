@@ -40,7 +40,7 @@ export function Sessions({ profile }: { profile: Profile | null }) {
           <>
             <p>
               {s.total} {plural(s.total, { one: 'session', other: 'sessions' })} · a response you noticed in{' '}
-              {s.withResponse} · clearest friend so far: {s.topLesson ? <b>{s.topLesson.title}</b> : ', '}
+              {s.withResponse} · clearest friend so far: {s.topLesson ? <b>{s.topLesson.title}</b> : '–'}
             </p>
             <div class="bars" role="img" aria-label={weeksAria(s.weeks)}>
               {s.weeks.map((w) => (
