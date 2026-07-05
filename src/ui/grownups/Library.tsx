@@ -229,8 +229,9 @@ function LessonCard({ lesson: base, profile }: { lesson: LessonSpec; profile: Pr
       <p class="card-note">{lesson.goal}</p>
       {lesson.quietPreferred && (
         <p class="card-note">
-          This kind of looking is easier in quiet. The “after a look” or “off” sound modes in Settings
-          often suit it best.
+          This kind of looking is easier in quiet, so the music waits during this lesson: the search
+          happens in silence, and sound arrives as the answer to a touch. Choose “No sound” in Settings
+          to silence it entirely.
         </p>
       )}
       <details>

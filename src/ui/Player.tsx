@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'preact/hooks';
 import { navigate } from '../lib/router';
-import { CUE_DRIVEN_BEHAVIORS, HOLD_DRIVEN_BEHAVIORS, getLesson } from '../lessons/specs';
+import { CUE_DRIVEN_BEHAVIORS, HOLD_DRIVEN_BEHAVIORS, effectiveAudioMode, getLesson } from '../lessons/specs';
 import { bandLookPhrase, bandNoun, resolveLesson } from '../lessons/bands';
 import { activeProfile, addSession, ensureProfile } from '../lib/store';
 import { buildParams } from '../engine/params';
@@ -113,7 +113,9 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
         ? profile.audio.find((a) => a.id === settings.melodySource)
         : undefined;
 
-    const melodyWanted = () => settings.audioMode === 'with' && !CUE_DRIVEN_BEHAVIORS.has(spec.behavior);
+    // The find/search lessons bind to the quiet after-a-look way (FR-6/PR-11).
+    const modeNow = () => effectiveAudioMode(settings.audioMode, spec);
+    const melodyWanted = () => modeNow() === 'with' && !CUE_DRIVEN_BEHAVIORS.has(spec.behavior);
     const startMelodyIfWanted = () => {
       if (!melodyWanted() || melody || !audio.unlocked) return;
       const usePan = settings.soundFollowsTarget || spec.behavior === 'audioPan';
@@ -250,9 +252,10 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
         }
         const fadeK = handover ? Math.min((lessonT - handover.at) / XFADE_MS, 1) : 0;
         voiceRef.current = voiceForItems(scene.items, profile.photos);
+        const cueMode = modeNow();
         for (const cue of scene.cues) {
-          if (settings.audioMode === 'off' || handover) continue;
-          if (settings.audioMode === 'after' && !isTapCue(cue)) continue;
+          if (cueMode === 'off' || handover) continue;
+          if (cueMode === 'after' && !isTapCue(cue)) continue;
           // In photo lessons, a recorded voice label is the answer (CR-3):
           // the caregiver's own "the red ball!" instead of the chime.
           if (cue === 'chime' && voiceRef.current) {
@@ -317,7 +320,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
         tapsRef.current.push({ t, x, y });
         const eff = effectiveTapEvents(tapsRef.current);
         if (eff[eff.length - 1]?.t !== t) return;
-      } else if (settings.audioMode === 'after') {
+      } else if (modeNow() === 'after') {
         // FR-6b, the grown-up taps when the baby looks; the song answers.
         // If the photo on screen has a recorded voice label, that voice IS
         // the answer, the most meaningful sound we can offer (CR-3).
@@ -466,7 +469,7 @@ export function Player({ lessonId, programId }: { lessonId?: string; programId?:
         </p>
       )}
 
-      {settings.audioMode === 'after' && phase === 'running' && (
+      {effectiveAudioMode(settings.audioMode, current) === 'after' && phase === 'running' && (
         <AfterModeHint interactive={current.interactive} lookPhrase={bandLookPhrase(profile.ageBand)} />
       )}
 

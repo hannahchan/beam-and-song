@@ -229,7 +229,12 @@ export function Settings({ profile }: { profile: Profile | null }) {
           value={s.audioMode}
           onChange={(audioMode) => set({ audioMode })}
           options={[
-            { value: 'with', label: 'With the visual', detail: 'Song and light together, the usual pairing.' },
+            {
+              value: 'with',
+              label: 'With the visual',
+              detail:
+                'Song and light together, the usual pairing. The find-and-seek lessons still keep the music back until a touch answers.',
+            },
             {
               value: 'after',
               label: 'After a look',
