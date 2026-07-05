@@ -64,7 +64,7 @@ export function About() {
           <a class="btn btn-small btn-primary" href="#/">
             Go to the app
           </a>
-          <button type="button" class="btn btn-small about-share" onClick={share}>
+          <button type="button" class="btn btn-small" onClick={share}>
             <ShareIcon />
             Share
           </button>
