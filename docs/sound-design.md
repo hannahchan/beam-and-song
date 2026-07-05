@@ -40,8 +40,10 @@ Rules that connect them:
 1. **The bed steps back for every cue and voice label** (about 10 dB, recovering smoothly).
    Feedback always wins the moment without ever being loud.
 2. **Contingency lessons are bedless.** Magic Touch and Reach for the Light play silence
-   between rewards; the chime is the only sound, so "I made that happen" is unmistakable.
-   Mechanically they joined `CUE_DRIVEN_BEHAVIORS` alongside the listening lessons.
+   between rewards, and Keep the Light Singing rests quiet until a held touch keeps the
+   light humming, so "I made that happen" is unmistakable (and the hold lesson's warm hum
+   no longer had to fight a bed in its own voice). Mechanically all three joined
+   `CUE_DRIVEN_BEHAVIORS` alongside the listening lessons.
 3. **Where the looking is the work, the music waits.** The find/search lessons
    (`quietPreferred`) bind their preference: when the profile's sound mode is "with the
    visual", the player runs them the after-a-look way instead (quiet search, sound as the

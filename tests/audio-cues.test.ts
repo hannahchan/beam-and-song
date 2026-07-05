@@ -79,8 +79,8 @@ describe('beds are tunes, not event markers', () => {
     }
   });
 
-  it('the contingency lessons are bedless: the reward is the only sound', () => {
-    for (const id of ['magic-touch', 'reach-for-the-light']) {
+  it('the contingency lessons are bedless: the answer is the only sound', () => {
+    for (const id of ['magic-touch', 'reach-for-the-light', 'keep-the-light-singing']) {
       const l = LESSONS.find((s) => s.id === id)!;
       expect(CUE_DRIVEN_BEHAVIORS.has(l.behavior), id).toBe(true);
     }
